@@ -1,5 +1,5 @@
-import Submission.Obl.Entropy__linear_transport_limit.Energy
-import Submission.Obl.Entropy__gaussian_l2_limit_of_jacobian_limit
+import Submission.Obl.Entropy__linear_transport_limit.L2Limit
+import Submission.Obl.Entropy__gaussian_l2_poincare
 import Submission.Obl.Entropy__continuous_jacobian_of_l2_limit
 
 open MeasureTheory ProbabilityTheory Filter
@@ -39,8 +39,28 @@ theorem centered_C1_limit {m : ℕ}
     ∃ G : E m → E m, ContDiff ℝ 1 G ∧ MemLp G 2 (stdGaussian (E m)) ∧
       (∫ x, G x ∂stdGaussian (E m)) = 0 ∧ (∀ x, fderiv ℝ G x = J x) ∧
       Tendsto (fun n => ∫ x, ‖Fseq n x - G x‖ ^ 2 ∂stdGaussian (E m)) atTop (𝓝 0) := by
+  obtain ⟨C, hC, hPoincare⟩ := Submission.Entropy.gaussian_l2_poincare m
+  have hbound (n k : ℕ) :
+      (∫ x, ‖Fseq n x - Fseq k x‖ ^ 2 ∂stdGaussian (E m)) ≤
+        C * ∫ x, ‖fderiv ℝ (Fseq n) x - fderiv ℝ (Fseq k) x‖ ^ 2
+          ∂stdGaussian (E m) := by
+    have hdiff : fderiv ℝ (fun x => Fseq n x - Fseq k x) =
+        fun x => fderiv ℝ (Fseq n) x - fderiv ℝ (Fseq k) x := by
+      funext x
+      exact fderiv_sub ((hF n).1.differentiable (by norm_num)).differentiableAt
+        ((hF k).1.differentiable (by norm_num)).differentiableAt
+    have hmean : (∫ x, Fseq n x - Fseq k x ∂stdGaussian (E m)) = 0 := by
+      rw [integral_sub ((hF n).2.1.integrable (by norm_num))
+        ((hF k).2.1.integrable (by norm_num)), (hF n).2.2, (hF k).2.2, sub_self]
+    have hdiffmem : MemLp (fderiv ℝ (fun x => Fseq n x - Fseq k x)) 2
+        (stdGaussian (E m)) := by
+      rw [hdiff]
+      exact (hDF n).sub (hDF k)
+    simpa only [hdiff] using hPoincare (fun x => Fseq n x - Fseq k x)
+      ((hF n).1.sub (hF k).1) ((hF n).2.1.sub (hF k).2.1) hmean hdiffmem
   obtain ⟨H, hHmem, hHmean, hHlim⟩ :=
-    Submission.Entropy.gaussian_l2_limit_of_jacobian_limit m Fseq J hF hDF hJmem hJlim
+    exists_centered_L2_limit_of_difference_bound (fun n => (hF n).2.1)
+      (fun n => (hF n).2.2) hDF hJmem hJlim hC hbound
   obtain ⟨G, hGcont, hGH, hDG⟩ :=
     Submission.Entropy.continuous_jacobian_of_l2_limit m Fseq H J
       (fun n => (hF n).1) (fun n => (hF n).2.1) hHmem hDF hJmem hJcont hHlim hJlim
