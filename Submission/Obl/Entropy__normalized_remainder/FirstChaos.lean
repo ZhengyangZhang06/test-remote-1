@@ -8,6 +8,8 @@ The definitions in equation (3.5) of the supplied paper.  All expectations
 are entrywise, as in the frozen interface of `normalized_remainder`.
 -/
 
+set_option backward.isDefEq.respectTransparency false
+
 namespace Submission.Obl.Entropy__normalized_remainder
 
 open MeasureTheory ProbabilityTheory
@@ -135,5 +137,118 @@ theorem fieldEnergy_integrable {m : ℕ} {A : E m → Mat m}
     Integrable (fun x => ∑ i, ∑ j, (A x i j) ^ 2) (stdGaussian (E m)) := by
   exact integrable_finsetSum _ fun i _ =>
     integrable_finsetSum _ fun j _ => (hA i j).integrable_sq
+
+/-- A first-chaos field has no constant component. -/
+theorem linearPart_mean {m : ℕ} (A : E m → Mat m) (i j : Fin m) :
+    (∫ x, linearPart A x i j ∂stdGaussian (E m)) = 0 := by
+  simp only [linearPart, Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul]
+  erw [integral_finsetSum _ (fun r _ =>
+    ((gaussian_coord_memLp r).integrable (by norm_num)).mul_const _)]
+  simp [integral_mul_const, gaussian_coord_mean]
+
+/-- Removing the first chaos preserves a vanishing mean. -/
+theorem nonlinearPart_mean {m : ℕ} {A : E m → Mat m}
+    (hA : ∀ i j, MemLp (fun x => A x i j) 2 (stdGaussian (E m)))
+    (hmean : ∀ i j, (∫ x, A x i j ∂stdGaussian (E m)) = 0) (i j : Fin m) :
+    (∫ x, nonlinearPart A x i j ∂stdGaussian (E m)) = 0 := by
+  change (∫ x, A x i j - linearPart A x i j ∂stdGaussian (E m)) = 0
+  erw [integral_sub ((hA i j).integrable (by norm_num))
+    ((linearPart_memLp A i j).integrable (by norm_num)), hmean, linearPart_mean, sub_self]
+
+/-- Projection preserves every degree-one coefficient. -/
+theorem linearPart_coord {m : ℕ} (A : E m → Mat m) (r i j : Fin m) :
+    (∫ x, x r * linearPart A x i j ∂stdGaussian (E m)) = firstCoeff A r i j := by
+  simp only [linearPart, Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul,
+    Finset.mul_sum, ← mul_assoc]
+  erw [integral_finsetSum _ (fun s _ =>
+    ((gaussian_coord_memLp r).integrable_mul (gaussian_coord_memLp s)).mul_const _)]
+  simp [integral_mul_const, gaussian_coord_mul, ite_mul]
+
+/-- The remainder is orthogonal to every coordinate function. -/
+theorem nonlinearPart_coord {m : ℕ} {A : E m → Mat m}
+    (hA : ∀ i j, MemLp (fun x => A x i j) 2 (stdGaussian (E m)))
+    (r i j : Fin m) :
+    (∫ x, x r * nonlinearPart A x i j ∂stdGaussian (E m)) = 0 := by
+  change (∫ x, x r * (A x i j - linearPart A x i j) ∂stdGaussian (E m)) = 0
+  simp only [mul_sub]
+  erw [integral_sub (firstCoeff_integrable hA r i j)
+    ((gaussian_coord_memLp r).integrable_mul (linearPart_memLp A i j)),
+    linearPart_coord]
+  simp only [firstCoeff, Matrix.of_apply, sub_self]
+
+/-- Each entry of the remainder is orthogonal to every entry of the linear part. -/
+theorem nonlinearPart_linearPart {m : ℕ} {A : E m → Mat m}
+    (hA : ∀ i j, MemLp (fun x => A x i j) 2 (stdGaussian (E m)))
+    (i j k l : Fin m) :
+    (∫ x, nonlinearPart A x i j * linearPart A x k l ∂stdGaussian (E m)) = 0 := by
+  simp only [linearPart, Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul,
+    Finset.mul_sum, ← mul_assoc]
+  erw [integral_finsetSum _ (fun r _ =>
+    ((nonlinearPart_memLp hA i j).integrable_mul (gaussian_coord_memLp r)).mul_const _)]
+  simp only [integral_mul_const]
+  have hzero (r : Fin m) :
+      (∫ x, nonlinearPart A x i j * x r ∂stdGaussian (E m)) = 0 := by
+    simpa only [mul_comm] using nonlinearPart_coord hA r i j
+  simp [hzero]
+
+/-- The Gram product of two projected entries is the product of their coefficients. -/
+theorem linearPart_mul {m : ℕ} (A : E m → Mat m) (i j k l : Fin m) :
+    (∫ x, linearPart A x i j * linearPart A x k l ∂stdGaussian (E m)) =
+      ∑ r, firstCoeff A r i j * firstCoeff A r k l := by
+  change (∫ x, linearPart A x i j *
+    (∑ r, x r • firstCoeff A r) k l ∂stdGaussian (E m)) = _
+  simp only [Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul, Finset.mul_sum, ← mul_assoc]
+  erw [integral_finsetSum _ (fun r _ =>
+    ((linearPart_memLp A i j).integrable_mul (gaussian_coord_memLp r)).mul_const _)]
+  apply Finset.sum_congr rfl
+  intro r _
+  erw [integral_mul_const]
+  congr 1
+  change (∫ x, linearPart A x i j * x r ∂stdGaussian (E m)) = firstCoeff A r i j
+  simpa only [mul_comm] using linearPart_coord A r i j
+
+/-- Orthogonality gives the entrywise second-moment decomposition. -/
+theorem entry_second_moment {m : ℕ} {A : E m → Mat m}
+    (hA : ∀ i j, MemLp (fun x => A x i j) 2 (stdGaussian (E m)))
+    (i j k l : Fin m) :
+    (∫ x, A x i j * A x k l ∂stdGaussian (E m)) =
+      (∑ r, firstCoeff A r i j * firstCoeff A r k l) +
+      ∫ x, nonlinearPart A x i j * nonlinearPart A x k l ∂stdGaussian (E m) := by
+  have hexpand (x : E m) : A x i j * A x k l =
+      linearPart A x i j * linearPart A x k l +
+      nonlinearPart A x i j * linearPart A x k l +
+      nonlinearPart A x k l * linearPart A x i j +
+      nonlinearPart A x i j * nonlinearPart A x k l := by
+    simp only [nonlinearPart, Matrix.sub_apply]
+    ring
+  simp_rw [hexpand]
+  have hLL := (linearPart_memLp A i j).integrable_mul (linearPart_memLp A k l)
+  have hYL := (nonlinearPart_memLp hA i j).integrable_mul (linearPart_memLp A k l)
+  have hLY := (nonlinearPart_memLp hA k l).integrable_mul (linearPart_memLp A i j)
+  have hYY := (nonlinearPart_memLp hA i j).integrable_mul (nonlinearPart_memLp hA k l)
+  erw [integral_add ((hLL.add hYL).add hLY) hYY,
+    integral_add (hLL.add hYL) hLY, integral_add hLL hYL,
+    nonlinearPart_linearPart hA, nonlinearPart_linearPart hA, linearPart_mul]
+  simp
+
+/-- The matrix identity used for the expected spectral measure in Proposition 3.5. -/
+theorem matrix_second_moment {m : ℕ} {A : E m → Mat m}
+    (hA : ∀ i j, MemLp (fun x => A x i j) 2 (stdGaussian (E m))) :
+    (Matrix.of fun i j => ∫ x, (A x * A x) i j ∂stdGaussian (E m)) =
+      firstGram A + Matrix.of (fun i j =>
+        ∫ x, (nonlinearPart A x * nonlinearPart A x) i j ∂stdGaussian (E m)) := by
+  ext i j
+  simp only [Matrix.of_apply, Matrix.add_apply, Matrix.mul_apply]
+  erw [integral_finsetSum _ (fun k _ => (hA i k).integrable_mul (hA k j)),
+    integral_finsetSum _ (fun k _ =>
+      (nonlinearPart_memLp hA i k).integrable_mul (nonlinearPart_memLp hA k j))]
+  change (∑ k, ∫ x, A x i k * A x k j ∂stdGaussian (E m)) =
+    firstGram A i j + ∑ k, ∫ x, nonlinearPart A x i k * nonlinearPart A x k j
+      ∂stdGaussian (E m)
+  simp_rw [entry_second_moment hA]
+  rw [Finset.sum_add_distrib]
+  congr 1
+  simp only [firstGram, Matrix.sum_apply, Matrix.mul_apply]
+  exact Finset.sum_comm
 
 end Submission.Obl.Entropy__normalized_remainder
