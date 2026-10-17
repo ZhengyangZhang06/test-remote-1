@@ -1,4 +1,9 @@
-import Submission.Obl.Root.DensityAffine
+/-
+Adapted from: here:root
+Original affine-density and exponential-moment proofs by session x0014.
+-/
+
+import Submission.Obl.Entropy__affine_exponential_moments.Affine
 import Submission.Lib.Cone.Integration
 
 set_option backward.isDefEq.respectTransparency false
@@ -6,7 +11,7 @@ set_option backward.isDefEq.respectTransparency false
 open MeasureTheory Set
 open Submission.Lib.EntropyTools
 
-namespace Submission.Obl.Root.DensityAffine
+namespace Submission.Obl.Entropy__affine_exponential_moments
 
 /-- The real density of a mean-one exponential variable. -/
 noncomputable def expDensity (x : ℝ) : ℝ :=
@@ -196,14 +201,14 @@ theorem entropy_equality_affine_product {n : ℕ}
     zero_div, sub_zero] at h
   linarith
 
-/-- Altering a density on a null set leaves its entropy and covariance unchanged. -/
-theorem entropy_equality_of_ae_affine_product {n : ℕ}
+/-- The exact entropy and covariance determinant of any a.e. affine exponential product. -/
+theorem moments_of_ae_affine_product {n : ℕ}
     (L : EuclideanSpace ℝ (Fin n) ≃ₗ[ℝ] EuclideanSpace ℝ (Fin n))
     (b : EuclideanSpace ℝ (Fin n)) {f : EuclideanSpace ℝ (Fin n) → ℝ}
     (h : ∀ᵐ x ∂volume, f x = |LinearMap.det L.toLinearMap|⁻¹ *
       (if ∀ i, 0 ≤ L.symm (x - b) i then Real.exp (-∑ i, L.symm (x - b) i) else 0)) :
-    -(∫ x, f x * Real.log (f x)) =
-      (n : ℝ) + Real.log (densityCovariance f (∫ x, f x • x)).det / 2 := by
+    -(∫ x, f x * Real.log (f x)) = (n : ℝ) + Real.log |LinearMap.det L.toLinearMap| ∧
+      (densityCovariance f (∫ x, f x • x)).det = (LinearMap.det L.toLinearMap) ^ 2 := by
   let e := L.toContinuousLinearEquiv
   have heq : f =ᵐ[volume] affineDensity e b productExpDensity := by
     filter_upwards [h] with x hx
@@ -228,6 +233,104 @@ theorem entropy_equality_of_ae_affine_product {n : ℕ}
     filter_upwards [heq] with x hx
     rw [hx]
   rw [hh, hc]
-  exact entropy_equality_affine_product e b
+  constructor
+  · rw [entropy_affineDensity e b (integrable_productExpDensity n)
+      (integrable_entropy_productExpDensity n) (integral_productExpDensity n),
+      entropy_productExpDensity]
+    rfl
+  · rw [mean_affineDensity e b (integrable_productExpDensity n)
+      (integrable_density_smul productExpDensity_nonneg (integrable_productExpDensity n)
+        (integrable_second_productExpDensity n)) (integral_productExpDensity n),
+      covariance_det_affineDensity e b _ productExpDensity_nonneg
+        (integrable_productExpDensity n) (integrable_second_productExpDensity n),
+      covariance_productExpDensity, Matrix.det_one, mul_one]
+    rfl
 
-end Submission.Obl.Root.DensityAffine
+/-- Altering an affine exponential product on a null set leaves its entropy gap zero. -/
+theorem entropy_equality_of_ae_affine_product {n : ℕ}
+    (L : EuclideanSpace ℝ (Fin n) ≃ₗ[ℝ] EuclideanSpace ℝ (Fin n))
+    (b : EuclideanSpace ℝ (Fin n)) {f : EuclideanSpace ℝ (Fin n) → ℝ}
+    (h : ∀ᵐ x ∂volume, f x = |LinearMap.det L.toLinearMap|⁻¹ *
+      (if ∀ i, 0 ≤ L.symm (x - b) i then Real.exp (-∑ i, L.symm (x - b) i) else 0)) :
+    -(∫ x, f x * Real.log (f x)) =
+      (n : ℝ) + Real.log (densityCovariance f (∫ x, f x • x)).det / 2 := by
+  obtain ⟨hH, hC⟩ := moments_of_ae_affine_product L b h
+  rw [hH, hC, Real.log_pow, Real.log_abs]
+  ring
+
+/-- The nonnegative orthant is closed and convex. -/
+theorem orthant_isClosed (n : ℕ) : IsClosed {x : EuclideanSpace ℝ (Fin n) | ∀ i, 0 ≤ x i} := by
+  simp only [Set.ofPred_forall]
+  apply isClosed_iInter
+  intro i
+  exact isClosed_le continuous_const (by fun_prop)
+
+theorem orthant_convex (n : ℕ) : Convex ℝ {x : EuclideanSpace ℝ (Fin n) | ∀ i, 0 ≤ x i} := by
+  intro x hx y hy a b ha hb _ i
+  change 0 ≤ a * x i + b * y i
+  exact add_nonneg (mul_nonneg ha (hx i)) (mul_nonneg hb (hy i))
+
+/-- The exponential-product density is upper semicontinuous, including its boundary. -/
+theorem upperSemicontinuous_productExpDensity (n : ℕ) :
+    UpperSemicontinuous (productExpDensity : EuclideanSpace ℝ (Fin n) → ℝ) := by
+  have hc : Continuous (fun x : EuclideanSpace ℝ (Fin n) => Real.exp (-∑ i, x i)) := by
+    fun_prop
+  intro x r hr
+  by_cases hx : ∀ i, 0 ≤ x i
+  · have hr' : Real.exp (-∑ i, x i) < r := by
+      simpa only [productExpDensity_eq, if_pos hx] using hr
+    filter_upwards [hc.continuousAt.eventually (gt_mem_nhds hr')] with y hy
+    by_cases hy0 : ∀ i, 0 ≤ y i
+    · simpa only [productExpDensity_eq, if_pos hy0] using hy
+    · have hr0 : 0 < r := (productExpDensity_nonneg x).trans_lt hr
+      simpa only [productExpDensity_eq, if_neg hy0] using hr0
+  · have hr0 : 0 < r := by simpa only [productExpDensity_eq, if_neg hx] using hr
+    filter_upwards [(orthant_isClosed n).isOpen_compl.mem_nhds hx] with y hy
+    change ¬ (∀ i, 0 ≤ y i) at hy
+    simpa only [productExpDensity_eq, if_neg hy] using hr0
+
+/-- The logarithm of the exponential density is affine on its positive support. -/
+theorem log_concave_productExpDensity (n : ℕ) :
+    ConcaveOn ℝ {x : EuclideanSpace ℝ (Fin n) | 0 < productExpDensity x}
+      (fun x => Real.log (productExpDensity x)) := by
+  have hs : {x : EuclideanSpace ℝ (Fin n) | 0 < productExpDensity x} =
+      {x | ∀ i, 0 ≤ x i} := by
+    ext x
+    by_cases hx : ∀ i, 0 ≤ x i <;> simp [productExpDensity_eq, hx, Real.exp_pos]
+  rw [hs]
+  refine ⟨orthant_convex n, ?_⟩
+  intro x hx y hy a b ha hb hab
+  have hxy := orthant_convex n hx hy ha hb hab
+  change ∀ i, 0 ≤ x i at hx
+  change ∀ i, 0 ≤ y i at hy
+  change ∀ i, 0 ≤ (a • x + b • y) i at hxy
+  simp only [productExpDensity_eq, if_pos hx, if_pos hy, if_pos hxy, Real.log_exp]
+  change a * (-∑ i, x i) + b * (-∑ i, y i) ≤ -(∑ i, (a * x i + b * y i))
+  simp only [Finset.sum_add_distrib, ← Finset.mul_sum]
+  ring_nf
+  exact le_rfl
+
+/-- All hypotheses of the entropy inequality hold for affine exponential products. -/
+theorem affine_product_regular {n : ℕ}
+    (e : EuclideanSpace ℝ (Fin n) ≃L[ℝ] EuclideanSpace ℝ (Fin n))
+    (b : EuclideanSpace ℝ (Fin n)) :
+    (∀ x, 0 ≤ affineDensity e b productExpDensity x) ∧
+    UpperSemicontinuous (affineDensity e b productExpDensity) ∧
+    ConcaveOn ℝ {x | 0 < affineDensity e b productExpDensity x}
+      (fun x => Real.log (affineDensity e b productExpDensity x)) ∧
+    Integrable (affineDensity e b productExpDensity) ∧
+    (∫ x, affineDensity e b productExpDensity x) = 1 ∧
+    Integrable (fun x => affineDensity e b productExpDensity x * ‖x‖ ^ 2) ∧
+    Integrable (fun x => affineDensity e b productExpDensity x *
+      Real.log (affineDensity e b productExpDensity x)) := by
+  refine ⟨affineDensity_nonneg e b productExpDensity_nonneg,
+    upperSemicontinuous_affineDensity e b (upperSemicontinuous_productExpDensity n),
+    log_concave_affineDensity e b (log_concave_productExpDensity n),
+    integrable_affineDensity e b (integrable_productExpDensity n), ?_,
+    integrable_second_affineDensity e b productExpDensity_nonneg (integrable_productExpDensity n)
+      (integrable_second_productExpDensity n),
+    integrable_entropy_affineDensity e b (integrable_productExpDensity n)
+      (integrable_entropy_productExpDensity n)⟩
+  rw [integral_affineDensity, integral_productExpDensity]
+
+end Submission.Obl.Entropy__affine_exponential_moments

@@ -1,3 +1,8 @@
+/-
+Adapted from: here:root
+Original affine-density and exponential-moment proofs by session x0014.
+-/
+
 import Mathlib
 import ChallengeDeps
 import Submission.Lib.EntropyTools.DensityMoments
@@ -6,7 +11,7 @@ open MeasureTheory
 open Submission.Lib.EntropyTools
 open scoped Matrix
 
-namespace Submission.Obl.Root.DensityAffine
+namespace Submission.Obl.Entropy__affine_exponential_moments
 
 noncomputable def affineDensity {n : ℕ}
     (e : EuclideanSpace ℝ (Fin n) ≃L[ℝ] EuclideanSpace ℝ (Fin n))
@@ -339,4 +344,4 @@ theorem log_concave_affineDensity {n : ℕ}
   rw [affineDensity, Real.log_mul (ne_of_gt hd) hy', Real.log_inv, hA]
   ring
 
-end Submission.Obl.Root.DensityAffine
+end Submission.Obl.Entropy__affine_exponential_moments
