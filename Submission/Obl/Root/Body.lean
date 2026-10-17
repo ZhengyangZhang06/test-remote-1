@@ -68,4 +68,46 @@ theorem covMatrix_det_nonneg {n : ℕ} {K : Set (EuclideanSpace ℝ (Fin n))}
     (hK : IsCompact K) : 0 ≤ (covMatrix K).det :=
   (covMatrix_posSemidef hK).det_nonneg
 
+/-- Nonempty interior makes the covariance quadratic form strictly positive. -/
+theorem body_covMatrix_posDef {n : ℕ} {K : Set (EuclideanSpace ℝ (Fin n))}
+    (hK : IsConvexBody K) : (covMatrix K).PosDef := by
+  apply Matrix.PosDef.of_dotProduct_mulVec_pos (covMatrix_isHermitian K)
+  intro u hu
+  simp only [star_trivial]
+  rw [covMatrix_quadratic hK.isCompact]
+  apply mul_pos (inv_pos.mpr (body_vol_pos hK))
+  have hc : Continuous (fun x : EuclideanSpace ℝ (Fin n) =>
+      (∑ i, u i * (x i - centroid K i)) ^ 2) := by fun_prop
+  have hi := ContinuousOn.integrableOn_compact (μ := volume) hK.isCompact hc.continuousOn
+  by_contra h
+  have hzero : (∫ x in K, (∑ i, u i * (x i - centroid K i)) ^ 2) = 0 :=
+    le_antisymm (le_of_not_gt h) (integral_nonneg (fun _ => sq_nonneg _))
+  have hae := (integral_eq_zero_iff_of_nonneg (fun _ => sq_nonneg _) hi).mp hzero
+  have hpoint := Measure.eqOn_open_of_ae_eq
+    (ae_restrict_of_ae_restrict_of_subset interior_subset hae)
+    isOpen_interior hc.continuousOn continuousOn_const
+  let F : EuclideanSpace ℝ (Fin n) →L[ℝ] ℝ := ∑ i, u i • EuclideanSpace.proj i
+  have hF (x : EuclideanSpace ℝ (Fin n)) : F x = ∑ i, u i * x i := by
+    simp [F, EuclideanSpace.proj]
+  have hAff : F.toLinearMap.toAffineMap =
+      AffineMap.const ℝ (EuclideanSpace ℝ (Fin n)) (F (centroid K)) := by
+    apply AffineMap.ext_on (isOpen_interior.affineSpan_eq_top hK.interior_nonempty)
+    intro x hx
+    change F x = F (centroid K)
+    rw [hF, hF, ← sub_eq_zero, ← Finset.sum_sub_distrib]
+    simpa only [mul_sub] using (sq_eq_zero_iff.mp (hpoint hx))
+  have hlin : F.toLinearMap = 0 := by
+    simpa only [LinearMap.toAffineMap_linear, AffineMap.const_linear] using
+      congrArg AffineMap.linear hAff
+  apply hu
+  funext i
+  have heval := LinearMap.congr_fun hlin (PiLp.single 2 i (1 : ℝ))
+  change F (PiLp.single 2 i (1 : ℝ)) = 0 at heval
+  simpa [hF, PiLp.single_apply] using heval
+
+/-- A convex body has strictly positive covariance determinant. -/
+theorem body_covMatrix_det_pos {n : ℕ} {K : Set (EuclideanSpace ℝ (Fin n))}
+    (hK : IsConvexBody K) : 0 < (covMatrix K).det :=
+  (body_covMatrix_posDef hK).det_pos
+
 end Submission.Obl.Root
