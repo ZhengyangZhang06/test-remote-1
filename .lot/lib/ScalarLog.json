@@ -1,0 +1,18 @@
+{
+  "name": "ScalarLog",
+  "module": "Submission.Lib.ScalarLog",
+  "files": [
+    "Submission/Lib/ScalarLog.lean",
+    "Submission/Lib/ScalarLog/Cutoff.lean",
+    "Submission/Lib/ScalarLog/GaussianEndpoints.lean",
+    "Submission/Lib/ScalarLog/GaussianMills.lean",
+    "Submission/Lib/ScalarLog/Kernel.lean",
+    "Submission/Lib/ScalarLog/Sqrt.lean"
+  ],
+  "by": "x0118",
+  "gid": "g00124",
+  "from": "here:root",
+  "purpose": "",
+  "at": 1792222787.9925506,
+  "sha": "e9f9b2dc27a3907f42e397d38413e29f8bec8354"
+}
