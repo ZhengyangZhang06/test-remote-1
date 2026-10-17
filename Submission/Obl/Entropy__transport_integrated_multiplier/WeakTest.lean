@@ -9,25 +9,27 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
   [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E]
   {μ : Measure E} {ι : Type*} [Fintype ι]
 
-/-- A weak identity extends to a bounded smooth test when its derivative products are integrable. -/
+/-- A weak identity extends to a bounded C1 test when its derivative products are integrable. -/
 theorem integral_mul_eq_neg_sum_of_weak
     (v : ι → E) {f p : E → ℝ} {b : ι → E → ℝ}
     (hf : Integrable f μ) (hb : ∀ r, Integrable (b r) μ)
-    (hp : ContDiff ℝ ∞ p) (hp_bound : ∃ M : ℝ, ∀ x, ‖p x‖ ≤ M)
+    (hp : ContDiff ℝ 1 p) (hp_bound : ∃ M : ℝ, ∀ x, ‖p x‖ ≤ M)
     (hp_deriv : ∀ r, Integrable (fun x => fderiv ℝ p x (v r) * b r x) μ)
-    (hweak : ∀ z : E → ℝ, ContDiff ℝ ∞ z → HasCompactSupport z →
+    (hweak : ∀ z : E → ℝ, ContDiff ℝ 1 z → HasCompactSupport z →
       (∫ x, z x * f x ∂μ) = -∑ r, ∫ x, fderiv ℝ z x (v r) * b r x ∂μ) :
     (∫ x, p x * f x ∂μ) = -∑ r, ∫ x, fderiv ℝ p x (v r) * b r x ∂μ := by
+  have hcut (n : ℕ) : ContDiff ℝ 1 (cutoff (E := E) n) :=
+    (cutoff_contDiff n).of_le (WithTop.coe_le_coe.mpr (le_top : (1 : ENat) ≤ ⊤))
   obtain ⟨M, hM⟩ := hp_bound
   have hM0 : 0 ≤ M := (norm_nonneg (p 0)).trans (hM 0)
   obtain ⟨C, hC, hCb⟩ := exists_bound_fderiv_cutoff (E := E)
   let z : ℕ → E → ℝ := fun n x => cutoff n x * p x
-  have hz (n : ℕ) : ContDiff ℝ ∞ (z n) := (cutoff_contDiff n).mul hp
+  have hz (n : ℕ) : ContDiff ℝ 1 (z n) := (hcut n).mul hp
   have hzc (n : ℕ) : HasCompactSupport (z n) := (cutoff_hasCompactSupport n).mul_right
   have hzderiv (n : ℕ) (x w : E) :
       fderiv ℝ (z n) x w =
         cutoff n x * fderiv ℝ p x w + p x * fderiv ℝ (cutoff n) x w := by
-    have hd := fderiv_mul ((cutoff_contDiff n).differentiable (by simp) x)
+    have hd := fderiv_mul ((hcut n).differentiable (by simp) x)
       (hp.differentiable (by simp) x)
     exact congrArg (fun L => L w) hd
   have hc_bound (n : ℕ) (x : E) : ‖cutoff n x‖ ≤ 1 := by

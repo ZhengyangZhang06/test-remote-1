@@ -16,13 +16,13 @@ theorem abstract_multiplier_bound
     (v : ι → E) (Q W T M : E → Matrix ι ι ℝ) (H K : ι → E → Matrix ι ι ℝ)
     (hQsym : ∀ x, (Q x).IsHermitian) (hMsym : ∀ x, (M x).IsHermitian)
     (hHsym : ∀ r x, (H r x).IsHermitian) (hWpos : ∀ x, (W x).PosSemidef)
-    (hQ : ∀ i j, ContDiff ℝ ∞ (fun x => Q x i j))
+    (hQ : ∀ i j, ContDiff ℝ 1 (fun x => Q x i j))
     (hPbound : ∀ i j, ∃ C : ℝ, ∀ x, ‖(Q x * Q x) i j‖ ≤ C)
     (hQtop : EntryLp ∞ Q μ) (hMtop : EntryLp ∞ M μ) (hWtop : EntryLp ∞ W μ)
     (hT : EntryLp 1 T μ) (hH : ∀ r, EntryLp 2 (H r) μ)
     (hK : ∀ r, EntryLp 2 (K r) μ)
     (hKd : ∀ r x i j, K r x i j = fderiv ℝ (fun y => Q y i j) x (v r))
-    (hweak : ∀ i j (z : E → ℝ), ContDiff ℝ ∞ z → HasCompactSupport z →
+    (hweak : ∀ i j (z : E → ℝ), ContDiff ℝ 1 z → HasCompactSupport z →
       (∫ x, z x * (-(if i = j then 1 else 0) + W x i j + T x i j) ∂μ) =
         -∑ r, ∑ s, ∫ x, fderiv ℝ z x (v s) * M x s r * H r x i j ∂μ) :
     (∫ x, (∑ i, ∑ j, (Q x * Q x) i j * T x i j) +

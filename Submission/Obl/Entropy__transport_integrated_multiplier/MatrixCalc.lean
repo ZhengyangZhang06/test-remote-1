@@ -32,9 +32,9 @@ lemma fderiv_matrix_square {Q : E → Matrix ι ι ℝ}
   change fderiv ℝ (fun y => Q y i k * Q y k j) x v = _ at hv
   simpa only [add_apply, smul_apply, smul_eq_mul, mul_comm, add_comm] using hv
 
-lemma contDiff_matrix_square {Q : E → Matrix ι ι ℝ}
-    (hQ : ∀ i j, ContDiff ℝ ∞ (fun x => Q x i j)) (i j : ι) :
-    ContDiff ℝ ∞ (fun x => (Q x * Q x) i j) := by
+lemma contDiff_matrix_square {n : ℕ∞ω} {Q : E → Matrix ι ι ℝ}
+    (hQ : ∀ i j, ContDiff ℝ n (fun x => Q x i j)) (i j : ι) :
+    ContDiff ℝ n (fun x => (Q x * Q x) i j) := by
   simp only [Matrix.mul_apply]
   exact ContDiff.sum fun k _ => (hQ i k).mul (hQ k j)
 
