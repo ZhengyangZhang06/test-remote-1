@@ -222,4 +222,165 @@ theorem transportCurvature_pos (a : ℝ) : 0 < transportCurvature a := by
   rw [heq]
   linarith
 
+/-- The scalar transport slope is strictly increasing. -/
+theorem strictMono_transportSlope : StrictMono transportSlope :=
+  strictMono_of_hasDerivAt_pos hasDerivAt_transportSlope transportCurvature_pos
+
+/-- The variance divided by the squared mean for the positive Gaussian excess. -/
+noncomputable def excessVarianceRatio (a : ℝ) : ℝ :=
+  (1 - gaussianHazard a * gaussianGap a) / gaussianGap a ^ 2
+
+theorem hasDerivAt_excessVarianceRatio (a : ℝ) :
+    HasDerivAt excessVarianceRatio
+      (((1 - a * gaussianGap a) * (2 - a * gaussianGap a) -
+        gaussianGap a ^ 2 * (3 - a * gaussianGap a)) / gaussianGap a ^ 3) a := by
+  have h := (((hasDerivAt_gaussianHazard a).mul (hasDerivAt_gaussianGap a)).const_sub 1).div
+    ((hasDerivAt_gaussianGap a).pow 2) (pow_ne_zero 2 (gaussianGap_pos a).ne')
+  change HasDerivAt excessVarianceRatio _ a at h
+  apply h.congr_deriv
+  dsimp
+  field_simp [(gaussianGap_pos a).ne']
+  unfold gaussianGap
+  ring
+
+/-- Strict growth of the excess variance-to-mean-square ratio. -/
+theorem strictMono_excessVarianceRatio : StrictMono excessVarianceRatio := by
+  apply strictMono_of_hasDerivAt_pos hasDerivAt_excessVarianceRatio
+  intro a
+  exact div_pos (tail_moment_determinant_pos a) (pow_pos (gaussianGap_pos a) 3)
+
+/-- The scalar identities express `l` without differentiating a quotient. -/
+theorem curvature_identity (a : ℝ) :
+    transportCurvature a = transportRatio a * (1 - gaussianHazard a * gaussianGap a) -
+      transportSlope a * gaussianGap a := by
+  unfold transportCurvature transportSlope transportRatio gaussianGap
+  field_simp [(gaussianHazard_pos a).ne']
+  ring
+
+/-- A positive decomposition of the logarithmic growth of `M=d⁻²(1-b²)`. -/
+theorem log_M_growth_eq (a : ℝ) :
+    2 * (1 - gaussianHazard a * gaussianGap a) / gaussianGap a ^ 2 -
+      2 * transportSlope a * transportCurvature a /
+        (gaussianGap a * (1 - transportSlope a ^ 2)) =
+      transportSlope a / (1 - transportSlope a) +
+        transportCurvature a / (gaussianGap a * (1 + transportSlope a)) +
+        excessVarianceRatio a := by
+  have hb := transportSlope_pos a
+  have hbhalf := transportSlope_lt_half a
+  have hd := gaussianGap_pos a
+  have hb1 : 0 < 1 - transportSlope a := by linarith
+  have hbp : 0 < 1 + transportSlope a := by linarith
+  have hbs : 0 < 1 - transportSlope a ^ 2 := by nlinarith
+  have hkd : transportRatio a * gaussianGap a = 1 - transportSlope a := by
+    unfold transportSlope
+    ring
+  have hlform : transportCurvature a =
+      ((1 - transportSlope a) * (1 - gaussianHazard a * gaussianGap a) -
+        transportSlope a * gaussianGap a ^ 2) / gaussianGap a := by
+    apply (eq_div_iff hd.ne').2
+    rw [curvature_identity]
+    calc
+      _ = (transportRatio a * gaussianGap a) * (1 - gaussianHazard a * gaussianGap a) -
+          transportSlope a * gaussianGap a ^ 2 := by ring
+      _ = _ := by rw [hkd]
+  rw [hlform]
+  unfold excessVarianceRatio
+  field_simp [hd.ne', hb1.ne', hbp.ne', hbs.ne']
+  ring
+
+/-- The logarithmic growth rate of `M=d⁻²(1-b²)` is positive on the whole real line. -/
+theorem log_M_growth_pos (a : ℝ) :
+    0 < 2 * (1 - gaussianHazard a * gaussianGap a) / gaussianGap a ^ 2 -
+      2 * transportSlope a * transportCurvature a /
+        (gaussianGap a * (1 - transportSlope a ^ 2)) := by
+  rw [log_M_growth_eq]
+  have hb := transportSlope_pos a
+  have hbhalf := transportSlope_lt_half a
+  have hd := gaussianGap_pos a
+  have hl := transportCurvature_pos a
+  have hv := one_sub_hazard_mul_gap_pos a
+  have hb1 : 0 < 1 - transportSlope a := by linarith
+  have hbp : 0 < 1 + transportSlope a := by linarith
+  have hR : 0 < excessVarianceRatio a := div_pos hv (sq_pos_of_pos hd)
+  exact add_pos (add_pos (div_pos hb hb1) (div_pos hl (mul_pos hd hbp))) hR
+
+/-- The growth rate depends only on the increasing quantities `b` and `Var(X)/E(X)²`. -/
+theorem log_M_growth_eq_ratios (a : ℝ) :
+    2 * (1 - gaussianHazard a * gaussianGap a) / gaussianGap a ^ 2 -
+      2 * transportSlope a * transportCurvature a /
+        (gaussianGap a * (1 - transportSlope a ^ 2)) =
+      2 * (excessVarianceRatio a + transportSlope a ^ 2 / (1 - transportSlope a)) /
+        (1 + transportSlope a) := by
+  rw [log_M_growth_eq, curvature_identity]
+  have hb := transportSlope_pos a
+  have hbhalf := transportSlope_lt_half a
+  have hd := gaussianGap_pos a
+  have hb1 : 1 - transportSlope a ≠ 0 := by linarith
+  have hbp : 1 + transportSlope a ≠ 0 := by linarith
+  have hkd : transportRatio a = (1 - transportSlope a) / gaussianGap a := by
+    apply (eq_div_iff hd.ne').2
+    unfold transportSlope
+    ring
+  rw [hkd]
+  unfold excessVarianceRatio
+  field_simp [hd.ne', hb1, hbp]
+  ring
+
+/-- Bounds for the two increasing ratios give an interval-wide growth bound. -/
+theorem log_M_growth_lower_bound (a blo bhi rlo : ℝ)
+    (hbl0 : 0 ≤ blo) (hbl : blo ≤ transportSlope a)
+    (hbu : transportSlope a ≤ bhi) (hr0 : 0 ≤ rlo)
+    (hr : rlo ≤ excessVarianceRatio a) :
+    2 * (rlo + blo ^ 2 / (1 - blo)) / (1 + bhi) ≤
+      2 * (1 - gaussianHazard a * gaussianGap a) / gaussianGap a ^ 2 -
+        2 * transportSlope a * transportCurvature a /
+          (gaussianGap a * (1 - transportSlope a ^ 2)) := by
+  rw [log_M_growth_eq_ratios]
+  have hb := transportSlope_pos a
+  have hbhalf := transportSlope_lt_half a
+  have hden : 0 < 1 - transportSlope a := by linarith
+  have hlo : 0 < 1 - blo := by linarith
+  have hsq : blo ^ 2 ≤ transportSlope a ^ 2 := by nlinarith
+  have hterm : blo ^ 2 / (1 - blo) ≤ transportSlope a ^ 2 / (1 - transportSlope a) :=
+    (div_le_div_of_nonneg_left (sq_nonneg blo) hden (by linarith)).trans
+      (div_le_div_of_nonneg_right hsq hden.le)
+  have hn : 0 ≤ 2 * (rlo + blo ^ 2 / (1 - blo)) := by positivity
+  calc
+    _ ≤ 2 * (rlo + blo ^ 2 / (1 - blo)) / (1 + transportSlope a) :=
+      div_le_div_of_nonneg_left hn (by linarith) (by linarith)
+    _ ≤ _ := div_le_div_of_nonneg_right
+      (mul_le_mul_of_nonneg_left (add_le_add hr hterm) (by norm_num)) (by linarith)
+
+/-- The scalar reserve `M=(1-b²)/d²` in the two-eigenvalue comparison. -/
+noncomputable def slopeReserve (a : ℝ) : ℝ :=
+  (1 - transportSlope a ^ 2) / gaussianGap a ^ 2
+
+theorem slopeReserve_pos (a : ℝ) : 0 < slopeReserve a := by
+  have hb := transportSlope_pos a
+  have hbhalf := transportSlope_lt_half a
+  exact div_pos (by nlinarith) (sq_pos_of_pos (gaussianGap_pos a))
+
+theorem hasDerivAt_slopeReserve (a : ℝ) :
+    HasDerivAt slopeReserve
+      (gaussianGap a * slopeReserve a *
+        (2 * (1 - gaussianHazard a * gaussianGap a) / gaussianGap a ^ 2 -
+          2 * transportSlope a * transportCurvature a /
+            (gaussianGap a * (1 - transportSlope a ^ 2)))) a := by
+  have h := (((hasDerivAt_transportSlope a).pow 2).const_sub 1).div
+    ((hasDerivAt_gaussianGap a).pow 2) (pow_ne_zero 2 (gaussianGap_pos a).ne')
+  change HasDerivAt slopeReserve _ a at h
+  apply h.congr_deriv
+  have hb := transportSlope_pos a
+  have hbhalf := transportSlope_lt_half a
+  have hbs : 1 - transportSlope a ^ 2 ≠ 0 := ne_of_gt (by nlinarith)
+  dsimp [slopeReserve]
+  field_simp [(gaussianGap_pos a).ne', hbs]
+  ring
+
+/-- The scalar reserve increases strictly, without interval certificates. -/
+theorem strictMono_slopeReserve : StrictMono slopeReserve := by
+  apply strictMono_of_hasDerivAt_pos hasDerivAt_slopeReserve
+  intro a
+  exact mul_pos (mul_pos (gaussianGap_pos a) (slopeReserve_pos a)) (log_M_growth_pos a)
+
 end Submission.Obl.Root.GaussianCurvature
