@@ -1,5 +1,5 @@
 import Mathlib
-import Submission.Obl.Entropy__gaussian_hazard_lipschitz.GaussianMoments
+import Submission.Lib.GaussianTransport.GaussianTails
 
 open MeasureTheory ProbabilityTheory Polynomial
 open scoped BigOperators
@@ -34,7 +34,7 @@ theorem derivative_hermitePoly_succ (n : ℕ) :
     simp only [map_add, map_one, map_ofNat]
     ring
 
-private noncomputable abbrev pdf := Submission.Obl.Entropy__gaussian_hazard_lipschitz.pdf
+private noncomputable abbrev pdf := Submission.Lib.GaussianTransport.normalPDF
 
 /-- Every polynomial has finite absolute Gaussian moments. -/
 theorem integrable_polynomial_mul_pdf (p : Polynomial ℝ) :
@@ -46,7 +46,7 @@ theorem integrable_polynomial_mul_pdf (p : Polynomial ℝ) :
     · ext x; simp [Polynomial.eval_add, add_mul]
   | monomial n a =>
     simpa only [Polynomial.eval_monomial, mul_assoc] using
-      (Submission.Obl.Entropy__gaussian_hazard_lipschitz.integrable_pow_mul_pdf n).const_mul a
+      (Submission.Lib.GaussianTransport.integrable_pow_mul_normalPDF n).const_mul a
 
 /-- Gaussian integration by parts for polynomials, with no boundary term. -/
 theorem integral_polynomial_derivative (p : Polynomial ℝ) :
@@ -55,7 +55,7 @@ theorem integral_polynomial_derivative (p : Polynomial ℝ) :
     (u := fun x : ℝ => p.eval x) (v := pdf)
     (u' := fun x : ℝ => p.derivative.eval x) (v' := fun x : ℝ => -x * pdf x)
     (fun x _ => p.hasDerivAt x)
-    (fun x _ => Submission.Obl.Entropy__gaussian_hazard_lipschitz.hasDerivAt_pdf x)
+    (fun x _ => Submission.Lib.GaussianTransport.hasDerivAt_normalPDF x)
     (by
       convert (integrable_polynomial_mul_pdf (X * p)).neg using 1 <;>
         ext x <;> simp [Polynomial.eval_mul, Polynomial.eval_X] <;> ring)
@@ -94,7 +94,7 @@ theorem integral_hermitePoly_mul_pdf (m n : ℕ) :
   | zero =>
     cases n with
     | zero =>
-      simpa [pdf, Submission.Obl.Entropy__gaussian_hazard_lipschitz.pdf] using
+      simpa [pdf, Submission.Lib.GaussianTransport.normalPDF] using
         integral_gaussianPDFReal_eq_one 0 (v := 1) one_ne_zero
     | succ n =>
       have h := integral_hermitePoly_succ_mul n 1
@@ -122,7 +122,7 @@ theorem integrable_gaussianReal_iff {f : ℝ → ℝ} :
   rw [gaussianReal_of_var_ne_zero 0 one_ne_zero,
     integrable_withDensity_iff_integrable_smul' (measurable_gaussianPDF 0 1)
       (Filter.Eventually.of_forall fun x => gaussianPDF_lt_top (μ := 0) (v := 1) (x := x))]
-  simp [gaussianPDF, pdf, Submission.Obl.Entropy__gaussian_hazard_lipschitz.pdf,
+  simp [gaussianPDF, pdf, Submission.Lib.GaussianTransport.normalPDF,
     ENNReal.toReal_ofReal (gaussianPDFReal_nonneg _ _ _), mul_comm]
 
 theorem integrable_polynomial_gaussianReal (p : Polynomial ℝ) :
@@ -140,7 +140,7 @@ theorem integral_hermitePoly_mul (m n : ℕ) :
     (∫ x, (hermitePoly m).eval x * (hermitePoly n).eval x ∂gaussianReal 0 1) =
       if m = n then (n.factorial : ℝ) else 0 := by
   rw [integral_gaussianReal_eq_integral_smul one_ne_zero]
-  simpa [pdf, Submission.Obl.Entropy__gaussian_hazard_lipschitz.pdf,
+  simpa [pdf, Submission.Lib.GaussianTransport.normalPDF,
     mul_comm, mul_left_comm] using integral_hermitePoly_mul_pdf m n
 
 noncomputable def hermiteFunction (n : ℕ) (x : ℝ) : ℝ :=
