@@ -5,8 +5,11 @@ import Submission.Obl.Cone__moments
 import Submission.Obl.Cone__simplex_iff_product
 import Submission.Obl.Entropy__affine_exponential_moments
 import Submission.Obl.Entropy__affine_limit_density
+import Submission.Obl.Entropy__c1_bounded_matrix_calculus
 import Submission.Obl.Entropy__centered_slack_transports
 import Submission.Obl.Entropy__continuous_jacobian_of_l2_limit
+import Submission.Obl.Entropy__gaussian_chaos_resolvent
+import Submission.Obl.Entropy__gaussian_first_chaos_h1_projection
 import Submission.Obl.Entropy__gaussian_hazard_lipschitz
 import Submission.Obl.Entropy__gaussian_l2_poincare
 import Submission.Obl.Entropy__linear_jacobian_normal_form
@@ -17,4 +20,7 @@ import Submission.Obl.Entropy__mollified_convex_sequence
 import Submission.Obl.Entropy__moreau_envelope_sequence
 import Submission.Obl.Entropy__orthogonal_gaussian_exponential_law
 import Submission.Obl.Entropy__smooth_approximation
+import Submission.Obl.Entropy__two_eigenvalue_compact_certificate
 import Submission.Obl.Entropy__two_eigenvalue_negative_certificate
+import Submission.Obl.Entropy__two_eigenvalue_positive_certificate
+import Submission.Obl.Entropy__two_eigenvalue_secant_deduction
