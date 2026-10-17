@@ -1,0 +1,18 @@
+{
+  "id": "oai_101_simplex_isotropic_constant",
+  "module": "LeanEval.Geometry.SimplexIsotropic",
+  "holes": [
+    {
+      "name": "theorem_1_1_ineq",
+      "basename": "theorem_1_1_ineq",
+      "kind": "theorem",
+      "body": "/-- Theorem 1.1 (The simplex inequality), inequality part: for every integer `n \u2265 1`,\nevery convex body `K \u2282 \u211d\u207f` satisfies\n`L_K \u2264 (n!)^{1/n} / ((n+1)^{(n+1)/(2n)} \u221a(n+2))`. -/\ntheorem theorem_1_1_ineq (n : \u2115) (hn : 1 \u2264 n) (K : Set (EuclideanSpace \u211d (Fin n)))\n    (hK : IsConvexBody K) :\n    isotropicConstant K \u2264 simplexBound n := by\n  sorry"
+    },
+    {
+      "name": "theorem_1_1_eq",
+      "basename": "theorem_1_1_eq",
+      "kind": "theorem",
+      "body": "/-- Theorem 1.1 (The simplex inequality), equality case: for every integer `n \u2265 1` and every\nconvex body `K \u2282 \u211d\u207f`, equality holds in the simplex inequality if and only if `K` is a\nsimplex. -/\ntheorem theorem_1_1_eq (n : \u2115) (hn : 1 \u2264 n) (K : Set (EuclideanSpace \u211d (Fin n)))\n    (hK : IsConvexBody K) :\n    isotropicConstant K = simplexBound n \u2194 IsSimplex K := by\n  sorry"
+    }
+  ]
+}
