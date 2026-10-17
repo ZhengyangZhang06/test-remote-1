@@ -1,6 +1,6 @@
 /-
 Adapted from: here:root
-Original scalar logarithmic estimates by session x0023, following Section 4 of the supplied paper.
+Original Section 4 logarithmic estimates by sessions x0023.
 -/
 
 import Mathlib

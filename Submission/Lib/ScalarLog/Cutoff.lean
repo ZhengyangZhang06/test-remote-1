@@ -1,14 +1,37 @@
 /-
 Adapted from: here:root
-Original scalar logarithmic estimates by session x0023, following Section 4 of the supplied paper.
+Original Section 4 logarithmic estimates by sessions x0023 and x0014.
 -/
 
-import Submission.Lib.ScalarLog.SquareRoot
+import Submission.Lib.ScalarLog.Kernel
+import Submission.Lib.ScalarLog.Sqrt
 import Submission.Lib.EntropyTools.Remainder
 
 open Submission.Lib.EntropyTools
 
 namespace Submission.Lib.ScalarLog
+
+/-- The integral and continuous-extension descriptions of the logarithmic cost agree. -/
+lemma logCost_eq_piecewise {s : ℝ} (hs : 0 < s) :
+    logCost s = if s = 1 then (1 / 2 : ℝ) else s * (s - 1 - Real.log s) / (1 - s) ^ 2 := by
+  by_cases hs1 : s = 1
+  · subst s
+    simp only [if_true, logCost_one]
+  · rw [if_neg hs1, logCost_eq hs hs1]
+
+/-- Square-root absorption, using the rational-logarithm certificate. -/
+theorem logCost_rho_mul_sqrt_le {s lam : ℝ} (hs : 0 < s) (hlam : 0 ≤ lam)
+    (hrel : (3 / 40 : ℝ) * lam = 1 / s - 37 / 40) :
+    (3 / 40) * logCost s / (3 / 20 + 1813 / 4000 * s) * Real.sqrt lam ≤ (22 / 25 : ℝ) := by
+  have hprod : s * lam ≤ 40 / 3 := by
+    have h := congrArg (fun r : ℝ => s * r) hrel
+    field_simp [hs.ne'] at h
+    nlinarith
+  have h := Submission.Lib.ScalarLog.scalar_log_sqrt_absorption hs hlam hprod
+  rw [← logCost_eq_piecewise hs] at h
+  have hrho : 0 < (3 / 20 : ℝ) + 1813 / 4000 * s := by positivity
+  rw [div_mul_eq_mul_div, div_le_iff₀ hrho]
+  exact h
 
 /-- The two elementary logarithmic estimates combined with the paper's cutoff. -/
 theorem logCost_rho_le_cutoff {s lam : ℝ} (hs : 0 < s) (hlam : 0 ≤ lam)
