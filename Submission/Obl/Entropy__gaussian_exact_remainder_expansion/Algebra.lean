@@ -2,6 +2,9 @@ import Submission.Lib.MatrixEntropy.Expansion
 
 open scoped BigOperators
 
+set_option linter.unusedSectionVars false
+set_option linter.unusedSimpArgs false
+
 namespace Submission.Obl.Entropy__gaussian_exact_remainder_expansion
 
 open Submission.Lib.MatrixEntropy

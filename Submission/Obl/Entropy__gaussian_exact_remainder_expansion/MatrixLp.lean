@@ -3,6 +3,9 @@ import Mathlib
 open MeasureTheory
 open scoped BigOperators ENNReal
 
+set_option linter.unusedSectionVars false
+set_option linter.unusedSimpArgs false
+
 namespace Submission.Obl.Entropy__gaussian_exact_remainder_expansion
 
 variable {α ι : Type*} [MeasurableSpace α] [Fintype ι]

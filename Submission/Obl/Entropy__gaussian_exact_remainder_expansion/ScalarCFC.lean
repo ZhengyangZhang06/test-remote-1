@@ -1,5 +1,8 @@
 import Submission.Obl.Entropy__gaussian_exact_remainder_expansion.Scalar
 
+set_option linter.unusedSectionVars false
+set_option linter.unusedSimpArgs false
+
 namespace Submission.Obl.Entropy__gaussian_exact_remainder_expansion
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
