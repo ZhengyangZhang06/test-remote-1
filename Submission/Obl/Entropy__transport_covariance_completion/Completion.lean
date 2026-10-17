@@ -1,5 +1,5 @@
 import Submission.Obl.Entropy__transport_covariance_completion.Pairing
-import Submission.Obl.Entropy__gaussian_weak_h1_testing
+import Submission.Obl.Entropy__transport_covariance_completion.WeakTesting
 
 namespace Submission.Obl.Entropy__transport_covariance_completion
 
@@ -31,9 +31,8 @@ theorem pairing_weak_testing (P : M) {H k : E → M} {v K : Fin m → E → M}
     have hd r : MemLp (fun x => fderiv ℝ (fun y => k y j i) x
         (PiLp.single 2 r (1 : ℝ))) 2 γ := by
       simpa only [← hder] using hK r j i
-    have h := Submission.Entropy.gaussian_weak_h1_testing m
-      (fun x => H x l i) (fun r x => v r x l i) (hH l i) (fun r => hv r l i)
-      (hweak l i) (fun x => k x j i) (hks j i) (hk j i) hd
+    have h := weak_h1_testing (μ := γ) (fun r : Fin m => PiLp.single 2 r (1 : ℝ))
+      (hH l i) (fun r => hv r l i) (hweak l i) (hks j i) (hk j i) hd
     simpa only [← hder] using h
   simp only [pairing, he, Finset.mul_sum]
   trans ∑ i, ∑ j, ∑ r, ∑ l, P l j * ∫ x, v r x l i * K r x j i ∂γ
