@@ -9,7 +9,7 @@ namespace Submission.Obl.Entropy__moreau_envelope_sequence
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 
 lemma minimizer_variational {S : Set E} {V : E → ℝ} (hV : ConvexOn ℝ S V)
-    {t : ℝ} (ht : 0 < t) {x p : E} (hp : p ∈ S)
+    {t : ℝ} (_ht : 0 < t) {x p : E} (hp : p ∈ S)
     (hmin : ∀ y ∈ S, V p + t / 2 * ‖x - p‖ ^ 2 ≤ V y + t / 2 * ‖x - y‖ ^ 2)
     {y : E} (hy : y ∈ S) :
     t * ⟪x - p, y - p⟫_ℝ ≤ V y - V p := by

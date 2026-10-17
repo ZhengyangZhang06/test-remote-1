@@ -69,18 +69,32 @@ lemma exists_weight_max [ProperSpace E] {f : E → ℝ}
 def objective (f : E → ℝ) (t : ℝ) (x y : E) : ℝ :=
   -Real.log (f y) + t / 2 * ‖x - y‖ ^ 2
 
+lemma weight_eq_exp_objective {f : E → ℝ} {t : ℝ} {x y : E} (hy : 0 < f y) :
+    weight f t x y = Real.exp (-objective f t x y) := by
+  rw [weight, objective, neg_add, neg_neg, Real.exp_add, Real.exp_log hy]
+
+lemma objective_le_of_weight_le {f : E → ℝ} {t : ℝ} {x p y : E}
+    (hp : 0 < f p) (hy : 0 < f y) (h : weight f t x y ≤ weight f t x p) :
+    objective f t x p ≤ objective f t x y := by
+  rw [weight_eq_exp_objective hy, weight_eq_exp_objective hp, Real.exp_le_exp] at h
+  linarith
+
 lemma exists_minimizer [ProperSpace E] {f : E → ℝ}
     (hf : ∀ x, 0 ≤ f x) (hu : UpperSemicontinuous f)
     (hne : ∃ x, 0 < f x) {a b t : ℝ} (ha : 0 < a) (ht : 0 ≤ t)
     (hb : ∀ y, f y ≤ Real.exp (b - a * ‖y‖)) (x : E) :
     ∃ p, 0 < f p ∧ ∀ y, 0 < f y → objective f t x p ≤ objective f t x y := by
   obtain ⟨p, hp, hpm⟩ := exists_weight_max hf hu hne ha ht hb x
-  refine ⟨p, hp, fun y hy => ?_⟩
-  have h := hpm y
-  have he (z : E) (hz : 0 < f z) :
-      weight f t x z = Real.exp (-objective f t x z) := by
-    rw [weight, objective, neg_add, neg_neg, Real.exp_add, Real.exp_log hz]
-  rw [he y hy, he p hp, Real.exp_le_exp] at h
-  linarith
+  exact ⟨p, hp, fun y hy => objective_le_of_weight_le hp hy (hpm y)⟩
+
+lemma objective_lower_bound {f : E → ℝ} {a b t : ℝ} (ha : 0 < a) (ht : 1 ≤ t)
+    (hb : ∀ y, f y ≤ Real.exp (b - a * ‖y‖)) (x y : E) (hy : 0 < f y) :
+    a * ‖x‖ - (b + a ^ 2 / 2) ≤ objective f t x y := by
+  have hl := (Real.log_le_iff_le_exp hy).2 (hb y)
+  have hn : ‖x‖ ≤ ‖y‖ + ‖x - y‖ := by
+    simpa only [add_sub_cancel] using norm_add_le y (x - y)
+  have hn' := mul_le_mul_of_nonneg_left hn ha.le
+  dsimp [objective]
+  nlinarith [sq_nonneg (‖x - y‖ - a), mul_nonneg (sub_nonneg.mpr ht) (sq_nonneg ‖x - y‖)]
 
 end Submission.Obl.Entropy__moreau_envelope_sequence
