@@ -232,4 +232,37 @@ theorem weighted_minorantLoss_le {ell : ℝ} (hell : 0 ≤ ell) :
           (minorantLoss_le_half hu hu') hd (by norm_num)
       _ ≤ 27 / 1000 := by norm_num
 
+/-- The nonlinear-field coefficient in Proposition 3.5 is at most `111/1000`. -/
+theorem scalar_y_cost {b h p : ℝ} (hb : 0 ≤ b) (hb' : b ≤ 1 / 2) (hp : 0 < p)
+    (hh : |h| ≤ (67 / 100) * Real.sqrt p) :
+    (40 / 37 : ℝ) * ((b - 7 / 25) ^ 2 +
+      (3 / 40) * h ^ 2 / (4 * (9 / 25) * p)) ≤ 111 / 1000 := by
+  have hb2 : (b - 7 / 25) ^ 2 ≤ (7 / 25 : ℝ) ^ 2 := by
+    nlinarith [mul_nonneg hb (show 0 ≤ 14 / 25 - b by linarith)]
+  have hh2 : h ^ 2 ≤ (67 / 100 : ℝ) ^ 2 * p := by
+    have hs := (sq_le_sq₀ (abs_nonneg h) (by positivity)).mpr hh
+    simpa only [sq_abs, mul_pow, Real.sq_sqrt hp.le] using hs
+  have hfrac : (3 / 40 : ℝ) * h ^ 2 / (4 * (9 / 25) * p) ≤
+      (5 / 96 : ℝ) * (67 / 100) ^ 2 := by
+    apply (div_le_iff₀ (by positivity)).mpr
+    nlinarith
+  nlinarith
+
+/-- Once the paper's logarithmic bound is known, the spectral absorption is arithmetic. -/
+theorem spectral_absorption_from_log_bound {ell r P cost : ℝ}
+    (hell : 0 ≤ ell) (hr : 0 ≤ r)
+    (hP : (689 / 1000) * rigidityCutoff ell - minorantLoss (rigidityCutoff ell) * r ≤ P)
+    (hcost : cost ≤ (688 / 1000) *
+      (spectralDefect ell * spectralRho ell * rigidityCutoff ell)) :
+    cost - spectralDefect ell * spectralRho ell * P ≤
+      (27 / 1000) * r - rigidityWeight ell / 1000 := by
+  have hw : 0 ≤ spectralDefect ell * spectralRho ell :=
+    mul_nonneg (spectralDefect_nonneg hell) (spectralRho_nonneg hell)
+  have hmean := mul_le_mul_of_nonneg_left hP hw
+  have hloss := mul_le_mul_of_nonneg_right (weighted_minorantLoss_le hell) hr
+  change cost - spectralDefect ell * spectralRho ell * P ≤
+    (27 / 1000) * r -
+      (spectralDefect ell * spectralRho ell * rigidityCutoff ell) / 1000
+  nlinarith
+
 end Submission.Obl.Entropy__normalized_remainder
