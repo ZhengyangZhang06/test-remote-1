@@ -14,13 +14,13 @@ namespace Submission.Lib.ScalarLog
 
 open Submission.Lib.GaussianTransport
 
-private theorem normalPDF_eq_inv (a : ℝ) :
+theorem normalPDF_eq_inv (a : ℝ) :
     normalPDF a = 1 / (Real.sqrt (2 * Real.pi) * Real.exp (a ^ 2 / 2)) := by
   simp only [normalPDF, gaussianPDFReal, NNReal.coe_one, sub_zero, mul_one]
   rw [neg_div, Real.exp_neg, one_div, mul_inv_rev]
   ring
 
-private theorem sqrt_two_pi_lower : (5 : ℝ) / 2 < Real.sqrt (2 * Real.pi) := by
+theorem sqrt_two_pi_lower : (5 : ℝ) / 2 < Real.sqrt (2 * Real.pi) := by
   have hp := Real.pi_gt_d2
   have hs := Real.sq_sqrt (by positivity : 0 ≤ 2 * Real.pi)
   have hn := Real.sqrt_nonneg (2 * Real.pi)
