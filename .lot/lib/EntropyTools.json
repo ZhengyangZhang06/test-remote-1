@@ -1,0 +1,16 @@
+{
+  "name": "EntropyTools",
+  "module": "Submission.Lib.EntropyTools",
+  "files": [
+    "Submission/Lib/EntropyTools.lean",
+    "Submission/Lib/EntropyTools/DensityMoments.lean",
+    "Submission/Lib/EntropyTools/LimitPassage.lean",
+    "Submission/Lib/EntropyTools/Remainder.lean"
+  ],
+  "by": "x0004",
+  "gid": "g00008",
+  "from": "here:o001",
+  "purpose": "",
+  "at": 1792216328.0969753,
+  "sha": "de16fb3dee03fb483df96bd0045e3898d53b00ce"
+}
