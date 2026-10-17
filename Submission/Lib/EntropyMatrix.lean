@@ -486,3 +486,110 @@ theorem diagonal_jacobian_primitive {m : ℕ}
   linarith
 
 end Submission.Lib.EntropyMatrix
+
+
+namespace Submission.Lib.EntropyMatrix
+
+open Matrix
+
+variable {ι : Type*} [Fintype ι] [DecidableEq ι]
+
+/-- Scalar functional calculus on a diagonal real matrix. -/
+theorem cfc_diagonal_real (q : ℝ → ℝ) (a : ι → ℝ) :
+    cfc q (diagonal a) = diagonal (q ∘ a) := by
+  have hspec (i : ι) : a i ∈ spectrum ℝ (diagonal a) := by
+    rw [spectrum_diagonal]
+    exact Set.mem_range_self i
+  let φ : C(spectrum ℝ (diagonal a), ℝ) →⋆ₐ[ℝ] Matrix ι ι ℝ :=
+    { toFun := fun g => diagonal (fun i => g ⟨a i, hspec i⟩)
+      map_zero' := by simp
+      map_one' := by simp
+      map_add' := by intro f g; simp [Matrix.diagonal_add]
+      map_mul' := by intro f g; simp [Matrix.diagonal_mul_diagonal]
+      commutes' := by intro r; simp [Matrix.algebraMap_eq_diagonal]
+      map_star' := by intro g; simp [Matrix.star_eq_conjTranspose] }
+  have hc : Continuous φ := by
+    change Continuous (fun g : C(spectrum ℝ (diagonal a), ℝ) =>
+      diagonal (fun i => g ⟨a i, hspec i⟩))
+    fun_prop
+  have hφ : cfcHom (Matrix.isHermitian_diagonal a).isSelfAdjoint = φ :=
+    cfcHom_eq_of_continuous_of_map_id _ φ hc (by rfl)
+  rw [cfc_apply q (diagonal a) (Matrix.isHermitian_diagonal a).isSelfAdjoint
+    ((diagonal a).finite_real_spectrum.continuousOn q), hφ]
+  rfl
+
+/-- Functional calculus commutes with orthogonal conjugation. -/
+theorem cfc_orthogonal_conjugate (q : ℝ → ℝ) {A : Matrix ι ι ℝ}
+    (hA : A.IsHermitian) (U : Matrix ι ι ℝ) (hU : U * U.transpose = 1) :
+    U * cfc q A * U.transpose = cfc q (U * A * U.transpose) := by
+  let u : Matrix.unitaryGroup ι ℝ := ⟨U, by
+    simpa only [Matrix.mem_unitaryGroup_iff, Matrix.star_eq_conjTranspose,
+      Matrix.conjTranspose_eq_transpose_of_trivial]
+      using hU⟩
+  let φ := Unitary.conjStarAlgAut ℝ (Matrix ι ι ℝ) u
+  have hc : Continuous φ := φ.toAlgEquiv.toLinearMap.continuous_of_finiteDimensional
+  have hφa : IsSelfAdjoint (φ A) := hA.isSelfAdjoint.map φ
+  have h := StarAlgHomClass.map_cfc φ q A
+    (A.finite_real_spectrum.continuousOn q) hc hA.isSelfAdjoint hφa
+  simpa only [φ, Unitary.conjStarAlgAut_apply, Matrix.star_eq_conjTranspose,
+    Matrix.conjTranspose_eq_transpose_of_trivial] using h
+
+/-- A diagonalized matrix has diagonalized scalar functional calculus in the same basis. -/
+theorem cfc_of_orthogonal_diagonalization (q : ℝ → ℝ)
+    {A U : Matrix ι ι ℝ} (hA : A.IsHermitian)
+    (hU : U.transpose * U = 1) {a : ι → ℝ}
+    (hdiag : U.transpose * A * U = diagonal a) :
+    U.transpose * cfc q A * U = diagonal (q ∘ a) := by
+  have h := cfc_orthogonal_conjugate q hA U.transpose (by simpa using hU)
+  simpa only [Matrix.transpose_transpose, hdiag, cfc_diagonal_real] using h
+
+end Submission.Lib.EntropyMatrix
+
+
+namespace Submission.Lib.EntropyMatrix
+
+open Matrix
+
+/-- Integrating a compatible linear-field spectral Jacobian after an orthogonal rotation. -/
+theorem linear_field_jacobian_primitive {m : ℕ}
+    (X : Fin m → Matrix (Fin m) (Fin m) ℝ)
+    (hherm : ∀ r, (X r).IsHermitian)
+    (hX : CoefficientSymmetry X)
+    (h₂ : ∀ r s t i,
+      (X r * X t + X t * X r) i s = (X s * X t + X t * X s) i r)
+    (hsq : ∑ r, X r * X r = 1)
+    (F : EuclideanSpace ℝ (Fin m) → EuclideanSpace ℝ (Fin m))
+    (t q : ℝ → ℝ) (ht : ∀ s, HasDerivAt t (q s) s)
+    (hF : ∀ x : EuclideanSpace ℝ (Fin m), HasFDerivAt F
+      ((cfc q (linearField X x)).toEuclideanLin.toContinuousLinearMap) x) :
+    ∃ U : Matrix (Fin m) (Fin m) ℝ,
+      U * U.transpose = 1 ∧ U.transpose * U = 1 ∧
+      ∃ σ : Fin m → ℝ, (∀ i, σ i = 1 ∨ σ i = -1) ∧
+        ∃ w : EuclideanSpace ℝ (Fin m), ∀ x i,
+          (U.transpose.toEuclideanLin (F (U.toEuclideanLin x))) i =
+            σ i * t (σ i * x i) + w i := by
+  obtain ⟨U, hUU, hUtU, σ, hσ, hfield⟩ :=
+    signed_coordinate_field X hherm hX h₂ hsq
+  let V := U.toEuclideanLin.toContinuousLinearMap
+  let W := U.transpose.toEuclideanLin.toContinuousLinearMap
+  let G := fun x => W (F (V x))
+  have hG (x : EuclideanSpace ℝ (Fin m)) : HasFDerivAt G
+      ((diagonal (fun i => q (σ i * x i))).toEuclideanLin.toContinuousLinearMap) x := by
+    have h := (W.hasFDerivAt.comp (V x) (hF (V x))).comp x V.hasFDerivAt
+    have hHerm : (linearField X (V x)).IsHermitian := by
+      unfold linearField
+      change (∑ r, (V x) r • X r).conjTranspose = ∑ r, (V x) r • X r
+      simp only [Matrix.conjTranspose_sum, Matrix.conjTranspose_smul, star_trivial,
+        (hherm _).eq]
+    have hd := cfc_of_orthogonal_diagonalization q hHerm hUtU
+      (hfield (fun i => x i))
+    convert! h using 1
+    ext v i
+    have heq := congrArg (fun M : Matrix (Fin m) (Fin m) ℝ => (M *ᵥ v) i) hd
+    simpa only [V, W, ContinuousLinearMap.comp_apply, LinearMap.coe_toContinuousLinearMap', Matrix.toLpLin_apply,
+      Matrix.mulVec_mulVec, Matrix.mul_assoc, Function.comp_def] using heq.symm
+  obtain ⟨w, hw⟩ := diagonal_jacobian_primitive G t q ht σ
+    (fun i => by rcases hσ i with h | h <;> simp [h]) hG
+  exact ⟨U, hUU, hUtU, σ, hσ, w, hw⟩
+
+end Submission.Lib.EntropyMatrix
