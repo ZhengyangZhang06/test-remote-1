@@ -1,0 +1,35 @@
+{
+  "children": [
+    {
+      "key": "exponential_tail",
+      "lean_name": "Entropy.log_concave_exponential_tail",
+      "lean_statement": "∀ m : ℕ, 1 ≤ m → ∀ f : (EuclideanSpace ℝ (Fin m)) → ℝ, (∀ x, 0 ≤ f x) → UpperSemicontinuous f → ConcaveOn ℝ {x | 0 < f x} (fun x => Real.log (f x)) → MeasureTheory.Integrable f MeasureTheory.volume → MeasureTheory.integral MeasureTheory.volume f = 1 → ∃ a b : ℝ, 0 < a ∧ 0 ≤ b ∧ ∀ x, f x ≤ Real.exp (b - a * ‖x‖)",
+      "nl_statement": "Lemma 5.1, in density form: every nonnegative upper-semicontinuous log-concave probability density has a pointwise exponential upper bound exp(b-a*norm(x)), with a>0 and b>=0.",
+      "role_in_glue": "Supplies the coercivity constants for the Moreau construction.",
+      "weight": 4,
+      "depends_on": [],
+      "reuse": null
+    },
+    {
+      "key": "moreau_envelopes",
+      "lean_name": "Entropy.moreau_envelope_sequence",
+      "lean_statement": "∀ m : ℕ, 1 ≤ m → ∀ f : (EuclideanSpace ℝ (Fin m)) → ℝ, (∀ x, 0 ≤ f x) → UpperSemicontinuous f → ConcaveOn ℝ {x | 0 < f x} (fun x => Real.log (f x)) → (∃ x, 0 < f x) → ∀ a b : ℝ, 0 < a → 0 ≤ b → (∀ x, f x ≤ Real.exp (b - a * ‖x‖)) → ∃ Q : ℕ → (EuclideanSpace ℝ (Fin m)) → ℝ, (∀ n, ContDiff ℝ 1 (Q n) ∧ ConvexOn ℝ Set.univ (Q n) ∧ ∀ x y : (EuclideanSpace ℝ (Fin m)), ‖fderiv ℝ (Q n) x - fderiv ℝ (Q n) y‖ ≤ ((n : ℝ) + 1) * ‖x - y‖) ∧ (∀ n x, a * ‖x‖ - (b + a ^ 2 / 2) ≤ Q n x) ∧ ∀ x, Filter.Tendsto (fun n => Real.exp (-Q n x)) Filter.atTop (nhds (f x))",
+      "nl_statement": "Lemma 5.2 through the envelope-limit equation: a nonzero upper-semicontinuous log-concave function with an exponential tail admits finite C1 convex Moreau envelopes Q_n, with (n+1)-Lipschitz derivative, the common linear lower bound, and exp(-Q_n) converging pointwise to the original function, including its zeros.",
+      "role_in_glue": "Constructs the convex C1 sequence from the given density and the tail constants. The derivative estimate is the hypothesis of the mollification child.",
+      "weight": 5,
+      "depends_on": [],
+      "reuse": null
+    },
+    {
+      "key": "convex_mollification",
+      "lean_name": "Entropy.mollified_convex_sequence",
+      "lean_statement": "∀ m : ℕ, 1 ≤ m → ∀ Q : ℕ → (EuclideanSpace ℝ (Fin m)) → ℝ, (∀ n, ContDiff ℝ 1 (Q n) ∧ ConvexOn ℝ Set.univ (Q n) ∧ ∀ x y : (EuclideanSpace ℝ (Fin m)), ‖fderiv ℝ (Q n) x - fderiv ℝ (Q n) y‖ ≤ ((n : ℝ) + 1) * ‖x - y‖) → ∃ U : ℕ → (EuclideanSpace ℝ (Fin m)) → ℝ, (∀ n, ContDiff ℝ ((⊤ : ENat) : WithTop ENat) (U n) ∧ ∀ x v : (EuclideanSpace ℝ (Fin m)), (2 / ((n : ℝ) + 1)) * ‖v‖ ^ 2 ≤ (fderiv ℝ (fderiv ℝ (U n)) x v) v ∧ (fderiv ℝ (fderiv ℝ (U n)) x v) v ≤ ((n : ℝ) + 1 + 2 / ((n : ℝ) + 1)) * ‖v‖ ^ 2) ∧ (∀ n x, Q n x ≤ U n x) ∧ ∀ x, Filter.Tendsto (fun n => U n x - Q n x) Filter.atTop (nhds 0)",
+      "nl_statement": "Lemma 5.2, smooth-potentials and Hessian-bounds step: any C1 convex sequence Q_n whose derivative is (n+1)-Lipschitz has smooth majorants U_n with Hessian between 2/(n+1) and n+1+2/(n+1), and U_n-Q_n tending pointwise to zero. Construct by even mollification at radius 1/(n+1) and addition of norm(x)^2/(n+1).",
+      "role_in_glue": "Supplies positive bounded smooth Hessians while preserving the common lower bound and density limit. The existing normalization and dominated-convergence helpers finish the parent.",
+      "weight": 4,
+      "depends_on": [],
+      "reuse": null
+    }
+  ],
+  "notes": "Follows supplied paper Section 5, Lemmas 5.1 and 5.2. Normalization.lean and Limits.lean were merged from the other o007 branch at 88b5573, and Tails.lean at b380f3a. These complete helper proofs are checked with this split; they import accepted EntropyTools for covariance. The three children have no proof dependencies because each assumes the properties supplied by its predecessor. The common derivative bound uses the operator norm of fderiv. Real envelopes and convergence of their exponentials encode the extended-potential construction, including zeros of f, without Submission definitions in frozen types. lot sync found no similar obligations; the complete glue builds against all three stubs."
+}
