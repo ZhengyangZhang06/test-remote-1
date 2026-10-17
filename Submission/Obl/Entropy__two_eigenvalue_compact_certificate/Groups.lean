@@ -29,6 +29,20 @@ local instance : Sub CExpr := ⟨CExpr.sub⟩
 local instance : Mul CExpr := ⟨CExpr.mul⟩
 local instance (n : Nat) : OfNat CExpr n := ⟨CExpr.const n⟩
 
+theorem CExpr.value_add (v : Nat → ℝ) (A B : CExpr) :
+    (A+B).value v = A.value v+B.value v := rfl
+
+theorem CExpr.value_sub (v : Nat → ℝ) (A B : CExpr) :
+    (A-B).value v = A.value v-B.value v := rfl
+
+theorem CExpr.value_mul (v : Nat → ℝ) (A B : CExpr) :
+    (A*B).value v = A.value v*B.value v := rfl
+
+theorem CExpr.value_nat (v : Nat → ℝ) (n : Nat) :
+    (OfNat.ofNat n : CExpr).value v = (n : ℝ) := by
+  change ((n : ℚ) : ℝ) = (n : ℝ)
+  simp
+
 /-- Every inequality is expressed without division by a function value. -/
 def groups (R : Bin) : List CExpr :=
   let a := CExpr.var 0
