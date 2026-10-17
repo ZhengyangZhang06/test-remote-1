@@ -357,6 +357,89 @@ theorem log_M_growth_lower_bound (a blo bhi rlo : ℝ)
     _ ≤ _ := div_le_div_of_nonneg_right
       (mul_le_mul_of_nonneg_left (add_le_add hr hterm) (by norm_num)) (by linarith)
 
+/-- Completing a square gives a growth bound from the variance ratio alone. -/
+theorem log_M_growth_lower_bound_of_ratio (a r m : ℝ) (hm : 0 ≤ m)
+    (hr : r ≤ excessVarianceRatio a) (hc : r ^ 2 ≤ (2 + m) * (2 * r - m)) :
+    m ≤ 2 * (1 - gaussianHazard a * gaussianGap a) / gaussianGap a ^ 2 -
+      2 * transportSlope a * transportCurvature a /
+        (gaussianGap a * (1 - transportSlope a ^ 2)) := by
+  rw [log_M_growth_eq_ratios]
+  have hb := transportSlope_pos a
+  have hbhalf := transportSlope_lt_half a
+  have hden : 0 < 1 - transportSlope a := by linarith
+  have hpoly : 0 ≤ (2 + m) * transportSlope a ^ 2 -
+      2 * r * transportSlope a + 2 * r - m := by
+    have heq : (2 + m) * ((2 + m) * transportSlope a ^ 2 -
+        2 * r * transportSlope a + 2 * r - m) =
+        ((2 + m) * transportSlope a - r) ^ 2 +
+          ((2 + m) * (2 * r - m) - r ^ 2) := by ring
+    have hp : 0 ≤ (2 + m) * ((2 + m) * transportSlope a ^ 2 -
+        2 * r * transportSlope a + 2 * r - m) := by
+      rw [heq]
+      exact add_nonneg (sq_nonneg _) (sub_nonneg.mpr hc)
+    exact nonneg_of_mul_nonneg_right hp (show 0 < 2 + m by linarith)
+  have hR := mul_le_mul_of_nonneg_right hr hden.le
+  have hid : excessVarianceRatio a + transportSlope a ^ 2 / (1 - transportSlope a) =
+      (excessVarianceRatio a * (1 - transportSlope a) + transportSlope a ^ 2) /
+        (1 - transportSlope a) := by
+    field_simp [hden.ne']
+  rw [le_div_iff₀ (show 0 < 1 + transportSlope a by linarith), hid,
+    ← mul_div_assoc, le_div_iff₀ hden]
+  nlinarith
+
+/-- A rational hazard upper bound gives a rational lower variance ratio. -/
+theorem excessVarianceRatio_ge_of_hazard_le {a q r : ℝ}
+    (hr : 0 ≤ r) (hq : gaussianHazard a ≤ q)
+    (hc : r * (q - a) ^ 2 + q * (q - a) ≤ 1) :
+    r ≤ excessVarianceRatio a := by
+  have hd := gaussianGap_pos a
+  have hq0 := gaussianHazard_pos a
+  have hqd : gaussianGap a ≤ q - a := by dsimp [gaussianGap]; linarith
+  have hqd0 : 0 ≤ q - a := hd.le.trans hqd
+  have hs : gaussianGap a ^ 2 ≤ (q - a) ^ 2 := by nlinarith
+  have hmul := mul_le_mul_of_nonneg_left hs hr
+  have hprod : gaussianHazard a * gaussianGap a ≤ q * (q - a) :=
+    mul_le_mul hq hqd hd.le (hq0.le.trans hq)
+  unfold excessVarianceRatio
+  rw [le_div_iff₀ (sq_pos_of_pos hd)]
+  linarith
+
+/-- The first quantitative growth rate follows from one hazard endpoint. -/
+theorem log_M_growth_ge_nineteen {a : ℝ} (ha : -3 ≤ a)
+    (hq : gaussianHazard (-3) ≤ 1 / 200) :
+    (19 / 100 : ℝ) ≤
+      2 * (1 - gaussianHazard a * gaussianGap a) / gaussianGap a ^ 2 -
+        2 * transportSlope a * transportCurvature a /
+          (gaussianGap a * (1 - transportSlope a ^ 2)) := by
+  apply log_M_growth_lower_bound_of_ratio a (1 / 10) (19 / 100) (by norm_num)
+  · exact (excessVarianceRatio_ge_of_hazard_le (by norm_num) hq (by norm_num)).trans
+      (strictMono_excessVarianceRatio.monotone ha)
+  · norm_num
+
+/-- The second quantitative growth rate follows from one hazard endpoint. -/
+theorem log_M_growth_ge_thirty_eight {a : ℝ} (ha : -2 ≤ a)
+    (hq : gaussianHazard (-2) ≤ 7 / 125) :
+    (38 / 100 : ℝ) ≤
+      2 * (1 - gaussianHazard a * gaussianGap a) / gaussianGap a ^ 2 -
+        2 * transportSlope a * transportCurvature a /
+          (gaussianGap a * (1 - transportSlope a ^ 2)) := by
+  apply log_M_growth_lower_bound_of_ratio a (1 / 5) (38 / 100) (by norm_num)
+  · exact (excessVarianceRatio_ge_of_hazard_le (by norm_num) hq (by norm_num)).trans
+      (strictMono_excessVarianceRatio.monotone ha)
+  · norm_num
+
+/-- The final quantitative growth rate follows from one hazard endpoint. -/
+theorem log_M_growth_ge_sixty_eight {a : ℝ} (ha : -1 ≤ a)
+    (hq : gaussianHazard (-1) ≤ 59 / 200) :
+    (68 / 100 : ℝ) ≤
+      2 * (1 - gaussianHazard a * gaussianGap a) / gaussianGap a ^ 2 -
+        2 * transportSlope a * transportCurvature a /
+          (gaussianGap a * (1 - transportSlope a ^ 2)) := by
+  apply log_M_growth_lower_bound_of_ratio a (11 / 30) (68 / 100) (by norm_num)
+  · exact (excessVarianceRatio_ge_of_hazard_le (by norm_num) hq (by norm_num)).trans
+      (strictMono_excessVarianceRatio.monotone ha)
+  · norm_num
+
 /-- The scalar reserve `M=(1-b²)/d²` in the two-eigenvalue comparison. -/
 noncomputable def slopeReserve (a : ℝ) : ℝ :=
   (1 - transportSlope a ^ 2) / gaussianGap a ^ 2
