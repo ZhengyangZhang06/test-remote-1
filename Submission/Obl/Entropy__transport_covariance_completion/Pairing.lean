@@ -5,6 +5,8 @@ namespace Submission.Obl.Entropy__transport_covariance_completion
 open MeasureTheory Matrix
 open scoped BigOperators
 
+set_option linter.unusedSectionVars false
+
 variable {Ω n : Type*} [MeasurableSpace Ω] [Fintype n] [DecidableEq n]
   {μ : Measure Ω}
 

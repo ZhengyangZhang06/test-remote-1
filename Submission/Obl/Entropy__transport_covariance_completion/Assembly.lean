@@ -1,4 +1,4 @@
-import Submission.Obl.Entropy__transport_covariance_completion.LogDet
+import Submission.Lib.MatrixEntropy.LogDet
 import Submission.Lib.EntropyTools.DensityMoments
 
 namespace Submission.Obl.Entropy__transport_covariance_completion
@@ -81,7 +81,7 @@ theorem completion_from_entropy_and_covariance
       (∫ x, (P * E x).trace ∂μ) - (∫ x, (E x).trace ∂μ) := by
     simp only [sub_mul, one_mul, trace_sub]
     exact integral_sub (integrable_trace_const_mul P hE) (integrable_trace hE)
-  have hplane := log_det_supporting_plane hC hP
+  have hplane := Submission.Lib.MatrixEntropy.log_det_supporting_plane hC hP
   linarith
 
 end Submission.Obl.Entropy__transport_covariance_completion

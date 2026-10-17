@@ -18,7 +18,7 @@ lemma contDiff_ratioK : ContDiff ℝ ∞ ratioK :=
   contDiff_tailLog.div contDiff_hazard (fun a => (hazard_pos a).ne')
 
 theorem cfc_hazard_mul_ratioK {n : Type*} [Fintype n] [DecidableEq n]
-    {A : Matrix n n ℝ} (hA : A.IsHermitian) :
+    {A : Matrix n n ℝ} (_hA : A.IsHermitian) :
     cfc hazard A * cfc ratioK A = cfc tailLog A := by
   rw [← cfc_mul hazard ratioK A contDiff_hazard.continuous.continuousOn contDiff_ratioK.continuous.continuousOn]
   congr 1
@@ -26,7 +26,7 @@ theorem cfc_hazard_mul_ratioK {n : Type*} [Fintype n] [DecidableEq n]
   exact mul_div_cancel₀ _ (hazard_pos a).ne'
 
 theorem cfc_ratioK_mul_hazard {n : Type*} [Fintype n] [DecidableEq n]
-    {A : Matrix n n ℝ} (hA : A.IsHermitian) :
+    {A : Matrix n n ℝ} (_hA : A.IsHermitian) :
     cfc ratioK A * cfc hazard A = cfc tailLog A := by
   rw [← cfc_mul ratioK hazard A contDiff_ratioK.continuous.continuousOn contDiff_hazard.continuous.continuousOn]
   congr 1

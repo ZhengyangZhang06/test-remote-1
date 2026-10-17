@@ -90,7 +90,76 @@ theorem pairing_eq_trace_mul (P : Matrix n n ℝ) {F G : Ω → Matrix n n ℝ}
   apply integral_congr_ae
   filter_upwards [] with x
   have ht : (F x).transpose = F x := by simpa using (hFs x).eq
-  rw [ht, trace_mul_cycle, Matrix.mul_assoc]
+  rw [ht, trace_mul_cycle, trace_mul_cycle, Matrix.mul_assoc]
+
+/-- All entries of the covariance correction are integrable. -/
+theorem integrable_completion {T k : Ω → Matrix n n ℝ} {K : r → Ω → Matrix n n ℝ}
+    (hT : ∀ i j, Integrable (fun x => T x i j) μ)
+    (hk : ∀ i j, MemLp (fun x => k x i j) 2 μ)
+    (hK : ∀ s i j, MemLp (fun x => K s x i j) 2 μ) :
+    ∀ i j, Integrable (fun x => (2 • T x - k x * k x - ∑ s, K s x * K s x) i j) μ := by
+  intro i j
+  have hsum : Integrable (fun x => ∑ s, (K s x * K s x) i j) μ :=
+    integrable_finsetSum _ fun s _ => integrable_matrix_mul (hK s) (hK s) i j
+  simp only [two_smul, Matrix.add_apply, Matrix.sub_apply, Matrix.sum_apply]
+  exact (((hT i j).add (hT i j)).sub (integrable_matrix_mul hk hk i j)).sub hsum
+
+/-- Integration of the weighted matrix correction is linear. -/
+theorem integral_weighted_completion (P : Matrix n n ℝ)
+    {T k : Ω → Matrix n n ℝ} {K : r → Ω → Matrix n n ℝ}
+    (hT : ∀ i j, Integrable (fun x => T x i j) μ)
+    (hk : ∀ i j, MemLp (fun x => k x i j) 2 μ)
+    (hK : ∀ s i j, MemLp (fun x => K s x i j) 2 μ) :
+    (∫ x, (P * (2 • T x - k x * k x - ∑ s, K s x * K s x)).trace ∂μ) =
+      2 * (∫ x, (P * T x).trace ∂μ) - (∫ x, (P * (k x * k x)).trace ∂μ) -
+        ∑ s, (∫ x, (P * (K s x * K s x)).trace ∂μ) := by
+  have hiT := integrable_trace_const_mul P hT
+  have hik := integrable_trace_const_mul P (integrable_matrix_mul hk hk)
+  have hiK s := integrable_trace_const_mul P (integrable_matrix_mul (hK s) (hK s))
+  simp only [two_smul, mul_sub, mul_add, Finset.mul_sum, trace_sub, trace_add, trace_sum]
+  simp only [← two_mul]
+  have hs := integral_sub ((hiT.const_mul 2).sub hik)
+    (integrable_finsetSum Finset.univ fun s _ => hiK s)
+  simp only [Pi.sub_apply] at hs
+  rw [hs, integral_sub (hiT.const_mul 2) hik, integral_const_mul,
+    integral_finsetSum Finset.univ (fun s _ => hiK s)]
+
+/-- The exact weighted square completion in Lemma 3.2. -/
+theorem completed_energy {P : Matrix n n ℝ} (hP : P.IsHermitian)
+    {J k u T : Ω → Matrix n n ℝ} {K v : r → Ω → Matrix n n ℝ}
+    (hJ : ∀ i j, MemLp (fun x => J x i j) 2 μ)
+    (hk : ∀ i j, MemLp (fun x => k x i j) 2 μ)
+    (hu : ∀ i j, MemLp (fun x => u x i j) 2 μ)
+    (hK : ∀ s i j, MemLp (fun x => K s x i j) 2 μ)
+    (hv : ∀ s i j, MemLp (fun x => v s x i j) 2 μ)
+    (hT : ∀ i j, Integrable (fun x => T x i j) μ)
+    (hJs : ∀ x, (J x).IsHermitian) (hks : ∀ x, (k x).IsHermitian)
+    (hKs : ∀ s x, (K s x).IsHermitian) (hkJ : ∀ x, k x * J x = T x)
+    (hc : pairing (μ := μ) P (fun x => u x - (J x - k x)) k =
+      ∑ s, pairing (μ := μ) P (fun x => v s x - K s x) (K s)) :
+    (∫ x, ((k x + u x).transpose * P * (k x + u x)).trace ∂μ) +
+        ∑ s, (∫ x, ((v s x - K s x).transpose * P * (v s x - K s x)).trace ∂μ) =
+      (∫ x, (P * (2 • T x - k x * k x - ∑ s, K s x * K s x)).trace ∂μ) +
+        (∫ x, ((u x).transpose * P * u x).trace ∂μ) +
+        ∑ s, (∫ x, ((v s x).transpose * P * v s x).trace ∂μ) := by
+  have htrace := integral_weighted_completion P hT hk hK
+  have ht : pairing (μ := μ) P J k = ∫ x, (P * T x).trace ∂μ := by
+    rw [pairing_eq_trace_mul P hJ hk hJs]
+    simp only [hkJ]
+  have hkr s := pairing_eq_trace_mul P (hK s) (hK s) (hKs s)
+  rw [← ht, ← pairing_eq_trace_mul P hk hk hks] at htrace
+  simp_rw [← hkr] at htrace
+  rw [htrace]
+  have hku : ∀ i j, MemLp (fun x => (k x + u x) i j) 2 μ :=
+    fun i j => (hk i j).add (hu i j)
+  have hvk s : ∀ i j, MemLp (fun x => (v s x - K s x) i j) 2 μ :=
+    fun i j => (hv s i j).sub (hK s i j)
+  have hsum s := pairing_eq_trace P (hvk s) (hvk s)
+  have hvv s := pairing_eq_trace P (hv s) (hv s)
+  rw [← pairing_eq_trace P hku hku, ← pairing_eq_trace P hu hu]
+  simp_rw [← hsum, ← hvv]
+  exact pairing_completion hP hJ hk hu hK hv hc
+
 end Algebra
 
 end Submission.Obl.Entropy__transport_covariance_completion
