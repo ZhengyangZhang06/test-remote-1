@@ -17,7 +17,7 @@ lemma log_cost_affine {s : ℝ} (hs : 0 < s) :
           (150*(s+1)^3) := by
       unfold rationalLog
       field_simp
-      <;> ring
+      ring
     calc
       _ ≤ s*(s-1-rationalLog s) := by gcongr
       _ ≤ _ := by
@@ -30,7 +30,7 @@ lemma log_cost_affine {s : ℝ} (hs : 0 < s) :
     have he : (4/25 + (13/25)*s)*(s-1)^2 - s*(s-1-2*(s-1)/(s+1)) =
         (s-1)^2 * (13*s^2 - 8*s + 4) / (25*(s+1)) := by
       field_simp
-      <;> ring
+      ring
     calc
       _ ≤ s*(s-1-2*(s-1)/(s+1)) := by gcongr
       _ ≤ _ := by
@@ -63,7 +63,7 @@ lemma log_cost_sqrt {s : ℝ} (hs : 0 < s) :
           (30*(t+1)^3) := by
       unfold rationalLog
       field_simp
-      <;> ring
+      ring
     have hraw : t*(t^2-1-2*Real.log t) ≤ (239/500+(7/5)*t^2)*(t^2-1)^2 := by
       calc
         _ ≤ t*(t^2-1-2*rationalLog t) := by gcongr

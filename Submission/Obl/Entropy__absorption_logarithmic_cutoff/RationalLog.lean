@@ -24,7 +24,7 @@ lemma hasDerivAt_log_sub_rationalLog {x : ℝ} (hx : 0 < x) :
   convert! (Real.hasDerivAt_log hx.ne').sub (hN.div hD (by dsimp; positivity)) using 1
   dsimp
   field_simp
-  <;> ring
+  ring
 
 lemma rationalLog_le_log {x : ℝ} (hx : 0 < x) (hx₁ : x ≤ 1) :
     rationalLog x ≤ Real.log x := by
@@ -48,7 +48,7 @@ lemma two_mul_sub_div_add_le_log {x : ℝ} (hx : 1 ≤ x) :
         ((hasDerivAt_id y).add_const 1) (by positivity)) using 1
     dsimp
     field_simp
-    <;> ring
+    ring
   have hm : MonotoneOn (fun y => Real.log y - 2*(y-1)/(y+1)) (Ici 1) := by
     refine monotoneOn_of_hasDerivWithinAt_nonneg (convex_Ici 1)
       (fun y hy => (hd y (by simpa using (lt_of_lt_of_le zero_lt_one hy))).continuousAt.continuousWithinAt)
