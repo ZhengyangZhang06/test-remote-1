@@ -2,6 +2,7 @@ import Mathlib
 import ChallengeDeps
 import Submission.Obl.Entropy__equality_cases.Frobenius
 import Submission.Obl.Entropy__equality_cases.LinearFieldPrimitive
+import Submission.Obl.Entropy__equality_cases.CoefficientCompactness
 import Submission.Obl.Entropy__lower_bound
 set_option linter.unusedVariables false
 
