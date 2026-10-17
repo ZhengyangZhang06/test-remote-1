@@ -1,14 +1,13 @@
 import Mathlib
 import ChallengeDeps
 import Submission.Obl.Root.ConeReduction
+import Submission.Obl.Root.SimplexEquality
 import Submission.Obl.Entropy__lower_bound
 import Submission.Obl.Entropy__equality_cases
 import Submission.Obl.Cone__moments
 import Submission.Obl.Cone__simplex_iff_product
 
 open SimplexIsotropic
-
-
 
 namespace Submission
 
@@ -50,8 +49,10 @@ theorem theorem_1_1_eq (n : ℕ) (hn : 1 ≤ n) (K : Set (EuclideanSpace ℝ (Fi
     hnonneg hupper hconcave hint hmass hsecond hent
     (densityMean (coneDensity K)) rfl (densityCov (coneDensity K)) rfl
     (densityEntropy (coneDensity K)) rfl
-  exact (isotropicConstant_eq_iff_det_eq n hn K hv hd.le).trans
-    ((cone_entropy_eq_iff_det_eq n K hv hd hH hC).symm.trans
-      (hequality.trans (Cone.simplex_iff_product n hn K hK (coneDensity K) rfl)))
+  constructor
+  · exact ((isotropicConstant_eq_iff_det_eq n hn K hv hd.le).trans
+      ((cone_entropy_eq_iff_det_eq n K hv hd hH hC).symm.trans
+        (hequality.trans (Cone.simplex_iff_product n hn K hK (coneDensity K) rfl)))).mp
+  · exact simplex_attains_bound n hn K hK
 
 end Submission
