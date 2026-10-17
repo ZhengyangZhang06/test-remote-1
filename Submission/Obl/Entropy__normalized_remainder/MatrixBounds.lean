@@ -120,10 +120,14 @@ theorem dualH_eq {m : ℕ} {B : Mat m} (hB : B.PosSemidef) :
 theorem dualH_posSemidef {m : ℕ} {B : Mat m} (hB : B.PosSemidef) :
     (dualH B).PosSemidef := by
   rw [dualH_eq hB]
-  have hD := hB.isHermitian.sub (Matrix.isHermitian_one (α := ℝ))
+  have hD : (B - 1).IsHermitian := hB.isHermitian.sub Matrix.isHermitian_one
   have hD2 : 0 ≤ (B - 1) ^ 2 := by
     apply Matrix.nonneg_iff_posSemidef.mpr
-    simpa only [hD.eq, pow_two] using Matrix.posSemidef_conjTranspose_mul_self (B - 1)
+    rw [pow_two]
+    have hpos := Matrix.posSemidef_conjTranspose_mul_self (B - 1)
+    have heq : (B - 1).conjTranspose * (B - 1) = (B - 1) * (B - 1) :=
+      congrArg (fun M : Mat m => M * (B - 1)) hD.eq
+    exact heq ▸ hpos
   exact (Matrix.nonneg_iff_posSemidef.mp <|
     Commute.mul_nonneg (dualS_posDef hB).posSemidef.nonneg hD2
       (((dualS_commute hB).sub_right (Commute.one_right _)).pow_right 2)).smul
