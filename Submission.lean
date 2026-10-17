@@ -11,6 +11,7 @@ import Submission.Obl.Entropy__gaussian_hazard_lipschitz
 import Submission.Obl.Entropy__gaussian_l2_poincare
 import Submission.Obl.Entropy__linear_jacobian_normal_form
 import Submission.Obl.Entropy__linear_jacobian_rigidity
+import Submission.Obl.Entropy__linear_transport_limit
 import Submission.Obl.Entropy__log_concave_exponential_tail
 import Submission.Obl.Entropy__mollified_convex_sequence
 import Submission.Obl.Entropy__moreau_envelope_sequence
