@@ -1,0 +1,25 @@
+{
+  "children": [
+    {
+      "key": "normal_form",
+      "lean_name": "Entropy.linear_jacobian_normal_form",
+      "lean_statement": "∀ m : ℕ, 1 ≤ m → ∀ F : (EuclideanSpace ℝ (Fin m)) → (EuclideanSpace ℝ (Fin m)), ContDiff ℝ 1 F → ∀ X : Fin m → (Matrix (Fin m) (Fin m) ℝ), (∀ r, (X r).IsHermitian) → Finset.sum Finset.univ (fun r : Fin m => X r * X r) = (1 : (Matrix (Fin m) (Fin m) ℝ)) → (∀ x v i, (fderiv ℝ F x v) i = Finset.sum Finset.univ (fun j : Fin m => (cfc (fun t : ℝ => ProbabilityTheory.gaussianPDFReal 0 1 t / ProbabilityTheory.cdf (ProbabilityTheory.gaussianReal 0 1) (-t)) (Finset.sum Finset.univ (fun r : Fin m => x r • X r))) i j * v j)) → ∃ Q : (EuclideanSpace ℝ (Fin m)) ≃ₗᵢ[ℝ] (EuclideanSpace ℝ (Fin m)), ∃ a : (EuclideanSpace ℝ (Fin m)), (∀ x : (EuclideanSpace ℝ (Fin m)), ∀ i : Fin m, (Q.symm (F (Q x) - a)) i = -Real.log (ProbabilityTheory.cdf (ProbabilityTheory.gaussianReal 0 1) (-x i)))",
+      "nl_statement": "Lemma 6.1 through its rigid-map formula: the prescribed Gaussian-hazard Jacobian of a linear Hermitian field with square-sum identity forces an orthogonal coordinatewise -log Gaussian-survival representation, with all coordinate signs absorbed into the orthogonal map.",
+      "role_in_glue": "Provides the orthogonal equivalence Q, translation a, and pointwise coordinate formula to which the independent Gaussian-law child applies.",
+      "weight": 5,
+      "depends_on": [],
+      "reuse": null
+    },
+    {
+      "key": "gaussian_law",
+      "lean_name": "Entropy.orthogonal_gaussian_exponential_law",
+      "lean_statement": "∀ m : ℕ, 1 ≤ m → ∀ F : (EuclideanSpace ℝ (Fin m)) → (EuclideanSpace ℝ (Fin m)), MeasureTheory.MemLp F 2 (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) → MeasureTheory.integral (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) F = 0 → ∀ Q : (EuclideanSpace ℝ (Fin m)) ≃ₗᵢ[ℝ] (EuclideanSpace ℝ (Fin m)), ∀ a : (EuclideanSpace ℝ (Fin m)), (∀ x : (EuclideanSpace ℝ (Fin m)), ∀ i : Fin m, (Q.symm (F (Q x) - a)) i = -Real.log (ProbabilityTheory.cdf (ProbabilityTheory.gaussianReal 0 1) (-x i))) → (MeasureTheory.Measure.map F (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) = (MeasureTheory.volume : MeasureTheory.Measure (EuclideanSpace ℝ (Fin m))).withDensity (fun x => ENNReal.ofReal (|LinearMap.det Q.toLinearEquiv.toLinearMap|⁻¹ * (if ∀ i : Fin m, 0 ≤ Q.symm (x - a) i then Real.exp (-Finset.sum Finset.univ (fun i : Fin m => Q.symm (x - a) i)) else 0)))) ∧ ((fun i j => MeasureTheory.integral (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) (fun x => F x i * F x j)) = (1 : (Matrix (Fin m) (Fin m) ℝ)))",
+      "nl_statement": "Last paragraph of Lemma 6.1: an orthogonally conjugated coordinatewise -log Gaussian-survival map has the explicit affine exponential-product density, and when centered its full raw second-moment matrix equals I.",
+      "role_in_glue": "Applied to Q and a from normal_form, proves the density using L=Q.toLinearEquiv and the covariance conjunct of o011.",
+      "weight": 4,
+      "depends_on": [],
+      "reuse": null
+    }
+  ],
+  "notes": "Two independent parts of the supplied paper Lemma 6.1. The normal-form child has no moment or centering hypotheses; the Gaussian-law child has no Jacobian, coefficient, or functional-calculus hypotheses. Existing original-tree matrix algebra/primitive helpers can be reused in the first child once available; no such unaccepted theorem is assumed in the glue. PROOF.md spells out analytic compatibility, sign absorption, scalar probability integral transform, affine density, and full covariance."
+}
