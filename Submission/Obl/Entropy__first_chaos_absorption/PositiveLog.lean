@@ -54,7 +54,6 @@ lemma positive_tail_log_bounds {r J : ℝ} (hr : 10 ≤ r)
     have hi := one_div_le_one_div_of_le (by norm_num : (0 : ℝ) < 99/100) hJcap
     norm_num only [one_div, inv_div, inv_inv] at hi
     have hh := Real.one_sub_inv_le_log_of_pos hJpos
-    norm_num at hi
     linarith
   have hlogHi : Real.log J ≤ 0 := Real.log_nonpos hJpos.le hJhi
   let T := Real.log (r*Real.sqrt (2*Real.pi))-Real.log J
