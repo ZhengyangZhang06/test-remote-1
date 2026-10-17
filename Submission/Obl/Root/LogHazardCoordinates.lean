@@ -145,4 +145,20 @@ theorem gaussian_mean_distance_bounds {a b : ℝ} (hab : a < b) :
   rw [hmass, hmoment] at h
   exact h
 
+/-- The complementary normalized endpoint distance is nonnegative. -/
+theorem gaussian_mean_distance_le_one {a b : ℝ} (hab : a < b) :
+    (∫ x in a..b, logHazard x - logHazard a) /
+      ((logHazard b - logHazard a) * (b - a)) ≤ 1 := by
+  have hd := sub_pos.mpr (strictMono_logHazard hab)
+  have hlog : Continuous (fun x => logHazard x - logHazard a) :=
+    (continuous_iff_continuousAt.mpr (fun x => (hasDerivAt_logHazard x).continuousAt)).sub
+      continuous_const
+  have h := intervalIntegral.integral_mono_on (μ := volume) hab.le (hlog.intervalIntegrable a b)
+    (intervalIntegrable_const (c := logHazard b - logHazard a))
+    (fun x hx => sub_le_sub_right (strictMono_logHazard.monotone hx.2) (logHazard a))
+  rw [intervalIntegral.integral_const] at h
+  simp only [smul_eq_mul] at h
+  apply (div_le_iff₀ (mul_pos hd (sub_pos.mpr hab))).mpr
+  nlinarith
+
 end Submission.Obl.Root.LogHazardCoordinates
