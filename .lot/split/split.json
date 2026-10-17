@@ -1,0 +1,25 @@
+{
+  "children": [
+    {
+      "key": "gaussian_poincare",
+      "lean_name": "Entropy.gaussian_l2_poincare",
+      "lean_statement": "∀ m : ℕ, ∃ C : ℝ, 0 < C ∧ ∀ F : (EuclideanSpace ℝ (Fin m)) → (EuclideanSpace ℝ (Fin m)), ContDiff ℝ 1 F → MeasureTheory.MemLp F 2 (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) → MeasureTheory.integral (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) F = 0 → MeasureTheory.MemLp (fderiv ℝ F) 2 (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) → MeasureTheory.integral (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) (fun x => ‖F x‖ ^ 2) ≤ C * MeasureTheory.integral (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) (fun x => ‖fderiv ℝ F x‖ ^ 2)",
+      "nl_statement": "For each finite dimension there is a positive finite Gaussian Poincare constant controlling the squared L2 norm of every centered C1 vector-valued map by the squared L2 operator norm of its derivative, assuming both are MemLp 2.",
+      "role_in_glue": "Applied to F_n-F_k, gives the difference bound consumed by the proved centered L2 completeness helper L2Limit.lean.",
+      "weight": 4,
+      "depends_on": [],
+      "reuse": null
+    },
+    {
+      "key": "continuous_jacobian_representative",
+      "lean_name": "Entropy.continuous_jacobian_of_l2_limit",
+      "lean_statement": "∀ m : ℕ, ∀ Fseq : ℕ → (EuclideanSpace ℝ (Fin m)) → (EuclideanSpace ℝ (Fin m)), ∀ F : (EuclideanSpace ℝ (Fin m)) → (EuclideanSpace ℝ (Fin m)), ∀ J : (EuclideanSpace ℝ (Fin m)) → ((EuclideanSpace ℝ (Fin m)) →L[ℝ] (EuclideanSpace ℝ (Fin m))), (∀ n, ContDiff ℝ 1 (Fseq n)) → (∀ n, MeasureTheory.MemLp (Fseq n) 2 (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m)))) → MeasureTheory.MemLp F 2 (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) → (∀ n, MeasureTheory.MemLp (fderiv ℝ (Fseq n)) 2 (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m)))) → MeasureTheory.MemLp J 2 (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) → Continuous J → (Filter.Tendsto (fun n => MeasureTheory.integral (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) (fun x => ‖Fseq n x - F x‖ ^ 2)) Filter.atTop (nhds (0 : ℝ))) → (Filter.Tendsto (fun n => MeasureTheory.integral (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) (fun x => ‖fderiv ℝ (Fseq n) x - J x‖ ^ 2)) Filter.atTop (nhds (0 : ℝ))) → ∃ G : (EuclideanSpace ℝ (Fin m)) → (EuclideanSpace ℝ (Fin m)), ContDiff ℝ 1 G ∧ Filter.EventuallyEq (MeasureTheory.ae (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m)))) G F ∧ (∀ x, fderiv ℝ G x = J x)",
+      "nl_statement": "If C1 maps and their classical Jacobians converge in Gaussian L2 and the limiting Jacobian field is continuous, the limiting map has a global C1 representative with exactly that derivative.",
+      "role_in_glue": "Replace the centered L2 limit by an almost-everywhere equal C1 map and preserve its mean and squared L2 convergence in glue.",
+      "weight": 4,
+      "depends_on": [],
+      "reuse": null
+    }
+  ],
+  "notes": "The finite-dimensional coefficient extraction, functional-calculus field convergence, and centered L2 completeness are handled by checked helper proofs, not deferred to children. The two new children are independent of functional calculus, normalization, and subsequence extraction: a finite-constant Gaussian Poincare inequality, and local weak-derivative closure with a C1 representative. Neither child uses the other in its proof. Derivative fields use the continuous-linear-map operator norm. A Gaussian rotation argument gives a sufficient nonsharp Poincare constant; the exact sharp constant is unnecessary."
+}
