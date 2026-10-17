@@ -1,6 +1,8 @@
 import Mathlib
 import ChallengeDeps
 import Submission.Obl.Root.Algebra
+import Submission.Obl.Cone__moments
+import Submission.Obl.Cone__simplex_iff_product
 
 open SimplexIsotropic
 
@@ -59,5 +61,39 @@ theorem cone_entropy_eq_iff_det_eq (n : ℕ)
     rw [hpow, Real.log_pow]
     push_cast
     ring
+
+/-- The body inequality is equivalent to the entropy bound for its exponential cone density. -/
+theorem isotropicConstant_le_iff_cone_entropy_bound (n : ℕ) (hn : 1 ≤ n)
+    (K : Set (EuclideanSpace ℝ (Fin n))) (hK : IsConvexBody K) :
+    isotropicConstant K ≤ simplexBound n ↔
+      (n + 1 : ℕ) + Real.log (densityCov (coneDensity K)).det / 2 ≤
+        densityEntropy (coneDensity K) := by
+  obtain ⟨hv, hd, _, _, _, _, _, _, _, hH, hC⟩ :=
+    Submission.Cone.moments n hn K hK (coneDensity K) rfl
+      (densityMean (coneDensity K)) rfl (densityCov (coneDensity K)) rfl
+      (densityEntropy (coneDensity K)) rfl
+  have ha : 0 < (n.factorial : ℝ) * vol K := by positivity
+  have hc : 0 < ((n : ℝ) + 1) ^ (n + 1) * ((n : ℝ) + 2) ^ n *
+      (covMatrix K).det := by positivity
+  rw [isotropicConstant_le_iff_det_le n hn K hv hd.le, hH, hC,
+    Nat.cast_add, Nat.cast_one]
+  rw [show (n.factorial : ℝ) ^ 2 * vol K ^ 2 =
+    ((n.factorial : ℝ) * vol K) ^ 2 by ring,
+    ← Real.log_le_log_iff hc (sq_pos_of_pos ha), Real.log_pow]
+  norm_num
+  constructor <;> intro h <;> linarith
+
+/-- Equality of isotropic constants is exactly entropy equality for the cone density. -/
+theorem isotropicConstant_eq_iff_cone_entropy_eq (n : ℕ) (hn : 1 ≤ n)
+    (K : Set (EuclideanSpace ℝ (Fin n))) (hK : IsConvexBody K) :
+    isotropicConstant K = simplexBound n ↔
+      densityEntropy (coneDensity K) =
+        (n + 1 : ℕ) + Real.log (densityCov (coneDensity K)).det / 2 := by
+  obtain ⟨hv, hd, _, _, _, _, _, _, _, hH, hC⟩ :=
+    Submission.Cone.moments n hn K hK (coneDensity K) rfl
+      (densityMean (coneDensity K)) rfl (densityCov (coneDensity K)) rfl
+      (densityEntropy (coneDensity K)) rfl
+  exact (isotropicConstant_eq_iff_det_eq n hn K hv hd.le).trans
+    (cone_entropy_eq_iff_det_eq n K hv hd hH hC).symm
 
 end Submission.Obl.Root
