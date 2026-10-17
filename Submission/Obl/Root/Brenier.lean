@@ -116,7 +116,7 @@ theorem convex_gradient_of_optimal_coupling {μ ν : ProbabilityMeasure E}
     ConvexGradientLaw.gradient_map_of_subgradient_coupling hconv habs
       (measurePreserving_fst hπ).map_eq (measurePreserving_snd hπ).map_eq hae⟩
 
-/-- A full-support absolutely continuous source admits a convex-gradient transport
+/-- A full-support absolutely continuous source has a convex-gradient transport
 to every law with finite second moment. -/
 theorem exists_convex_gradient_transport (μ ν : ProbabilityMeasure E)
     (hμ : MemLp (id : E → E) 2 (μ : Measure E))
