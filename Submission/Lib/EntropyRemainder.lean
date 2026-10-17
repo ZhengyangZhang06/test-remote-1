@@ -16,3 +16,5 @@ import Submission.Lib.EntropyRemainder.Interfaces
 import Submission.Lib.EntropyRemainder.FirstChaosDerivative
 import Submission.Lib.EntropyRemainder.SmoothCutoff
 import Submission.Lib.EntropyRemainder.WeakDivergence
+import Submission.Lib.EntropyRemainder.CompactApprox
+import Submission.Lib.EntropyRemainder.WeakDivergenceC1
