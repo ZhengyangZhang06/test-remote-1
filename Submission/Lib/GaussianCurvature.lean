@@ -5,7 +5,7 @@ strict transport curvature, excess variance ratio, and scalar reserve growth.
 -/
 
 import Submission.Lib.GaussianTransport.GaussianSlope
-import Submission.Lib.GaussianCurvature.MeanDistance
+import Submission.Lib.GaussianCurvature.LogHazardCoordinates
 
 open MeasureTheory ProbabilityTheory Set Filter
 open scoped Topology
