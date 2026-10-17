@@ -6,6 +6,7 @@ import Submission.Obl.Cone__simplex_iff_product
 import Submission.Obl.Entropy__affine_exponential_moments
 import Submission.Obl.Entropy__affine_limit_density
 import Submission.Obl.Entropy__centered_slack_transports
+import Submission.Obl.Entropy__continuous_jacobian_of_l2_limit
 import Submission.Obl.Entropy__gaussian_hazard_lipschitz
 import Submission.Obl.Entropy__gaussian_l2_poincare
 import Submission.Obl.Entropy__log_concave_exponential_tail
