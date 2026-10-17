@@ -1,0 +1,16 @@
+{
+  "name": "Cone",
+  "module": "Submission.Lib.Cone",
+  "files": [
+    "Submission/Lib/Cone.lean",
+    "Submission/Lib/Cone/Geometry.lean",
+    "Submission/Lib/Cone/Integration.lean",
+    "Submission/Lib/Cone/Moments.lean"
+  ],
+  "by": "x0005",
+  "gid": "g00006",
+  "from": "here:o003",
+  "purpose": "",
+  "at": 1792216264.8039823,
+  "sha": "1127b339e55be2157760d2a5f83663c61b080008"
+}
