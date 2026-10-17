@@ -233,4 +233,28 @@ theorem lipschitzWith_gaussianHazard : LipschitzWith 1 gaussianHazard := by
     abs_of_pos (deriv_gaussianHazard_pos a)]
   exact (deriv_gaussianHazard_lt_one a).le
 
+/-- Monotonicity of the hazard gives the survival comparison used in Lemma 2.1. -/
+theorem gaussian_survival_submultiplicative (a u v : ℝ) (hu : 0 ≤ u) (hv : 0 ≤ v) :
+    normalCDF (-(a + (u + v))) / normalCDF (-a) ≤
+      (normalCDF (-(a + u)) / normalCDF (-a)) *
+        (normalCDF (-(a + v)) / normalCDF (-a)) := by
+  have hd (x : ℝ) :
+      HasDerivAt (fun x => exponentialTransport (x + v) - exponentialTransport x)
+        (gaussianHazard (x + v) - gaussianHazard x) x := by
+    convert! ((hasDerivAt_exponentialTransport (x + v)).comp x
+      ((hasDerivAt_id x).add_const v)).sub (hasDerivAt_exponentialTransport x) using 1
+    simp
+  have hm : Monotone (fun x => exponentialTransport (x + v) - exponentialTransport x) :=
+    monotone_of_hasDerivAt_nonneg hd (fun x => sub_nonneg.mpr
+      (strictMono_gaussianHazard.monotone (le_add_of_nonneg_right hv)))
+  have hdiff := hm (a := a) (b := a + u) (le_add_of_nonneg_right hu)
+  have hcdf (x : ℝ) : normalCDF (-x) = Real.exp (-exponentialTransport x) := by
+    unfold exponentialTransport
+    rw [neg_neg, Real.exp_log (normalCDF_pos (-x))]
+  rw [hcdf, hcdf, hcdf, hcdf, ← Real.exp_sub, ← Real.exp_sub, ← Real.exp_sub,
+    ← Real.exp_add]
+  apply Real.exp_le_exp.mpr
+  simp only [add_assoc] at hdiff
+  linarith
+
 end Submission.Lib.GaussianTransport
