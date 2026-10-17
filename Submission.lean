@@ -9,6 +9,7 @@ import Submission.Obl.Entropy__c1_bounded_matrix_calculus
 import Submission.Obl.Entropy__centered_slack_transports
 import Submission.Obl.Entropy__continuous_jacobian_of_l2_limit
 import Submission.Obl.Entropy__gaussian_chaos_resolvent
+import Submission.Obl.Entropy__gaussian_covariance_variational
 import Submission.Obl.Entropy__gaussian_first_chaos_h1_projection
 import Submission.Obl.Entropy__gaussian_hazard_lipschitz
 import Submission.Obl.Entropy__gaussian_l2_poincare
