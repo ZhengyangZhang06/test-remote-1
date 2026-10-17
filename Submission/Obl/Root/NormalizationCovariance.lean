@@ -1,4 +1,5 @@
 import Submission.Obl.Root.GaussianCovarianceUpper
+import Submission.Obl.Entropy__c1_bounded_matrix_calculus.CFCUniform
 
 open MeasureTheory ProbabilityTheory Matrix
 open scoped BigOperators MatrixOrder Matrix.Norms.L2Operator
@@ -11,6 +12,15 @@ variable {m : ℕ}
 local notation "E" => EuclideanSpace ℝ (Fin m)
 local notation "γ" => stdGaussian E
 local notation "Mat" => Matrix (Fin m) (Fin m) ℝ
+
+/-- Entrywise integrability also gives the Bochner integral in the operator norm. -/
+lemma integrable_matrix_of_entries {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
+    {H : Ω → Mat} (hH : ∀ i j, Integrable (fun x => H x i j) μ) : Integrable H μ := by
+  let e : (Fin m → Fin m → ℝ) ≃L[ℝ] Mat :=
+    (Matrix.ofLinearEquiv ℝ).toContinuousLinearEquiv
+  have hi : Integrable (fun x i j => H x i j) μ :=
+    integrable_pi_iff.mpr (fun i => integrable_pi_iff.mpr (hH i))
+  exact e.toContinuousLinearMap.integrable_comp hi
 
 /-- A zero of the normalization map has a fixed positive covariance floor. -/
 theorem covariance_floor_of_normalization
@@ -76,5 +86,40 @@ theorem covariance_ceiling_of_normalization
     exact Matrix.nonneg_iff_posSemidef.mp (cfc_nonneg (fun a _ => (gaussianHazard_pos a).le))
   exact (trace_covariance_le_bound_mul_mean_trace hf0 hf hf2 hF hlaw hJ hJF hpos hbound).trans
     (mul_le_mul_of_nonneg_left (mean_trace_le_of_normalization hA hAi hqi hmean hl) hL)
+
+/-- The covariance bounds need no extra integrability hypotheses for bounded
+continuous Hermitian parameter fields. -/
+theorem normalization_covariance_bounds_of_bounded
+    {f : E → ℝ} (hf0 : ∀ x, 0 ≤ f x) (hf : Integrable f volume)
+    (hf2 : Integrable (fun x => f x * ‖x‖^2) volume)
+    {F : E → E} (hF : ContDiff ℝ 1 F)
+    (hlaw : Measure.map F γ = volume.withDensity (fun x => ENNReal.ofReal (f x)))
+    {A : E → Mat} (hAc : Continuous A) (hA : ∀ x, (A x).IsHermitian)
+    (hAb : ∃ R : ℝ, 0 < R ∧ ∀ x i j, |A x i j| ≤ R)
+    (hJF : ∀ x i j, cfc gaussianHazard (A x) i j =
+      (fderiv ℝ F x (PiLp.single 2 j (1 : ℝ))) i)
+    (hmean : ∀ i j, (∫ x, A x i j ∂γ) = 0) {l L : ℝ} (hL : 0 ≤ L)
+    (hl : ∀ x, ∀ a ∈ spectrum ℝ (A x), l ≤ a)
+    (hbound : ∀ x, cfc gaussianHazard (A x) ≤ L • (1 : Mat)) :
+    gaussianHazard 0 ^ 2 • (1 : Mat) ≤ densityCovariance f (∫ x, f x • x) ∧
+      (densityCovariance f (∫ x, f x • x)).trace ≤
+        L * ((m : ℝ) * (gaussianHazard l - l)) := by
+  have hAi : Integrable A γ := by
+    obtain ⟨R, _, hb⟩ := hAb
+    apply integrable_matrix_of_entries
+    intro i j
+    have hc : Continuous (fun x => A x i j) :=
+      (continuous_apply j).comp ((continuous_apply i).comp hAc)
+    have hp : MemLp (fun x => A x i j) 2 γ :=
+      MemLp.of_bound hc.aestronglyMeasurable R
+        (Filter.Eventually.of_forall fun x => by simpa using hb x i j)
+    exact hp.integrable (by norm_num)
+  have hJ := Submission.Obl.Entropy__c1_bounded_matrix_calculus.memLp_cfc_entries_of_bounded
+    (μ := γ) A hAc hA hAb contDiff_gaussianHazard.continuous
+  have hqi : Integrable (fun x => cfc gaussianHazard (A x)) γ :=
+    integrable_matrix_of_entries (fun i j => (hJ i j).integrable (by norm_num))
+  exact ⟨covariance_floor_of_normalization hf0 hf hf2 hF hlaw hA hAi hqi hJ hJF hmean,
+    covariance_ceiling_of_normalization hf0 hf hf2 hF hlaw hA hAi hqi hJ hJF hmean
+      hL hl hbound⟩
 
 end Submission.Obl.Root.GaussianCovariance
