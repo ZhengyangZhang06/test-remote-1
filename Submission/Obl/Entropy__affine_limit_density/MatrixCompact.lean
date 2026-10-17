@@ -73,4 +73,42 @@ theorem matrix_subsequence_of_covariance [Nonempty (Fin m)]
     (2 / c + 1)).tendsto_subseq' hbdd.frequently
   exact ⟨P, τ, hτ, hlim⟩
 
+theorem diagonal_congruence (P C : Matrix (Fin m) (Fin m) ℝ) (i : Fin m) :
+    (P * C * P.transpose) i i = P i ⬝ᵥ (C *ᵥ P i) := by
+  simp only [Matrix.mul_apply, Matrix.transpose_apply, dotProduct, Matrix.mulVec,
+    Finset.sum_mul, Finset.mul_sum]
+  rw [Finset.sum_comm]
+  apply Finset.sum_congr rfl
+  intro j _
+  apply Finset.sum_congr rfl
+  intro k _
+  ring
+
+/-- A nondegenerate limiting covariance makes the compact limit invertible. -/
+theorem matrix_subsequence_nonsingular [Nonempty (Fin m)]
+    {C : Matrix (Fin m) (Fin m) ℝ} (hC : C.PosDef)
+    {Cn Pn : ℕ → Matrix (Fin m) (Fin m) ℝ}
+    (hCn : Tendsto Cn atTop (𝓝 C))
+    (hDn : Tendsto (fun n => Pn n * Cn n * (Pn n).transpose) atTop (𝓝 1)) :
+    ∃ P : Matrix (Fin m) (Fin m) ℝ, P.det ≠ 0 ∧ ∃ τ : ℕ → ℕ,
+      StrictMono τ ∧ Tendsto (Pn ∘ τ) atTop (𝓝 P) := by
+  have hdiag (i : Fin m) :
+      Tendsto (fun n => Pn n i ⬝ᵥ (Cn n *ᵥ Pn n i)) atTop (𝓝 1) := by
+    have h := ((continuous_apply i).comp (continuous_apply i)).tendsto
+      (1 : Matrix (Fin m) (Fin m) ℝ) |>.comp hDn
+    change Tendsto (fun n => (Pn n * Cn n * (Pn n).transpose) i i) atTop
+      (𝓝 ((1 : Matrix (Fin m) (Fin m) ℝ) i i)) at h
+    simpa only [diagonal_congruence, Matrix.one_apply_eq] using h
+  obtain ⟨P, τ, hτ, hP⟩ := matrix_subsequence_of_covariance hC hCn hdiag
+  have hc : Continuous (fun z : Matrix (Fin m) (Fin m) ℝ × Matrix (Fin m) (Fin m) ℝ =>
+      z.1 * z.2 * z.1.transpose) := by fun_prop
+  have hp := hc.tendsto (P, C) |>.comp (hP.prodMk_nhds (hCn.comp hτ.tendsto_atTop))
+  have heq : P * C * P.transpose = 1 :=
+    tendsto_nhds_unique hp (hDn.comp hτ.tendsto_atTop)
+  have hdet : P.det ≠ 0 := by
+    intro h
+    have := congrArg Matrix.det heq
+    simp [Matrix.det_mul, h] at this
+  exact ⟨P, hdet, τ, hτ, hP⟩
+
 end Submission.Obl.Entropy__affine_limit_density
