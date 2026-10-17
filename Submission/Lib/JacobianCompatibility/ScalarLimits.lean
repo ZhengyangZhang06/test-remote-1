@@ -1,3 +1,9 @@
+/-
+Adapted from: here:o011
+
+Original proofs by session x0028, shared from the o011 compatibility development.
+-/
+
 import Mathlib
 
 /-! Rescaling scalar Taylor remainders uniformly on bounded sets. -/

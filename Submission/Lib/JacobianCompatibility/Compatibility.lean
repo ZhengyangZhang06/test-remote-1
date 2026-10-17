@@ -1,3 +1,9 @@
+/-
+Adapted from: here:o011
+
+Original proofs by session x0028, shared from the o011 compatibility development.
+-/
+
 import Submission.Lib.JacobianCompatibility.PrimitiveCoefficients
 
 /-! The Jacobian compatibility identities of Section 6, Lemma 6.1. -/
