@@ -1,0 +1,16 @@
+{
+  "name": "GaussianCurvature",
+  "module": "Submission.Lib.GaussianCurvature",
+  "files": [
+    "Submission/Lib/GaussianCurvature.lean",
+    "Submission/Lib/GaussianCurvature/LogHazardCoordinates.lean",
+    "Submission/Lib/GaussianCurvature/MeanDistance.lean",
+    "Submission/Lib/GaussianCurvature/SecantBounds.lean"
+  ],
+  "by": "x0014",
+  "gid": "g00134",
+  "from": "here:root",
+  "purpose": "",
+  "at": 1792223147.5290625,
+  "sha": "6ae76539dff58f163dbeca08becab5e3ccaa23b4"
+}
