@@ -1,0 +1,19 @@
+{
+  "name": "Brenier",
+  "module": "Submission.Lib.Brenier",
+  "files": [
+    "Submission/Lib/Brenier.lean",
+    "Submission/Lib/Brenier/ConvexGradientLaw.lean",
+    "Submission/Lib/Brenier/CouplingRearrangement.lean",
+    "Submission/Lib/Brenier/CouplingSupport.lean",
+    "Submission/Lib/Brenier/CyclicOptimality.lean",
+    "Submission/Lib/Brenier/CyclicPotential.lean",
+    "Submission/Lib/Brenier/OptimalCoupling.lean"
+  ],
+  "by": "x0119",
+  "gid": "g00143",
+  "from": "here:root",
+  "purpose": "Convex-gradient transport existence",
+  "at": 1792226798.153189,
+  "sha": "764d13e9c034122dbc1fa7f4cc8c6abb10efca93"
+}
