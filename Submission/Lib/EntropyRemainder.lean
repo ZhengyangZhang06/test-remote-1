@@ -9,3 +9,4 @@ import Submission.Lib.EntropyRemainder.MatrixBounds
 import Submission.Lib.EntropyRemainder.ChaosSummation
 import Submission.Lib.EntropyRemainder.ScalarMinorant
 import Submission.Lib.EntropyRemainder.CommutatorScalar
+import Submission.Lib.EntropyRemainder.BlockContraction
