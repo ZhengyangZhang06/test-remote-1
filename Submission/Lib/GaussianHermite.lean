@@ -1,2 +1,2 @@
-/- Adapted from: here:o022. Gaussian Hermite basis and coordinate integration by parts. -/
-import Submission.Lib.GaussianHermite.CoordinateDerivative
+/- Adapted from: here:o022. Gaussian Hermite basis and second-chaos inverse estimates. -/
+import Submission.Lib.GaussianHermite.ScalarInverse
