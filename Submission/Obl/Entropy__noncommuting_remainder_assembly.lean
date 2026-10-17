@@ -1,17 +1,19 @@
 import Mathlib
 import ChallengeDeps
-import Submission.Obl.Entropy__gaussian_weak_remainder_expansion
-import Submission.Obl.Entropy__pointwise_weighted_remainder
+import Submission.Obl.Entropy__gaussian_weak_remainder_witnesses
+import Submission.Obl.Entropy__gaussian_exact_remainder_expansion
+import Submission.Obl.Entropy__noncommuting_remainder_assembly.Pointwise
 import Submission.Obl.Entropy__noncommuting_remainder_assembly.CommutatorInvariant
 
 set_option linter.unusedVariables false
 
 /-!
-# Assembly from the Gaussian expansion and pointwise matrix estimates
+# Assembly from regularity, weak witnesses and the exact Gaussian expansion
 
-The compensated commutator estimate is proved in the owned helper modules.
-The two proposed children supply the exact analytic expansion and the
-independent weighted bound. The glue integrates their sum.
+Both matrix estimates are proved in owned helper modules. The two analytic
+children supply the regularity and weak witnesses, and the exact integrated
+trace identity conditional on that regularity. The glue integrates the
+pointwise estimates and substitutes those identities.
 -/
 
 theorem Submission.Entropy.noncommuting_remainder_assembly : ∀ m : ℕ, 1 ≤ m → ∀ A : (EuclideanSpace ℝ (Fin m)) → Matrix (Fin m) (Fin m) ℝ, ∀ hA : ∀ x, (A x).IsHermitian, (fun γ => (fun L2 => (fun d => (fun Z => (fun t => (fun q => (fun k => (fun K => (fun I => (fun Div => (fun X => (fun Y => (fun B => (fun S => (fun b => (fun l => (fun p => (fun h => (fun cost => (fun R => (fun W => (fun ta => (fun ka => (fun E2 => (fun J => (∀ i j, ContDiff ℝ ((⊤ : ENat) : WithTop ENat) (fun x => A x i j)) → (∃ R : ℝ, 0 < R ∧ ∀ x i j, |A x i j| ≤ R) → (∀ i j, I (fun x => A x i j) = 0) → (∀ r, L2 (Z r)) → (∀ r, L2 (K r)) → (∀ a, 0 < p a) → ∀ g : Fin m → ((EuclideanSpace ℝ (Fin m)) → Matrix (Fin m) (Fin m) ℝ), (∀ r x, (g r x).IsHermitian) → (∀ r, L2 (g r)) → Div Y g → (fun N => (fun Dr => (fun Lr => (fun f0 => (fun Mr => (fun PB => ∃ u : (EuclideanSpace ℝ (Fin m)) → Matrix (Fin m) (Fin m) ℝ, ∃ v : Fin m → ((EuclideanSpace ℝ (Fin m)) → Matrix (Fin m) (Fin m) ℝ), L2 u ∧ (∀ r, L2 (v r)) ∧ Div (fun x => u x - (J x - ka x)) (fun r x => v r x - K r x) ∧ I (fun x => Matrix.trace ((S - 1) * E2 x)) + W S u + Finset.sum Finset.univ (fun r : Fin m => W S (v r)) - Real.log S.det ≤ R + PB) (Finset.sum Finset.univ (fun r : Fin m => (40/37)*N (fun x => Dr r x - (7/25 : ℝ) • g r x) + (42/37)*N (fun x => Dr r x - (3/4 : ℝ) • g r x) + (27/592)*N (g r) + (40/3)*N (Lr r) + (5/17)*N (fun x => Mr r x * cfc (fun a => (Real.sqrt (p a))⁻¹) (A x))))) (fun r x => d (fun y => cfc f0 (A y)) r x - X r * cfc (deriv f0) (A x) - 2 • (Dr r x * cfc b (A x)) - (80/3 : ℝ) • (Lr r x * cfc l (A x)) + (3/2 : ℝ) • (g r x * cfc b (A x)))) (fun a => k a * (1 + b a))) (fun r x => d (fun y => cfc b (A y)) r x - X r * cfc l (A x))) (fun r x => K r x - X r * cfc b (A x))) (fun F => I (fun x => Finset.sum Finset.univ (fun i : Fin m => Finset.sum Finset.univ (fun j : Fin m => (F x i j)^2))))) (fun x => cfc q (A x))) (fun x => 2 • ta x - ka x * ka x - Finset.sum Finset.univ (fun r : Fin m => K r x * K r x))) (fun x => cfc k (A x))) (fun x => cfc t (A x))) (fun P F => I (fun x => Matrix.trace ((F x).transpose * P * F x)))) (Matrix.trace (S - 1) - Real.log S.det - I (fun x => Matrix.trace ((-(S - 1) * (B - 1)) * ((3/20 : ℝ) • 1 + (1813/4000 : ℝ) • S) * cfc p (A x))) + I (fun x => Matrix.trace (Y x * Y x * cfc cost (A x))))) (fun a => (40/37) * ((b a - 7/25)^2 + (5/96) * (h a)^2 / p a))) (fun a => k a * (1 + b a) - (3/2) * k a - (80/3) * (b a - 7/25) * l a)) (fun a => deriv (fun z => k z * (1 + b z)) a - (b a)^2 - (40/3) * (l a)^2)) (deriv b)) (deriv k)) (((37/40 : ℝ) • (1 : Matrix (Fin m) (Fin m) ℝ) + (3/40 : ℝ) • B)⁻¹)) (Finset.sum Finset.univ (fun r : Fin m => X r * X r))) (fun x => A x - Finset.sum Finset.univ (fun r : Fin m => x r • X r))) (fun r => Matrix.of (fun i j => I (fun x => x r * A x i j)))) (fun F v => ∀ i j, ∀ z : (EuclideanSpace ℝ (Fin m)) → ℝ, ContDiff ℝ ((⊤ : ENat) : WithTop ENat) z → HasCompactSupport z → I (fun x => F x i j * z x) = Finset.sum Finset.univ (fun r : Fin m => I (fun x => v r x i j * fderiv ℝ z x (PiLp.single 2 r (1 : ℝ)))))) (MeasureTheory.integral γ)) (d (fun x => cfc k (A x)))) (fun a => t a / q a)) (fun a => ProbabilityTheory.gaussianPDFReal 0 1 a / ProbabilityTheory.cdf (ProbabilityTheory.gaussianReal 0 1) (-a))) (fun a => -Real.log (ProbabilityTheory.cdf (ProbabilityTheory.gaussianReal 0 1) (-a)))) (d A)) (fun F r x => Matrix.of (fun i j => fderiv ℝ (fun y => F y i j) x (PiLp.single 2 r (1 : ℝ))))) (fun F => ∀ i j, MeasureTheory.MemLp (fun x => F x i j) 2 γ)) (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) := by
@@ -59,10 +61,13 @@ theorem Submission.Entropy.noncommuting_remainder_assembly : ∀ m : ℕ, 1 ≤ 
   let Comm := fun x => -Matrix.trace (T * cfc b (A x) * B * cfc b (A x) - T * B * cfc b (A x) * cfc b (A x)) - 2 * Matrix.trace ((T * cfc b (A x) - cfc b (A x) * T) * Finset.sum Finset.univ (fun r : Fin m => X r * w r x)) - Matrix.trace (T * Finset.sum Finset.univ (fun r : Fin m => (w r x).transpose * w r x))
   let Right := fun x => -Matrix.trace (H * ρ * cfc p (A x)) + Matrix.trace (Y x * Y x * cfc cost (A x)) + Finset.sum Finset.univ (fun r : Fin m => (40/37 : ℝ) * ss (v r x) + (42/37 : ℝ) * ss (w r x) + (27/592 : ℝ) * ss (g r x) + (40/3 : ℝ) * ss (Lr r x) + (5/17 : ℝ) * ss (Mr r x * cfc (fun a => (Real.sqrt (p a))⁻¹) (A x)))
   let PB := Finset.sum Finset.univ (fun r : Fin m => (40/37)*N (v r) + (42/37)*N (w r) + (27/592)*N (g r) + (40/3)*N (Lr r) + (5/17)*N (fun x => Mr r x * cfc (fun a => (Real.sqrt (p a))⁻¹) (A x)))
-  have hexp := Submission.Entropy.gaussian_weak_remainder_expansion m hm A hA
+  have hwitness := Submission.Entropy.gaussian_weak_remainder_witnesses m hm A hA
     hsm hbnd hmean hZ hK hp g hg hgL hdiv
-  change (∀ r, (X r).IsHermitian) ∧ (∀ x, (Y x).IsHermitian) ∧ L2 u ∧ (∀ r, L2 (v r)) ∧ Div (fun x => u x - (J x - ka x)) (fun r x => v r x - K r x) ∧ MeasureTheory.Integrable (fun x => Core x + Comm x) γ ∧ MeasureTheory.Integrable Right γ ∧ I (fun x => Matrix.trace (T * E2 x)) + W S u + Finset.sum Finset.univ (fun r : Fin m => W S (v r)) = Matrix.trace T + I (fun x => Core x + Comm x) ∧ I Right = -I (fun x => Matrix.trace (H * ρ * cfc p (A x))) + I (fun x => Matrix.trace (Y x * Y x * cfc cost (A x))) + PB at hexp
-  rcases hexp with ⟨hX, hY, hu, hv, hDiv, hleft, hright, hexact, hbudget⟩
+  change (∀ f : ℝ → ℝ, ContDiff ℝ ((⊤ : ENat) : WithTop ENat) f → (∀ i j, ContDiff ℝ 1 (fun x => cfc f (A x) i j)) ∧ (∃ C : ℝ, 0 < C ∧ ∀ x i j, |cfc f (A x) i j| ≤ C) ∧ (∀ r, L2 (d (fun x => cfc f (A x)) r))) ∧ (∀ r, (X r).IsHermitian) ∧ (∀ x, (Y x).IsHermitian) ∧ L2 u ∧ (∀ r, L2 (v r)) ∧ Div (fun x => u x - (J x - ka x)) (fun r x => v r x - K r x) ∧ MeasureTheory.Integrable (fun x => Core x + Comm x) γ ∧ MeasureTheory.Integrable Right γ ∧ I Right = -I (fun x => Matrix.trace (H * ρ * cfc p (A x))) + I (fun x => Matrix.trace (Y x * Y x * cfc cost (A x))) + PB at hwitness
+  rcases hwitness with ⟨hreg, hX, hY, hu, hv, hDiv, hleft, hright, hbudget⟩
+  have hexact := Submission.Entropy.gaussian_exact_remainder_expansion m hm A hA
+    hsm hbnd hmean hZ hK hp g hg hgL hdiv hreg
+  change I (fun x => Matrix.trace (T * E2 x)) + W S u + Finset.sum Finset.univ (fun r : Fin m => W S (v r)) = Matrix.trace T + I (fun x => Core x + Comm x) at hexact
   change ∃ u : (EuclideanSpace ℝ (Fin m)) → Matrix (Fin m) (Fin m) ℝ, ∃ v : Fin m → ((EuclideanSpace ℝ (Fin m)) → Matrix (Fin m) (Fin m) ℝ), L2 u ∧ (∀ r, L2 (v r)) ∧
     Div (fun x => u x - (J x - ka x)) (fun r x => v r x - K r x) ∧
     I (fun x => Matrix.trace (T * E2 x)) + W S u +
@@ -74,7 +79,7 @@ theorem Submission.Entropy.noncommuting_remainder_assembly : ∀ m : ℕ, 1 ≤ 
     have hc := Submission.Obl.Entropy__noncommuting_remainder_assembly.commutator_bound_constants
       X (fun r => w r x) (cfc b (A x)) hX (cfc_predicate b (A x))
     change Comm x ≤ (42/37 : ℝ) * Finset.sum Finset.univ (fun r : Fin m => ss (w r x)) at hc
-    have hw := Submission.Entropy.pointwise_weighted_remainder m X hX (A x) (Y x)
+    have hw := Submission.Obl.Entropy__noncommuting_remainder_assembly.pointwise_weighted_remainder X hX (A x) (Y x)
       (hA x) (hY x) b h p hp (fun r => Dr r x) (fun r => Lr r x)
       (fun r => Mr r x) (fun r => g r x) (fun r => hg r x)
     change Core x ≤ -Matrix.trace (H * ρ * cfc p (A x)) + Matrix.trace (Y x * Y x * cfc cost (A x)) + Finset.sum Finset.univ (fun r : Fin m => (40/37 : ℝ) * ss (v r x) + (27/592 : ℝ) * ss (g r x) + (40/3 : ℝ) * ss (Lr r x) + (5/17 : ℝ) * ss (Mr r x * cfc (fun a => (Real.sqrt (p a))⁻¹) (A x))) at hw
