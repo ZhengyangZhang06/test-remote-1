@@ -1,7 +1,6 @@
 /-
 Adapted from: here:o006
-
-Original proofs by sessions x0016, x0019 and x0062.
+Original proofs by sessions x0016 and x0062.
 -/
 
 import Submission.Lib.EntropyRemainder.GaussianIBP
@@ -25,6 +24,11 @@ lemma linearPart_contDiff {m : ℕ} (A : E m → Mat m) (i j : Fin m)
     {n : WithTop ℕ∞} : ContDiff ℝ n (fun x => linearPart A x i j) := by
   simp only [linearPart, Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul]
   exact ContDiff.sum fun r _ => (EuclideanSpace.proj (𝕜 := ℝ) r).contDiff.mul contDiff_const
+
+lemma nonlinearPart_contDiff {m : ℕ} {A : E m → Mat m} {n : WithTop ℕ∞}
+    (hA : ∀ i j, ContDiff ℝ n (fun x => A x i j)) (i j : Fin m) :
+    ContDiff ℝ n (fun x => nonlinearPart A x i j) :=
+  (hA i j).sub (linearPart_contDiff A i j)
 
 lemma coordinateDerivative_linearPart {m : ℕ} (A : E m → Mat m)
     (r : Fin m) (x : E m) : coordinateDerivative (linearPart A) r x = firstCoeff A r := by
@@ -134,5 +138,28 @@ theorem firstChaos_energy_cancellation {m : ℕ} {A : E m → Mat m}
   rw [firstChaos_energy hL]
   simp_rw [coordinateDerivative_energy hA hL hZ, Finset.sum_add_distrib]
   ring
+
+/-- The full H1 projection interface used by the chaos resolvent. -/
+theorem firstChaos_h1_projection {m : ℕ} {A : E m → Mat m}
+    (hA : ∀ x, (A x).IsHermitian)
+    (hsm : ∀ i j, ContDiff ℝ ((⊤ : ENat) : WithTop ENat) (fun x => A x i j))
+    (hbd : ∃ R : ℝ, ∀ x i j, |A x i j| ≤ R)
+    (hm : ∀ i j, expectation (fun x => A x i j) = 0)
+    (hZ : ∀ r, SquareIntegrable (coordinateDerivative A r)) :
+    (∀ x, (nonlinearPart A x).IsHermitian) ∧
+    (∀ i j, ContDiff ℝ ((⊤ : ENat) : WithTop ENat) (fun x => nonlinearPart A x i j)) ∧
+    SquareIntegrable (nonlinearPart A) ∧
+    (∀ r, SquareIntegrable (coordinateDerivative (nonlinearPart A) r)) ∧
+    (∀ i j, expectation (fun x => nonlinearPart A x i j) = 0) ∧
+    (∀ r i j, expectation (fun x => x r * nonlinearPart A x i j) = 0) ∧
+    fieldEnergy A - (∑ r, fieldEnergy (coordinateDerivative A r)) =
+      fieldEnergy (nonlinearPart A) -
+        ∑ r, fieldEnergy (coordinateDerivative (nonlinearPart A) r) := by
+  have hL : SquareIntegrable A := entry_memLp_of_bounded (fun i j => (hsm i j).continuous) hbd
+  have hd : ∀ i j, Differentiable ℝ (fun x => A x i j) :=
+    fun i j => (hsm i j).differentiable (by simp)
+  exact ⟨nonlinearPart_isHermitian hA, nonlinearPart_contDiff hsm,
+    nonlinearPart_memLp hL, coordinateDerivative_nonlinearPart_memLp hd hZ,
+    nonlinearPart_mean hL hm, nonlinearPart_coord hL, firstChaos_energy_cancellation hd hL hZ⟩
 
 end Submission.Lib.EntropyRemainder

@@ -1,7 +1,7 @@
 /-
 Adapted from: here:o006
 
-Original proofs by session x0016.
+Original proofs by sessions x0016 and x0062.
 -/
 
 import Submission.Lib.EntropyRemainder.FirstChaos

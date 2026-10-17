@@ -1,4 +1,4 @@
-import Mathlib
+import Submission.Obl.Entropy__continuous_jacobian_of_l2_limit.GaussianDensity
 
 /-!
 # A Lebesgue density for the standard Gaussian on Euclidean space
@@ -57,37 +57,15 @@ lemma gaussianDensity_eq_prod {m : ℕ} (x : EuclideanSpace ℝ (Fin m)) :
 lemma gaussian_pi_eq_withDensity (m : ℕ) :
     Measure.pi (fun _ : Fin m => gaussianReal 0 1) =
       volume.withDensity (fun x : Fin m → ℝ =>
-        ENNReal.ofReal (∏ i, gaussianPDFReal 0 1 (x i))) := by
-  apply Measure.pi_eq
-  intro s hs
-  rw [withDensity_apply _ (MeasurableSet.univ_pi hs),
-    show (volume : Measure (Fin m → ℝ)) = Measure.pi (fun _ => volume) from rfl,
-    Measure.restrict_pi_pi]
-  rw [← ofReal_integral_eq_lintegral_ofReal
-    (Integrable.fintype_prod (fun _ => (integrable_gaussianPDFReal 0 1).integrableOn))
-    (Filter.Eventually.of_forall fun x => Finset.prod_nonneg fun i _ =>
-      gaussianPDFReal_nonneg 0 1 (x i)), integral_fintype_prod_eq_prod,
-    ENNReal.ofReal_prod_of_nonneg (fun i _ => integral_nonneg fun x =>
-      gaussianPDFReal_nonneg 0 1 x)]
-  apply Finset.prod_congr rfl
-  intro i _
-  rw [gaussianReal_of_var_ne_zero _ one_ne_zero, withDensity_apply _ (hs i),
-    ofReal_integral_eq_lintegral_ofReal (integrable_gaussianPDFReal 0 1).integrableOn
-      (Filter.Eventually.of_forall fun x => gaussianPDFReal_nonneg 0 1 x)]
-  rfl
+        ENNReal.ofReal (∏ i, gaussianPDFReal 0 1 (x i))) :=
+  Submission.Obl.Entropy__continuous_jacobian_of_l2_limit.pi_gaussian_density
 
 lemma stdGaussian_eq_withDensity (m : ℕ) :
     stdGaussian (EuclideanSpace ℝ (Fin m)) =
       volume.withDensity (fun x => ENNReal.ofReal (gaussianDensity x)) := by
-  rw [← map_pi_eq_stdGaussian, gaussian_pi_eq_withDensity]
-  apply Measure.ext
-  intro s hs
-  rw [Measure.map_apply (by fun_prop) hs,
-    withDensity_apply _ ((by fun_prop : Measurable (@WithLp.toLp 2 (Fin m → ℝ))) hs),
-    withDensity_apply _ hs]
-  simpa only [gaussianDensity_eq_prod] using
-    (PiLp.volume_preserving_toLp (Fin m)).setLIntegral_comp_preimage hs
-      (gaussianDensity_continuous.measurable.ennreal_ofReal)
+  simpa only [gaussianDensity_eq_prod,
+    Submission.Obl.Entropy__continuous_jacobian_of_l2_limit.gaussianDensity] using
+    (Submission.Obl.Entropy__continuous_jacobian_of_l2_limit.stdGaussian_eq_withDensity (m := m))
 
 lemma gaussian_integrable_iff {m : ℕ} {f : EuclideanSpace ℝ (Fin m) → ℝ} :
     Integrable f (stdGaussian (EuclideanSpace ℝ (Fin m))) ↔
