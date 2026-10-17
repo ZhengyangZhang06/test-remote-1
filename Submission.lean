@@ -28,6 +28,7 @@ import Submission.Obl.Entropy__linear_transport_limit
 import Submission.Obl.Entropy__log_concave_exponential_tail
 import Submission.Obl.Entropy__mollified_convex_sequence
 import Submission.Obl.Entropy__moreau_envelope_sequence
+import Submission.Obl.Entropy__noncommuting_remainder_assembly
 import Submission.Obl.Entropy__orthogonal_gaussian_exponential_law
 import Submission.Obl.Entropy__smooth_approximation
 import Submission.Obl.Entropy__transport_covariance_completion
