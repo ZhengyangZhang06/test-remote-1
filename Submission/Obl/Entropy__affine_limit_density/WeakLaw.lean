@@ -38,7 +38,7 @@ theorem tendsto_integral_varying_density {m : ℕ} {fn : ℕ → E m → ℝ} {f
     · simpa using tendsto_const_nhds.mul hl1
   simpa only [sub_add_cancel, zero_add] using herr.add hfixed
 
- theorem isFinite_density {m : ℕ} {f : E m → ℝ}
+theorem isFinite_density {m : ℕ} {f : E m → ℝ}
     (hf0 : ∀ x, 0 ≤ f x) (hf : Integrable f volume) :
     IsFiniteMeasure (volume.withDensity (fun x => ENNReal.ofReal (f x))) := by
   constructor
@@ -62,7 +62,7 @@ theorem map_eq_of_density_limits {m : ℕ} {μ : Measure (E m)} [IsFiniteMeasure
     (hlaw : ∀ n, Measure.map (Fn n) μ = Measure.map (Tn n)
       (volume.withDensity (fun x => ENNReal.ofReal (fn n x)))) :
     Measure.map F μ = Measure.map T (volume.withDensity (fun x => ENNReal.ofReal (f x))) := by
-  letI := isFinite_density hf0 hf
+  haveI := isFinite_density hf0 hf
   apply ext_of_forall_integral_eq_of_IsFiniteMeasure
   intro g
   have hleft : Tendsto (fun n => ∫ x, g (Fn n x) ∂μ) atTop
