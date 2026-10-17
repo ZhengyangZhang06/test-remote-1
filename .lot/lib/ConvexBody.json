@@ -1,0 +1,13 @@
+{
+  "name": "ConvexBody",
+  "module": "Submission.Lib.ConvexBody",
+  "files": [
+    "Submission/Lib/ConvexBody.lean"
+  ],
+  "by": "x0003",
+  "gid": "g00003",
+  "from": "here:root",
+  "purpose": "",
+  "at": 1792215442.0154238,
+  "sha": "64174e61e1d35a3d81446bca66a2a9de7b5d688a"
+}
