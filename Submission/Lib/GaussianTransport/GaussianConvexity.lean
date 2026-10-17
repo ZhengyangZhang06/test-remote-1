@@ -1,8 +1,8 @@
 /-
 Adapted from: here:o001
 
-Original Lemma 2.1 integrated tail comparison by session x0021,
-building on x0004's original Gaussian scalar calculus in this workspace.
+Original proofs by session x0021, building on the Gaussian scalar
+calculus developed by x0004 in this workspace.
 -/
 
 import Submission.Lib.GaussianTransport.GaussianTails
@@ -18,12 +18,15 @@ open scoped Topology ContDiff
 
 namespace Submission.Lib.GaussianTransport
 
-theorem antitone_gaussianGap : Antitone gaussianGap := by
-  apply antitone_of_hasDerivAt_nonpos hasDerivAt_gaussianGap
+/-- The positive conditional variance makes the Gaussian excess mean decrease strictly. -/
+theorem strictAnti_gaussianGap : StrictAnti gaussianGap := by
+  apply strictAnti_of_deriv_neg
   intro a
+  rw [(hasDerivAt_gaussianGap a).deriv]
   have h := one_sub_hazard_mul_gap_pos a
-  change gaussianHazard a * gaussianGap a - 1 ≤ 0
   linarith
+
+theorem antitone_gaussianGap : Antitone gaussianGap := strictAnti_gaussianGap.antitone
 
 private theorem hasDerivAt_survival (a : ℝ) :
     HasDerivAt (fun x => normalCDF (-x)) (-normalPDF a) a := by
@@ -126,30 +129,54 @@ theorem integral_normalPDF_sub_mul_normalCDF_tail (a : ℝ) :
   convert! h using 1
   ring
 
-/-- The variance of a Gaussian excess is at most its squared mean (Lemma 2.1). -/
-theorem one_sub_hazard_mul_gap_le_gap_sq (a : ℝ) :
-    1 - gaussianHazard a * gaussianGap a ≤ gaussianGap a ^ 2 := by
+/-- The variance of a Gaussian excess is strictly below its squared mean (Lemma 2.1). -/
+theorem one_sub_hazard_mul_gap_lt_gap_sq (a : ℝ) :
+    1 - gaussianHazard a * gaussianGap a < gaussianGap a ^ 2 := by
   have hfactor (x : ℝ) : normalPDF x - x * normalCDF (-x) =
       gaussianGap x * normalCDF (-x) := by
     unfold gaussianGap gaussianHazard
     rw [sub_mul, div_mul_cancel₀ _ (ne_of_gt (normalCDF_pos (-x)))]
-  have hi := integral_mono_ae (integrableOn_normalPDF_sub_mul_normalCDF a)
-    ((integrableOn_normalCDF_neg a).const_mul (gaussianGap a)) (by
+  let F : ℝ → ℝ := fun x => gaussianGap a * normalCDF (-x) -
+    (normalPDF x - x * normalCDF (-x))
+  have hF (x : ℝ) (hx : x ∈ Ioi a) : 0 < F x := by
+    dsimp only [F]
+    rw [hfactor]
+    exact sub_pos.mpr (mul_lt_mul_of_pos_right (strictAnti_gaussianGap hx)
+      (normalCDF_pos (-x)))
+  have hint : IntegrableOn F (Ioi a) :=
+    ((integrableOn_normalCDF_neg a).const_mul (gaussianGap a)).sub
+      (integrableOn_normalPDF_sub_mul_normalCDF a)
+  have hpos : 0 < ∫ x in Ioi a, F x := by
+    apply (setIntegral_pos_iff_support_of_nonneg_ae (by
       filter_upwards [ae_restrict_mem measurableSet_Ioi] with x hx
-      rw [hfactor]
-      exact mul_le_mul_of_nonneg_right (antitone_gaussianGap hx.le)
-        (normalCDF_pos (-x)).le)
+      exact (hF x hx).le) hint).2
+    have hs : Function.support F ∩ Ioi a = Ioi a := by
+      ext x
+      exact ⟨fun hx => hx.2, fun hx => ⟨ne_of_gt (hF x hx), hx⟩⟩
+    rw [hs, Real.volume_Ioi]
+    exact ENNReal.zero_lt_top
+  have hi : (∫ x in Ioi a, normalPDF x - x * normalCDF (-x)) <
+      ∫ x in Ioi a, gaussianGap a * normalCDF (-x) := by
+    dsimp only [F] at hpos
+    rw [integral_sub ((integrableOn_normalCDF_neg a).const_mul (gaussianGap a))
+      (integrableOn_normalPDF_sub_mul_normalCDF a)] at hpos
+    exact sub_pos.mp hpos
   rw [integral_normalPDF_sub_mul_normalCDF_tail, integral_const_mul,
     integral_normalCDF_neg_tail, hfactor] at hi
   have hpdf : normalPDF a = gaussianHazard a * normalCDF (-a) := by
     unfold gaussianHazard
     rw [div_mul_cancel₀ _ (ne_of_gt (normalCDF_pos (-a)))]
   rw [hpdf] at hi
-  have hbound : (a ^ 2 + 1 - a * gaussianHazard a) / 2 ≤ gaussianGap a ^ 2 := by
-    apply (mul_le_mul_iff_of_pos_right (normalCDF_pos (-a))).mp
+  have hbound : (a ^ 2 + 1 - a * gaussianHazard a) / 2 < gaussianGap a ^ 2 := by
+    apply (mul_lt_mul_iff_of_pos_right (normalCDF_pos (-a))).mp
     nlinarith [hi]
   unfold gaussianGap at *
   nlinarith
+
+/-- The weak variance bound used in Lemma 2.1. -/
+theorem one_sub_hazard_mul_gap_le_gap_sq (a : ℝ) :
+    1 - gaussianHazard a * gaussianGap a ≤ gaussianGap a ^ 2 :=
+  (one_sub_hazard_mul_gap_lt_gap_sq a).le
 
 /-- Differentiating `q' = q d` gives the second derivative in Lemma 2.1. -/
 theorem hasDerivAt_deriv_gaussianHazard (a : ℝ) :
