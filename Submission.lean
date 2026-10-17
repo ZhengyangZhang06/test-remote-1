@@ -23,3 +23,4 @@ import Submission.Obl.Entropy__smooth_approximation
 import Submission.Obl.Entropy__two_eigenvalue_compact_certificate
 import Submission.Obl.Entropy__two_eigenvalue_negative_certificate
 import Submission.Obl.Entropy__two_eigenvalue_positive_certificate
+import Submission.Obl.Entropy__two_eigenvalue_secant_deduction
