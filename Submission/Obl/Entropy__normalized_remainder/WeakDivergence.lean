@@ -60,20 +60,21 @@ lemma integral_mul_fderiv_smoothCutoff_tendsto {m : ℕ} {μ : Measure (E m)} {f
   simpa only [integral_zero] using ht
 
 /-- Density of compact tests in the smooth Gaussian H1 class, at the level of pairings. -/
-theorem weak_divergence_smooth_test {m : ℕ} {μ : Measure (E m)}
+theorem weak_divergence_test_of_compact_test {m : ℕ} {μ : Measure (E m)}
+    {k : ENat} (hk : k ≠ 0)
     {F : E m → ℝ} {v : Fin m → E m → ℝ}
     (hF : MemLp F 2 μ) (hv : ∀ r, MemLp (v r) 2 μ)
     (hweak : ∀ z : E m → ℝ,
-      ContDiff ℝ ((⊤ : ENat) : WithTop ENat) z → HasCompactSupport z →
+      ContDiff ℝ (k : WithTop ENat) z → HasCompactSupport z →
       (∫ x, F x * z x ∂μ) =
         ∑ r, ∫ x, v r x * fderiv ℝ z x (PiLp.single 2 r (1 : ℝ)) ∂μ)
-    {z : E m → ℝ} (hz : ContDiff ℝ ((⊤ : ENat) : WithTop ENat) z)
+    {z : E m → ℝ} (hz : ContDiff ℝ (k : WithTop ENat) z)
     (hzL : MemLp z 2 μ)
     (hzD : ∀ r, MemLp (fun x => fderiv ℝ z x (PiLp.single 2 r (1 : ℝ))) 2 μ) :
     (∫ x, F x * z x ∂μ) =
       ∑ r, ∫ x, v r x * fderiv ℝ z x (PiLp.single 2 r (1 : ℝ)) ∂μ := by
   let zn (n : ℕ) (x : E m) := z x * smoothCutoff n x
-  have hzn (n : ℕ) : ContDiff ℝ ((⊤ : ENat) : WithTop ENat) (zn n) :=
+  have hzn (n : ℕ) : ContDiff ℝ (k : WithTop ENat) (zn n) :=
     hz.mul (smoothCutoff_contDiff n)
   have hzc (n : ℕ) : HasCompactSupport (zn n) := (smoothCutoff_hasCompactSupport n).mul_left
   have hleft : Tendsto (fun n => ∫ x, F x * zn n x ∂μ) atTop
@@ -81,7 +82,7 @@ theorem weak_divergence_smooth_test {m : ℕ} {μ : Measure (E m)}
     simpa only [zn, Pi.mul_apply, mul_assoc] using! integral_mul_smoothCutoff_tendsto (hF.integrable_mul hzL)
   have hexpand (n : ℕ) (x e : E m) : fderiv ℝ (zn n) x e =
       fderiv ℝ z x e * smoothCutoff n x + z x * fderiv ℝ (smoothCutoff n) x e := by
-    have hd := hz.differentiable (by simp)
+    have hd := hz.differentiable (by exact_mod_cast hk)
     have hc := (smoothCutoff_contDiff (m := m) n (k := 1)).differentiable (by norm_num)
     dsimp [zn]
     erw [fderiv_mul (hd x) (hc x)]
@@ -106,6 +107,21 @@ theorem weak_divergence_smooth_test {m : ℕ} {μ : Measure (E m)}
   have he := funext (fun n => hweak (zn n) (hzn n) (hzc n))
   rw [he] at hleft
   exact tendsto_nhds_unique hleft hright
+
+/-- The infinitely smooth specialization used by the frozen interface. -/
+theorem weak_divergence_smooth_test {m : ℕ} {μ : Measure (E m)}
+    {F : E m → ℝ} {v : Fin m → E m → ℝ}
+    (hF : MemLp F 2 μ) (hv : ∀ r, MemLp (v r) 2 μ)
+    (hweak : ∀ z : E m → ℝ,
+      ContDiff ℝ ((⊤ : ENat) : WithTop ENat) z → HasCompactSupport z →
+      (∫ x, F x * z x ∂μ) =
+        ∑ r, ∫ x, v r x * fderiv ℝ z x (PiLp.single 2 r (1 : ℝ)) ∂μ)
+    {z : E m → ℝ} (hz : ContDiff ℝ ((⊤ : ENat) : WithTop ENat) z)
+    (hzL : MemLp z 2 μ)
+    (hzD : ∀ r, MemLp (fun x => fderiv ℝ z x (PiLp.single 2 r (1 : ℝ))) 2 μ) :
+    (∫ x, F x * z x ∂μ) =
+      ∑ r, ∫ x, v r x * fderiv ℝ z x (PiLp.single 2 r (1 : ℝ)) ∂μ :=
+  weak_divergence_test_of_compact_test (by simp) hF hv hweak hz hzL hzD
 
 /-- The frozen matrix weak-divergence interface admits all smooth H1 scalar tests. -/
 theorem WeakDivergence.smooth_test {m : ℕ} {F : E m → Mat m} {v : Fin m → E m → Mat m}
