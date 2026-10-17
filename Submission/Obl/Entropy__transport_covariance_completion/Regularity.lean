@@ -1,5 +1,5 @@
 import Submission.Obl.Entropy__transport_covariance_completion.Spectral
-import Submission.Obl.Entropy__smooth_bounded_matrix_calculus
+import Submission.Obl.Entropy__c1_bounded_matrix_calculus
 import Submission.Lib.GaussianTransport.GaussianModel
 import Submission.Obl.Entropy__centered_slack_transports.Fields
 
@@ -39,10 +39,12 @@ theorem cfc_field_memLp {m : ℕ} (hm : 1 ≤ m)
     (hs : ∀ i j, ContDiff ℝ ∞ (fun x => A x i j))
     (hb : ∃ R : ℝ, 0 < R ∧ ∀ x i j, |A x i j| ≤ R)
     {g : ℝ → ℝ} (hg : ContDiff ℝ ∞ g) :
-    (∀ i j, ContDiff ℝ ∞ (fun x => cfc g (A x) i j)) ∧
+    (∀ i j, ContDiff ℝ 1 (fun x => cfc g (A x) i j)) ∧
     (∀ i j, MemLp (fun x => cfc g (A x) i j) 2
       (stdGaussian (EuclideanSpace ℝ (Fin m)))) := by
-  obtain ⟨hcont, hbound⟩ := Submission.Entropy.smooth_bounded_matrix_calculus m hm A hA hs hb g hg
+  obtain ⟨hcont, hbound⟩ := Submission.Entropy.c1_bounded_matrix_calculus m hm A hA
+    (fun i j => (hs i j).of_le (by exact WithTop.coe_le_coe.mpr le_top)) hb g
+    (hg.of_le (by exact WithTop.coe_le_coe.mpr le_top))
   exact ⟨hcont, Submission.Obl.Entropy__centered_slack_transports.field_memLp
     (fun i j => (hcont i j).continuous) hbound⟩
 

@@ -1,5 +1,5 @@
 import Submission.Obl.Entropy__transport_covariance_completion.Pairing
-import Submission.Obl.Entropy__transport_covariance_completion.WeakTesting
+import Submission.Obl.Entropy__transport_covariance_completion.WeakC1
 
 namespace Submission.Obl.Entropy__transport_covariance_completion
 
@@ -20,7 +20,7 @@ theorem pairing_weak_testing (P : M) {H k : E → M} {v K : Fin m → E → M}
     (hv : ∀ r i j, MemLp (fun x => v r x i j) 2 γ)
     (hk : ∀ i j, MemLp (fun x => k x i j) 2 γ)
     (hK : ∀ r i j, MemLp (fun x => K r x i j) 2 γ)
-    (hks : ∀ i j, ContDiff ℝ ∞ (fun x => k x i j))
+    (hks : ∀ i j, ContDiff ℝ 1 (fun x => k x i j))
     (hder : ∀ r x i j, K r x i j = fderiv ℝ (fun y => k y i j) x (PiLp.single 2 r (1 : ℝ)))
     (hweak : ∀ i j, ∀ z : E → ℝ, ContDiff ℝ ∞ z → HasCompactSupport z →
       (∫ x, H x i j * z x ∂γ) = ∑ r, ∫ x, v r x i j *
@@ -31,7 +31,7 @@ theorem pairing_weak_testing (P : M) {H k : E → M} {v K : Fin m → E → M}
     have hd r : MemLp (fun x => fderiv ℝ (fun y => k y j i) x
         (PiLp.single 2 r (1 : ℝ))) 2 γ := by
       simpa only [← hder] using hK r j i
-    have h := weak_h1_testing (μ := γ) (fun r : Fin m => PiLp.single 2 r (1 : ℝ))
+    have h := weak_h1_testing_contDiff_one (μ := γ) volume (fun r : Fin m => PiLp.single 2 r (1 : ℝ))
       (hH l i) (fun r => hv r l i) (hweak l i) (hks j i) (hk j i) hd
     simpa only [← hder] using h
   simp only [pairing, he, Finset.mul_sum]
