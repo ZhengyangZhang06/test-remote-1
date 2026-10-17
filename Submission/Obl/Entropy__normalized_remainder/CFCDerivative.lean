@@ -38,6 +38,7 @@ lemma continuous_dslope_of_differentiable {f : ℝ → ℝ} (hf : Differentiable
   exact (continuousOn_dslope (Filter.univ_mem : Set.univ ∈ 𝓝 a)).2
     ⟨hf.continuous.continuousOn, hf a⟩
 
+omit [NormedSpace ℝ E] in
 /-- Continuity of the divided-difference CFC along Hermitian matrix fields. -/
 lemma continuous_cfc_dslope {A : E → Matrix n n ℝ} (hA : Continuous A)
     (hAH : ∀ x, (A x).IsHermitian) {f : ℝ → ℝ} (hf : Differentiable ℝ f) (a : ℝ) :
