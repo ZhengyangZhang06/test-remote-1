@@ -1,0 +1,17 @@
+{
+  "name": "MatrixEntropy",
+  "module": "Submission.Lib.MatrixEntropy",
+  "files": [
+    "Submission/Lib/MatrixEntropy.lean",
+    "Submission/Lib/MatrixEntropy/Completion.lean",
+    "Submission/Lib/MatrixEntropy/Expansion.lean",
+    "Submission/Lib/MatrixEntropy/LogDet.lean",
+    "Submission/Lib/MatrixEntropy/Squares.lean"
+  ],
+  "by": "x0024",
+  "gid": "g00047",
+  "from": "here:root",
+  "purpose": "",
+  "at": 1792219065.3609393,
+  "sha": "ad5a7c3e00b8587018ca715ad71c46d1d4725f3e"
+}
