@@ -30,6 +30,7 @@ lemma integrable_matrixSquareSum {F : α → Matrix n n ℝ}
     Integrable (fun x => matrixSquareSum (F x)) μ :=
   integrable_finsetSum _ (fun i _ => integrable_finsetSum _ (fun j _ => (hF i j).integrable_sq))
 
+omit [DecidableEq n] in
 lemma memLp_entries_of_squareSum_bound {F G : α → Matrix n n ℝ} {C : ℝ}
     (hF : ∀ i j, AEStronglyMeasurable (fun x => F x i j) μ)
     (hG : ∀ i j, MemLp (fun x => G x i j) 2 μ)
