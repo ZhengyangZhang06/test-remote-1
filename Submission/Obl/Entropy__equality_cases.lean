@@ -1,5 +1,6 @@
 import Mathlib
 import ChallengeDeps
+import Submission.Obl.Entropy__equality_cases.Rigidity
 import Submission.Obl.Entropy__lower_bound
 set_option linter.unusedVariables false
 
