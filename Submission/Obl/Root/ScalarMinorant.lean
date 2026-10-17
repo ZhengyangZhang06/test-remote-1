@@ -1,4 +1,4 @@
-import Submission.Obl.Root.LogCutoff
+import Submission.Lib.ScalarLog.Cutoff
 
 set_option backward.isDefEq.respectTransparency false
 set_option backward.isDefEq.respectTransparency.types false
@@ -224,9 +224,9 @@ theorem absorption_for_law (μ : Measure ℝ) [IsProbabilityMeasure μ] (p : ℝ
     (hsecond : Integrable (fun a : ℝ => a ^ 2) μ)
     (hmean : ∫ a, a ∂μ = 0) {lam r : ℝ} (hlam : 0 ≤ lam) (hr : 0 ≤ r)
     (hmoment : ∫ a, a ^ 2 ∂μ = lam + r) :
-    LogAbsorption.dualScale lam - 1 - Real.log (LogAbsorption.dualScale lam) -
+    Submission.Lib.ScalarLog.dualScale lam - 1 - Real.log (Submission.Lib.ScalarLog.dualScale lam) -
       absorptionFactor lam * (∫ a, p a ∂μ) ≤ (27 / 1000) * r - rigidityWeight lam / 1000 := by
-  have hlog := LogAbsorption.dual_log_le_weight hlam
+  have hlog := Submission.Lib.ScalarLog.dual_log_le_weight hlam
   have hmeanbound := integral_lower_bound_cutoff μ p hneg hpos htail hp hfirst hsecond hmean hlam hmoment
   have hprod := mul_le_mul_of_nonneg_left hmeanbound (absorptionFactor_nonneg hlam)
   have hloss := mul_le_mul_of_nonneg_right (factor_curvature_le hlam) hr
