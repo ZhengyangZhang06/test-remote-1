@@ -1,0 +1,22 @@
+{
+  "name": "GaussianTransport",
+  "module": "Submission.Lib.GaussianTransport",
+  "files": [
+    "Submission/Lib/GaussianTransport.lean",
+    "Submission/Lib/GaussianTransport/GaussianConvexity.lean",
+    "Submission/Lib/GaussianTransport/GaussianInverse.lean",
+    "Submission/Lib/GaussianTransport/GaussianMatrixInverse.lean",
+    "Submission/Lib/GaussianTransport/GaussianMatrixMean.lean",
+    "Submission/Lib/GaussianTransport/GaussianModel.lean",
+    "Submission/Lib/GaussianTransport/GaussianPushforward.lean",
+    "Submission/Lib/GaussianTransport/GaussianSlope.lean",
+    "Submission/Lib/GaussianTransport/GaussianTails.lean",
+    "Submission/Lib/GaussianTransport/ScalarMatrixDerivative.lean"
+  ],
+  "by": "x0052",
+  "gid": "g00046",
+  "from": "here:o001",
+  "purpose": "",
+  "at": 1792219091.435385,
+  "sha": "b48f9aa0dea75fbb764e0b0767b2d3d80512f351"
+}
