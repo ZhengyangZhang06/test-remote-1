@@ -16,7 +16,7 @@ def bernCoeffs (p : List ℚ) : List ℚ :=
 def Enclosure.LowerBound (A : Enclosure) (r : ℚ) : Prop :=
   A.poly.length ≤ 5 ∧ ∀ c ∈ bernCoeffs A.poly, r + A.error ≤ c
 
-instance (A : Enclosure) (r : ℚ) : Decidable (A.LowerBound r) :=
+scoped instance (A : Enclosure) (r : ℚ) : Decidable (A.LowerBound r) :=
   inferInstanceAs (Decidable (A.poly.length ≤ 5 ∧ ∀ c ∈ bernCoeffs A.poly, r + A.error ≤ c))
 
 private theorem quartic_bound (a b c d e m t : ℝ)

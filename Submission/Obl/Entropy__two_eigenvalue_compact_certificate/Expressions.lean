@@ -49,7 +49,6 @@ structure Model where
   radius : ℚ
   hazard : List ℚ
   ratio : List ℚ
-  deriving DecidableEq
 
 def Model.coordinate (M : Model) : List ℚ := [M.center, M.radius]
 

@@ -120,7 +120,7 @@ def Model.ODECheck (M : Model) (R K : ℚ) : Prop :=
   0 < M.radius ∧ pnorm M.qResidual ≤ R ∧ pnorm M.kResidual ≤ 2/10^10 ∧
     pnorm M.ratio ≤ K ∧ (⟨M.gap, 0⟩ : Enclosure).trunc.LowerBound (9/100)
 
-instance (M : Model) (R K : ℚ) : Decidable (M.ODECheck R K) :=
+scoped instance (M : Model) (R K : ℚ) : Decidable (M.ODECheck R K) :=
   inferInstanceAs (Decidable (0 < M.radius ∧ pnorm M.qResidual ≤ R ∧
     pnorm M.kResidual ≤ 2/10^10 ∧ pnorm M.ratio ≤ K ∧
     (⟨M.gap, 0⟩ : Enclosure).trunc.LowerBound (9/100)))

@@ -98,7 +98,6 @@ theorem hasDerivAt_peval (p : List ℚ) (x : ℝ) :
 structure Enclosure where
   poly : List ℚ
   error : ℚ
-  deriving DecidableEq
 
 def Enclosure.Holds (A : Enclosure) (x v : ℝ) : Prop :=
   |v - peval A.poly x| ≤ (A.error : ℝ)

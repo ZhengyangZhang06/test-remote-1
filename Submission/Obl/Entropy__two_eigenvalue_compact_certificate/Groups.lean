@@ -76,7 +76,7 @@ def groups (R : Bin) : List CExpr :=
 def Model.Check (M : Model) (R : Bin) : Prop :=
   ∀ A ∈ groups R, (A.enclose M.initial).LowerBound (1/10^6)
 
-instance (M : Model) (R : Bin) : Decidable (M.Check R) :=
+scoped instance (M : Model) (R : Bin) : Decidable (M.Check R) :=
   inferInstanceAs (Decidable (∀ A ∈ groups R, (A.enclose M.initial).LowerBound (1/10^6)))
 
 end Submission.Obl.Entropy__two_eigenvalue_compact_certificate
