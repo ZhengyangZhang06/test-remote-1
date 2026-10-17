@@ -1,4 +1,5 @@
 import Submission.Obl.Entropy__normalized_remainder.CFCField
+import Submission.Lib.PairEstimate.Integration
 
 open MeasureTheory
 open scoped BigOperators Matrix.Norms.L2Operator
@@ -23,7 +24,7 @@ omit [DecidableEq n] in
 lemma integrable_matrixSquareSum {F : α → Matrix n n ℝ}
     (hF : ∀ i j, MemLp (fun x => F x i j) 2 μ) :
     Integrable (fun x => matrixSquareSum (F x)) μ :=
-  integrable_finsetSum _ (fun i _ => integrable_finsetSum _ (fun j _ => (hF i j).integrable_sq))
+  Submission.Lib.PairEstimate.integrable_squareSum hF
 
 omit [DecidableEq n] in
 lemma memLp_entries_of_squareSum_bound {F G : α → Matrix n n ℝ} {C : ℝ}

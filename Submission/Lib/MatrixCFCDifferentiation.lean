@@ -3,7 +3,7 @@ Adapted from: here:o006
 Original matrix functional-calculus derivative proofs by session x0063.
 -/
 
-import Submission.Lib.MatrixCFCDifferentiation.CFCCoercive
+import Submission.Lib.MatrixCFCDifferentiation.CFCUniform
 
 /-!
 # Matrix functional-calculus derivatives
