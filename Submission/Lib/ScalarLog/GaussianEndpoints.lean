@@ -180,6 +180,25 @@ theorem log_hazard_neg_one_sub_neg_two_gt :
   have h2 := Real.log_lt_log (gaussianHazard_pos (-2)) gaussianHazard_neg_two_lt
   linarith
 
+/-- The logarithmic separation between `-3` and `-1`. -/
+theorem log_hazard_neg_one_sub_neg_three_gt :
+    (4 : ℝ) < Real.log (gaussianHazard (-1)) - Real.log (gaussianHazard (-3)) := by
+  have he : Real.exp 1 < (11 : ℝ) / 4 := by linarith [Real.exp_one_lt_d9]
+  have he4 : Real.exp 4 < (287 : ℝ) / 5 := by
+    calc
+      Real.exp 4 = Real.exp 1 ^ 4 := by norm_num [← Real.exp_nat_mul]
+      _ < (11 / 4 : ℝ) ^ 4 := pow_lt_pow_left₀ he (Real.exp_pos 1).le (by norm_num)
+      _ < 287 / 5 := by norm_num
+  have hl : (4 : ℝ) < Real.log (287 / 5) := (Real.lt_log_iff_exp_lt (by norm_num)).2 he4
+  have hratio : Real.log (287 / 5 : ℝ) =
+      Real.log (287 / 1000 : ℝ) - Real.log (1 / 200 : ℝ) := by
+    rw [← Real.log_div (by norm_num) (by norm_num)]
+    norm_num
+  rw [hratio] at hl
+  have h1 := Real.log_lt_log (by norm_num) gaussianHazard_neg_one_gt
+  have h2 := Real.log_lt_log (gaussianHazard_pos (-3)) gaussianHazard_neg_three_lt
+  linarith
+
 /-- The logarithmic separation between `-2` and `4`. -/
 theorem log_hazard_four_sub_neg_two_gt :
     (4 : ℝ) < Real.log (gaussianHazard 4) - Real.log (gaussianHazard (-2)) := by
