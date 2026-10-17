@@ -18,3 +18,6 @@ import Submission.Lib.EntropyRemainder.SmoothCutoff
 import Submission.Lib.EntropyRemainder.WeakDivergence
 import Submission.Lib.EntropyRemainder.CompactApprox
 import Submission.Lib.EntropyRemainder.WeakDivergenceC1
+import Submission.Lib.EntropyRemainder.WeakMatrix
+import Submission.Lib.EntropyRemainder.WeakWitness
+import Submission.Lib.EntropyRemainder.FirstChaosTrace
