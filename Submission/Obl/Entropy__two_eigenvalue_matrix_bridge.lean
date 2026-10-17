@@ -1,0 +1,34 @@
+import Mathlib
+import ChallengeDeps
+import Submission.Obl.Entropy__two_eigenvalue_matrix_bridge.Integration
+import Submission.Obl.Entropy__c1_bounded_matrix_calculus.CFCUniform
+set_option linter.unusedVariables false
+
+/-!
+# `Submission.Entropy.two_eigenvalue_matrix_bridge`
+
+Prove the theorem at the end of this file and keep its statement exactly as
+it is. Put helper declarations in `namespace Submission.Obl.Entropy__two_eigenvalue_matrix_bridge`, where others can
+reuse them, or make them `private`. Only this file and `Submission/Obl/Entropy__two_eigenvalue_matrix_bridge/`
+belong to this obligation.
+-/
+
+open Submission.Obl.Entropy__two_eigenvalue_matrix_bridge in
+theorem Submission.Entropy.two_eigenvalue_matrix_bridge : ∀ k q : ℝ → ℝ, ContDiff ℝ ((⊤ : ENat) : WithTop ENat) k → Continuous q → (∀ a : ℝ, 0 < q a) → (fun (b : ℝ → ℝ) => (fun (l : ℝ → ℝ) => (fun (f : ℝ → ℝ) => (fun (p : ℝ → ℝ) => (fun (e : ℝ → ℝ) => (fun (Q : ℝ → ℝ → ℝ) => (fun (delta : ℝ → ℝ → ℝ) => (fun (sigma : ℝ → ℝ → ℝ) => (∀ a : ℝ, 0 < p a) → ((fun (dd : (ℝ → ℝ) → ℝ → ℝ → ℝ) => (fun (dk : ℝ → ℝ → ℝ) => (fun (db : ℝ → ℝ → ℝ) => (fun (psi : ℝ → ℝ → ℝ) => (fun (H : ℝ → ℝ → ℝ → ℝ → ℝ → ℝ) => ∀ a c G g Z : ℝ, (H a c G g Z + H c a G g Z)/2 ≤ Q G (g-G/2) + sigma a c*Z^2) (fun a c G g Z => (40/37)*(G*b c + Z*dk a c - (7/25)*g)^2 + (42/37)*(G*b c + Z*dk a c - (3/4)*g)^2 + (27/592)*g^2 + (40/3)*(G*l c + Z*db a c)^2 + (5/17)*(G*e c + Z*psi a c + (3/2)*g*b c)^2 / p c)) (fun a c => dd f a c - deriv f c - 2*b c*dk a c - (80/3)*l c*db a c)) (fun a c => dd b a c - l c)) (fun a c => dd k a c - b c)) (fun v a c => if a = c then deriv v c else (v a - v c)/(a-c))) → ∀ m : ℕ, 1 ≤ m → ∀ A : EuclideanSpace ℝ (Fin m) → Matrix (Fin m) (Fin m) ℝ, ∀ hA : ∀ x, (A x).IsHermitian, (fun gamma => (fun I => (fun L2 => (fun d => (fun Z => (fun K => ∀ X : Fin m → Matrix (Fin m) (Fin m) ℝ, (∀ r, (X r).IsHermitian) → (fun Y => (fun U => (fun sep => (∀ i j, ContDiff ℝ ((⊤ : ENat) : WithTop ENat) (fun x => A x i j)) → (∃ R : ℝ, 0 < R ∧ ∀ x i j, |A x i j| ≤ R) → (∀ r, L2 (Z r)) → (∀ r, L2 (K r)) → ∀ g : Fin m → (EuclideanSpace ℝ (Fin m) → Matrix (Fin m) (Fin m) ℝ), (∀ r x, (g r x).IsHermitian) → (∀ r, L2 (g r)) → (fun N => (fun Dr => (fun Lr => (fun Mr => (fun PB => (fun G => (fun QE => PB ≤ QE + sep) (I (fun x => Finset.sum Finset.univ (fun r : Fin m => Finset.sum Finset.univ (fun i : Fin m => Finset.sum Finset.univ (fun j : Fin m => Q (G r x i j) (g r x i j - G r x i j / 2))))))) (d Y)) (Finset.sum Finset.univ (fun r : Fin m => (40/37)*N (fun x => Dr r x - (7/25 : ℝ) • g r x) + (42/37)*N (fun x => Dr r x - (3/4 : ℝ) • g r x) + (27/592)*N (g r) + (40/3)*N (Lr r) + (5/17)*N (fun x => Mr r x * cfc (fun a => (Real.sqrt (p a))⁻¹) (A x))))) (fun r x => d (fun y => cfc f (A y)) r x - X r * cfc (deriv f) (A x) - 2 • (Dr r x * cfc b (A x)) - (80/3 : ℝ) • (Lr r x * cfc l (A x)) + (3/2 : ℝ) • (g r x * cfc b (A x)))) (fun r x => d (fun y => cfc b (A y)) r x - X r * cfc l (A x))) (fun r x => K r x - X r * cfc b (A x))) (fun F : EuclideanSpace ℝ (Fin m) → Matrix (Fin m) (Fin m) ℝ => I (fun x => Finset.sum Finset.univ (fun i : Fin m => Finset.sum Finset.univ (fun j : Fin m => (F x i j)^2))))) (I (fun x => Finset.sum Finset.univ (fun r : Fin m => Finset.sum Finset.univ (fun i : Fin m => Finset.sum Finset.univ (fun j : Fin m => sigma ((hA x).eigenvalues i) ((hA x).eigenvalues j) * ((U x).transpose * Z r x * U x) i j ^ 2)))))) (fun x => ((hA x).eigenvectorUnitary : Matrix (Fin m) (Fin m) ℝ))) (fun x : EuclideanSpace ℝ (Fin m) => A x - Finset.sum Finset.univ (fun r : Fin m => x r • X r))) (d (fun x => cfc k (A x)))) (d A)) (fun (F : EuclideanSpace ℝ (Fin m) → Matrix (Fin m) (Fin m) ℝ) (r : Fin m) (x : EuclideanSpace ℝ (Fin m)) => Matrix.of (fun i j => fderiv ℝ (fun y => F y i j) x (PiLp.single 2 r (1 : ℝ))))) (fun F : EuclideanSpace ℝ (Fin m) → Matrix (Fin m) (Fin m) ℝ => ∀ i j, MeasureTheory.MemLp (fun x => F x i j) 2 gamma)) (MeasureTheory.integral gamma)) (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m)))) (fun a c => (1 + (if min a c < -3 then 0 else if min a c < -2 then 19/100 else if min a c < -1 then 38/100 else 68/100)) / 16 * (1 + (delta a c)^2/30 + (delta a c)^4/1680) * (delta a c)^2)) (fun a c => Real.log (q a) - Real.log (q c))) (fun u v => (43/100)*u^2 + (26/100)*u*v + (68/25)*v^2)) (fun a => deriv f a - 2*(b a)^2 - (80/3)*(l a)^2)) (fun a => deriv f a - (b a)^2 - (40/3)*(l a)^2)) (fun a => k a * (1 + b a))) (deriv b)) (deriv k) := by
+  intro k q hk hq hqpos
+  dsimp only
+  intro hp hs m hm A hA X hX hAc hAb hZ hK g hg hgL2
+  refine integrated_bridge_of_cfc (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m)))
+    k q hk hq hqpos hp hs A hA hAc hAb X hX hZ hK g hg hgL2 ?_ ?_
+  · intro v hv r x i j
+    simpa only [rotate, entryPartial, dividedDiff_eq_dslope,
+      Submission.Obl.Entropy__c1_bounded_matrix_calculus.entryDirectionalDerivative] using!
+      Submission.Obl.Entropy__c1_bounded_matrix_calculus.entryDirectionalDerivative_cfc_eigenbasis
+        A (fun i j => (hAc i j).continuous) hA hv
+        (fun i j => (hAc i j).differentiable (by norm_num) x)
+        (PiLp.single 2 r (1 : ℝ)) i j
+  · intro v hv r i j
+    exact Submission.Obl.Entropy__c1_bounded_matrix_calculus.memLp_entryDirectionalDerivative_cfc_of_bounded
+      A (fun i j => (hAc i j).continuous) hA hAb hv
+      (fun x i j => (hAc i j).differentiable (by norm_num) x)
+      (PiLp.single 2 r (1 : ℝ)) (hZ r) i j
