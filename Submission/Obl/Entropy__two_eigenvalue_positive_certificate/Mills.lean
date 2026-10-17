@@ -89,4 +89,72 @@ theorem mills_bounds {a : ℝ} (ha : 0 < a) :
       (by simpa using ht.sub (tendsto_normalPDF_atTop.mul tendsto_millsUpper)) ha
     linarith
 
+
+
+/-- Higher alternating truncations keep three differentiated tail quantities accurate. -/
+noncomputable def millsUpper7 (a : ℝ) : ℝ := millsLower a + 10395*(a⁻¹)^13
+
+noncomputable def millsLower8 (a : ℝ) : ℝ := millsUpper7 a - 135135*(a⁻¹)^15
+
+private theorem hasDerivAt_millsUpper7 {a : ℝ} (ha : a ≠ 0) :
+    HasDerivAt millsUpper7
+      (-(a⁻¹)^2 + 3*(a⁻¹)^4 - 15*(a⁻¹)^6 + 105*(a⁻¹)^8 - 945*(a⁻¹)^10 +
+        10395*(a⁻¹)^12 - 135135*(a⁻¹)^14) a := by
+  convert! (hasDerivAt_millsLower ha).add (((hasDerivAt_inv ha).pow 13).const_mul 10395)
+    using 1
+  simp only [inv_pow]
+  ring
+
+private theorem hasDerivAt_millsLower8 {a : ℝ} (ha : a ≠ 0) :
+    HasDerivAt millsLower8
+      (-(a⁻¹)^2 + 3*(a⁻¹)^4 - 15*(a⁻¹)^6 + 105*(a⁻¹)^8 - 945*(a⁻¹)^10 +
+        10395*(a⁻¹)^12 - 135135*(a⁻¹)^14 + 2027025*(a⁻¹)^16) a := by
+  convert! (hasDerivAt_millsUpper7 ha).sub (((hasDerivAt_inv ha).pow 15).const_mul 135135)
+    using 1
+  simp only [inv_pow]
+  ring
+
+private theorem tendsto_millsUpper7 : Tendsto millsUpper7 atTop (𝓝 0) := by
+  convert! tendsto_millsLower.add
+    (((tendsto_inv_atTop_zero (𝕜 := ℝ)).pow 13).const_mul 10395) using 1 <;> norm_num
+
+private theorem tendsto_millsLower8 : Tendsto millsLower8 atTop (𝓝 0) := by
+  convert! tendsto_millsUpper7.sub
+    (((tendsto_inv_atTop_zero (𝕜 := ℝ)).pow 15).const_mul 135135) using 1 <;> norm_num
+
+/-- Seven/eight-term bounds for the Gaussian tail. -/
+theorem mills_bounds_high {a : ℝ} (ha : 0 < a) :
+    normalPDF a * millsLower8 a ≤ normalCDF (-a) ∧
+    normalCDF (-a) ≤ normalPDF a * millsUpper7 a := by
+  have hc (x : ℝ) : HasDerivAt (fun y => normalCDF (-y)) (-normalPDF x) x := by
+    convert! (hasDerivAt_normalCDF (-x)).comp x (hasDerivAt_id x).neg using 1
+    simp [normalPDF_neg]
+  have ht : Tendsto (fun x => normalCDF (-x)) atTop (𝓝 0) :=
+    (ProbabilityTheory.tendsto_cdf_atBot _).comp tendsto_neg_atTop_atBot
+  constructor
+  · have hd (x : ℝ) (hx : 0 < x) : HasDerivAt
+        (fun y => normalPDF y * millsLower8 y - normalCDF (-y))
+        (2027025 * normalPDF x * (x⁻¹)^16) x := by
+      convert! ((hasDerivAt_normalPDF x).mul (hasDerivAt_millsLower8 hx.ne')).sub (hc x)
+        using 1
+      dsimp [millsLower8, millsUpper7, millsLower, millsUpper]
+      field_simp
+      <;> ring
+    have hn := nonpos_of_deriv_nonneg_of_tendsto_zero hd
+      (fun x hx => by have := normalPDF_pos x; positivity)
+      (by simpa using (tendsto_normalPDF_atTop.mul tendsto_millsLower8).sub ht) ha
+    linarith
+  · have hd (x : ℝ) (hx : 0 < x) : HasDerivAt
+        (fun y => normalCDF (-y) - normalPDF y * millsUpper7 y)
+        (135135 * normalPDF x * (x⁻¹)^14) x := by
+      convert! (hc x).sub ((hasDerivAt_normalPDF x).mul (hasDerivAt_millsUpper7 hx.ne'))
+        using 1
+      dsimp [millsUpper7, millsLower, millsUpper]
+      field_simp
+      <;> ring
+    have hn := nonpos_of_deriv_nonneg_of_tendsto_zero hd
+      (fun x hx => by have := normalPDF_pos x; positivity)
+      (by simpa using ht.sub (tendsto_normalPDF_atTop.mul tendsto_millsUpper7)) ha
+    linarith
+
 end Submission.Obl.Entropy__two_eigenvalue_positive_certificate
