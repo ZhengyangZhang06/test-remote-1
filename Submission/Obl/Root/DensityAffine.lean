@@ -295,11 +295,48 @@ theorem integrable_second_affineDensity {n : ℕ}
   rw [abs_of_nonneg (sq_nonneg _)]
   have hlin := e.toContinuousLinearMap.le_opNorm x
   have hsum : ‖e x + b‖ ≤ ‖e.toContinuousLinearMap‖ * ‖x‖ + ‖b‖ :=
-    (norm_add_le _ _).trans (by simpa only [ContinuousLinearEquiv.coe_coe] using
-      add_le_add hlin (le_refl ‖b‖))
+    (norm_add_le _ _).trans (by
+      simpa only [ContinuousLinearEquiv.coe_coe] using (add_le_add hlin (le_refl ‖b‖)))
   have hsq : ‖e x + b‖ ^ 2 ≤ (‖e.toContinuousLinearMap‖ * ‖x‖ + ‖b‖) ^ 2 :=
     pow_le_pow_left₀ (norm_nonneg _) hsum 2
   nlinarith [sq_nonneg (‖e.toContinuousLinearMap‖ * ‖x‖ - ‖b‖),
     mul_nonneg (sq_nonneg ‖b‖) (sq_nonneg ‖x‖), sq_nonneg ‖e.toContinuousLinearMap‖]
+
+
+/-- Upper semicontinuity is preserved by the affine image density. -/
+theorem upperSemicontinuous_affineDensity {n : ℕ}
+    (e : EuclideanSpace ℝ (Fin n) ≃L[ℝ] EuclideanSpace ℝ (Fin n))
+    (b : EuclideanSpace ℝ (Fin n)) {f : EuclideanSpace ℝ (Fin n) → ℝ}
+    (hf : UpperSemicontinuous f) : UpperSemicontinuous (affineDensity e b f) := by
+  have hpre : UpperSemicontinuous (fun y => f (e.symm (y - b))) :=
+    hf.comp (by fun_prop)
+  exact (continuous_const.mul continuous_id).comp_upperSemicontinuous hpre
+    (fun _ _ h => mul_le_mul_of_nonneg_left h (inv_nonneg.mpr (abs_nonneg _)))
+
+/-- Log concavity on the positive set is preserved by an affine image. -/
+theorem log_concave_affineDensity {n : ℕ}
+    (e : EuclideanSpace ℝ (Fin n) ≃L[ℝ] EuclideanSpace ℝ (Fin n))
+    (b : EuclideanSpace ℝ (Fin n)) {f : EuclideanSpace ℝ (Fin n) → ℝ}
+    (hf : ConcaveOn ℝ {x | 0 < f x} (fun x => Real.log (f x))) :
+    ConcaveOn ℝ {y | 0 < affineDensity e b f y}
+      (fun y => Real.log (affineDensity e b f y)) := by
+  let A : EuclideanSpace ℝ (Fin n) →ᵃ[ℝ] EuclideanSpace ℝ (Fin n) :=
+    e.symm.toLinearMap.toAffineMap - AffineMap.const ℝ _ (e.symm b)
+  have hA (x : EuclideanSpace ℝ (Fin n)) : A x = e.symm (x - b) := by
+    simp [A, map_sub]
+  have hd : 0 < |LinearMap.det e.toLinearMap|⁻¹ :=
+    inv_pos.mpr (abs_pos.mpr e.toLinearEquiv.isUnit_det'.ne_zero)
+  have hs : {y | 0 < affineDensity e b f y} = A ⁻¹' {x | 0 < f x} := by
+    ext y
+    simp only [affineDensity, Set.mem_ofPred_eq, Set.mem_preimage, hA,
+      mul_pos_iff_of_pos_left hd]
+  rw [hs]
+  apply ((hf.comp_affineMap A).add_const (-Real.log |LinearMap.det e.toLinearMap|)).congr
+  intro y hy
+  have hy' : f (e.symm (y - b)) ≠ 0 := ne_of_gt (by simpa only [Set.mem_preimage,
+    Set.mem_ofPred_eq, hA] using hy)
+  dsimp only [Pi.add_apply, Function.comp_apply]
+  rw [affineDensity, Real.log_mul (ne_of_gt hd) hy', Real.log_inv, hA]
+  ring
 
 end Submission.Obl.Root.DensityAffine
