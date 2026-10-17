@@ -34,7 +34,7 @@ noncomputable def hstar (a : ℝ) := 1 + 3*b a + k a*z a
 noncomputable def chi (a : ℝ) := l a / (q a-a)
 noncomputable def logq (a : ℝ) := Real.log (q a)
 noncomputable def delta (a c : ℝ) := logq a - logq c
-noncomputable def m0 (a : ℝ) :=
+noncomputable def m0 (a : ℝ) : ℝ :=
   if a < -3 then 0 else if a < -2 then 19/100 else if a < -1 then 38/100 else 68/100
 noncomputable def sigma (a c : ℝ) :=
   (1 + m0 (min a c)) / 16 * (1 + (delta a c)^2/30 + (delta a c)^4/1680) *
