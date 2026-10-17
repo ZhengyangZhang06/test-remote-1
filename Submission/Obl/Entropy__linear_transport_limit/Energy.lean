@@ -122,7 +122,7 @@ theorem integral_cfc_energy_le {α : Type*} [MeasurableSpace α] {μ : Measure �
 
 /-- From coefficient convergence and the vanishing remainder to convergence of the actual
 Jacobians. This is the field-to-derivative part of Section 6. -/
-theorem jacobian_limit
+theorem jacobian_entries_limit
     {Fseq : ℕ → E m → E m} {Aseq : ℕ → E m → Mat m}
     {Xseq : ℕ → Fin m → Mat m} {X : Fin m → Mat m}
     (hF : ∀ n, ContDiff ℝ 1 (Fseq n))
@@ -134,9 +134,11 @@ theorem jacobian_limit
       ∑ i, ∑ j, (Aseq n x i j - ∑ r, x r * Xseq n r i j) ^ 2
         ∂stdGaussian (E m)) atTop (𝓝 0))
     (hX : Tendsto Xseq atTop (𝓝 X)) (hXherm : ∀ r, (X r).IsHermitian) :
-    let J := fun x : E m => entriesCLM m (entries (cfc q (linearField X x)))
-    Continuous J ∧ MemLp J 2 (stdGaussian (E m)) ∧
-      Tendsto (fun n => ∫ x : E m, ‖fderiv ℝ (Fseq n) x - J x‖ ^ 2
+    let Jseq := fun n (x : E m) => entries (cfc q (Aseq n x))
+    let J := fun x : E m => entries (cfc q (linearField X x))
+    (∀ n, MemLp (Jseq n) 2 (stdGaussian (E m))) ∧
+      Continuous J ∧ MemLp J 2 (stdGaussian (E m)) ∧
+      Tendsto (fun n => ∫ x : E m, ‖Jseq n x - J x‖ ^ 2
         ∂stdGaussian (E m)) atTop (𝓝 0) := by
   dsimp only
   have hAlp : ∀ n, MemLp (fun x => entries (Aseq n x)) 2 (stdGaussian (E m)) :=
@@ -158,12 +160,6 @@ theorem jacobian_limit
     apply squeeze_zero (fun _ => integral_nonneg (fun _ => sq_nonneg _)) _ hfield
     exact fun n => integral_cfc_energy_le hq (hA n).1 (linearField_hermitian hXherm)
       (hAlp n) (memLp_linearField X) (hJlp n) hJlim
-  refine ⟨(entriesCLM m).continuous.comp (lipschitz_cfc_linearField hq hXherm).continuous,
-    hJlim.continuousLinearMap_comp (entriesCLM m), ?_⟩
-  have heq (n : ℕ) (x : E m) :
-      entriesCLM m (entries (cfc q (Aseq n x))) = fderiv ℝ (Fseq n) x := by
-    ext v i
-    exact (hderiv n x v i).symm
-  simpa only [heq] using tendsto_energy_clm (entriesCLM m) hJlp hJlim hJfield
+  exact ⟨hJlp, (lipschitz_cfc_linearField hq hXherm).continuous, hJlim, hJfield⟩
 
 end Submission.Obl.Entropy__linear_transport_limit
