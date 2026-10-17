@@ -1,5 +1,7 @@
 import Submission.Obl.Entropy__two_eigenvalue_matrix_bridge.Pointwise
 
+/-! Readable definitions of the frozen residuals and their elementary calculus. -/
+
 open scoped BigOperators Topology
 open Matrix MeasureTheory ProbabilityTheory
 
@@ -11,6 +13,7 @@ noncomputable def entryPartial (A : EuclideanSpace ℝ (Fin m) → Matrix n n �
     (r : Fin m) (x : EuclideanSpace ℝ (Fin m)) : Matrix n n ℝ :=
   Matrix.of fun i j => fderiv ℝ (fun y => A y i j) x (PiLp.single 2 r (1 : ℝ))
 
+omit [Fintype n] [DecidableEq n] in
 lemma entryPartial_isHermitian (A : EuclideanSpace ℝ (Fin m) → Matrix n n ℝ)
     (hA : ∀ x, (A x).IsHermitian) (r : Fin m) (x : EuclideanSpace ℝ (Fin m)) :
     (entryPartial A r x).IsHermitian := by
@@ -21,10 +24,12 @@ lemma entryPartial_isHermitian (A : EuclideanSpace ℝ (Fin m) → Matrix n n �
     simpa only [star_trivial] using (hA y).apply i j
   rw [heq]
 
+omit [Fintype n] [DecidableEq n] in
 lemma measurable_entryPartial (A : EuclideanSpace ℝ (Fin m) → Matrix n n ℝ)
     (r : Fin m) (i j : n) : Measurable (fun x => entryPartial A r x i j) :=
   measurable_fderiv_apply_const ℝ (fun y => A y i j) _
 
+omit [Fintype n] [DecidableEq n] in
 lemma linearPart_hasFDerivAt (X : Fin m → Matrix n n ℝ)
     (x : EuclideanSpace ℝ (Fin m)) (i j : n) :
     HasFDerivAt (fun y : EuclideanSpace ℝ (Fin m) => ∑ s, y s * X s i j)
@@ -39,7 +44,7 @@ lemma entryPartial_remainder (A : EuclideanSpace ℝ (Fin m) → Matrix n n ℝ)
   simp only [entryPartial, Matrix.of_apply, Matrix.sub_apply, Matrix.sum_apply,
     Matrix.smul_apply, smul_eq_mul]
   erw [((hA i j x).hasFDerivAt.sub (linearPart_hasFDerivAt X x i j)).fderiv]
-  simp [ContinuousLinearMap.sum_apply, PiLp.single_apply, PiLp.proj_apply]
+  simp [PiLp.single_apply, PiLp.proj_apply]
 
 noncomputable def firstResidual (k : ℝ → ℝ)
     (A : EuclideanSpace ℝ (Fin m) → Matrix n n ℝ) (X : Fin m → Matrix n n ℝ)
@@ -81,7 +86,7 @@ lemma dividedDiff_eq_dslope (v : ℝ → ℝ) (a c : ℝ) : dividedDiff v a c = 
     simp [dividedDiff, dslope_same]
   · rw [dividedDiff, if_neg h, dslope_of_ne v (Ne.symm h), slope_def_field]
     field_simp
-    <;> ring
+    ring
 
 lemma scalarF_smooth {k : ℝ → ℝ} (hk : ContDiff ℝ (⊤ : ENat) k) :
     ContDiff ℝ (⊤ : ENat) (scalarF k) := by

@@ -1,6 +1,11 @@
 import Submission.Lib.PairEstimate.SpectralAlgebra
 import Submission.Lib.PairEstimate.Integration
 
+/-!
+The threshold projectors are measurable by continuous ramp approximation.
+Commutators with `v(A)` encode spectral gaps without differentiating eigenvectors.
+-/
+
 open scoped BigOperators Topology
 open Matrix MeasureTheory Filter
 
@@ -109,6 +114,7 @@ lemma cfc_cutRamp_eventually {A : Matrix n n ℝ} (hA : A.IsHermitian) (t : ℝ)
   exact hk i
 
 open scoped Matrix.Norms.L2Operator in
+/-- A closed spectral threshold is measurable even through eigenvalue collisions. -/
 lemma measurable_cfc_cut {Ω : Type*} [TopologicalSpace Ω] [MeasurableSpace Ω]
     [OpensMeasurableSpace Ω] (A : Ω → Matrix n n ℝ) (hA : ∀ x, (A x).IsHermitian)
     (hc : Continuous A) (t : ℝ) (i j : n) :

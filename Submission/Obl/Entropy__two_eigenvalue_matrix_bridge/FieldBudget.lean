@@ -1,5 +1,7 @@
 import Submission.Obl.Entropy__two_eigenvalue_matrix_bridge.Fields
 
+/-! Identify the three matrix residuals with the scalar endpoint residuals. -/
+
 open scoped BigOperators
 open Matrix
 

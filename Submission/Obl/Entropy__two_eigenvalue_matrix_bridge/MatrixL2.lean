@@ -1,5 +1,7 @@
 import Submission.Obl.Entropy__two_eigenvalue_matrix_bridge.SpectralEnergy
 
+/-! Entry bounds for functional calculus and square integrability of matrix products. -/
+
 open scoped BigOperators Topology
 open Matrix MeasureTheory Filter
 
@@ -9,7 +11,8 @@ open Submission.Lib.PairEstimate
 
 variable {n Ω : Type*} [Fintype n] [DecidableEq n]
 
-lemma mul_entry_bound (M N : Matrix n n ℝ) {C D : ℝ} (hC : 0 ≤ C) (hD : 0 ≤ D)
+omit [DecidableEq n] in
+lemma mul_entry_bound (M N : Matrix n n ℝ) {C D : ℝ} (hC : 0 ≤ C) (_hD : 0 ≤ D)
     (hM : ∀ i j, |M i j| ≤ C) (hN : ∀ i j, |N i j| ≤ D) (i j : n) :
     |(M * N) i j| ≤ (Fintype.card n : ℝ) * (C * D) := by
   rw [Matrix.mul_apply]
@@ -42,11 +45,10 @@ lemma cfc_entry_bound {A : Matrix n n ℝ} (hA : A.IsHermitian)
     (i j : n) : |cfc f A i j| ≤ (Fintype.card n : ℝ) * C := by
   rw [hA.cfc_eq, Matrix.IsHermitian.cfc, Unitary.conjStarAlgAut_apply]
   simp only [Matrix.star_eq_conjTranspose, Matrix.conjTranspose_eq_transpose_of_trivial,
-    Matrix.transpose_apply,
     RCLike.ofReal_real_eq_id]
   rw [Matrix.mul_apply]
   simp only [Matrix.mul_diagonal, Matrix.transpose_apply, Function.comp_apply,
-    RCLike.ofReal_real_eq_id, id_eq]
+    id_eq]
   calc
     _ ≤ ∑ k, |(hA.eigenvectorUnitary : Matrix n n ℝ) i k * f (hA.eigenvalues k) *
         (hA.eigenvectorUnitary : Matrix n n ℝ) j k| := Finset.abs_sum_le_sum_abs _ _
@@ -81,6 +83,7 @@ lemma bounded_cfc_entries (A : Ω → Matrix n n ℝ) (hA : ∀ x, (A x).IsHermi
 section Measure
 variable [MeasurableSpace Ω] {μ : Measure Ω}
 
+omit [DecidableEq n] in
 lemma l2_mul_bounded_left {F B : Ω → Matrix n n ℝ}
     (hF : ∀ i j, MemLp (fun x => F x i j) 2 μ)
     (hB : ∀ i j, AEStronglyMeasurable (fun x => B x i j) μ)
@@ -95,6 +98,7 @@ lemma l2_mul_bounded_left {F B : Ω → Matrix n n ℝ}
     simp only [Real.norm_eq_abs, Pi.mul_apply, abs_mul]
     exact mul_le_mul_of_nonneg_right (hb x i k) (abs_nonneg _)
 
+omit [DecidableEq n] in
 lemma l2_mul_bounded_right {F B : Ω → Matrix n n ℝ}
     (hF : ∀ i j, MemLp (fun x => F x i j) 2 μ)
     (hB : ∀ i j, AEStronglyMeasurable (fun x => B x i j) μ)

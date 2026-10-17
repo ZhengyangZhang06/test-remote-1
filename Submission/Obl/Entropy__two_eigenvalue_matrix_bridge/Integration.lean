@@ -1,5 +1,7 @@
 import Submission.Obl.Entropy__two_eigenvalue_matrix_bridge.FieldBudget
 
+/-! Integrate the matrix budget after establishing all residuals are square integrable. -/
+
 open scoped BigOperators Topology
 open Matrix MeasureTheory
 

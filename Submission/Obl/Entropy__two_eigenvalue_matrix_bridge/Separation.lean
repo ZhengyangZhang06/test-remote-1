@@ -1,5 +1,11 @@
 import Submission.Obl.Entropy__two_eigenvalue_matrix_bridge.MatrixL2
 
+/-!
+The exact separation coefficient is a positive combination of unprojected and
+threshold-projected commutator squares. This gives an integrable expression in
+fixed coordinates, including at the three discontinuous spectral cutoffs.
+-/
+
 open scoped BigOperators Topology
 open Matrix MeasureTheory Filter
 
@@ -136,6 +142,7 @@ lemma integrable_separationEnergy (A Z : Ω → Matrix n n ℝ)
   exact (((hM.add ((hPM (-3)).const_mul (19/100))).add
     ((hPM (-2)).const_mul (19/100))).add ((hPM (-1)).const_mul (3/10))).div_const 16
 
+/-- Integrability of the spectral sum with the exact frozen cutoff convention. -/
 lemma integrable_separation_spectral (A Z : Ω → Matrix n n ℝ)
     (hA : ∀ x, (A x).IsHermitian) (hAc : Continuous A)
     (hAb : ∃ R : ℝ, 0 ≤ R ∧ ∀ x i j, |A x i j| ≤ R)

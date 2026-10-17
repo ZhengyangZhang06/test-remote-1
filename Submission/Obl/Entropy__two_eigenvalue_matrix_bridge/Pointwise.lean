@@ -1,5 +1,7 @@
 import Submission.Obl.Entropy__two_eigenvalue_matrix_bridge.Separation
 
+/-! Transposed-entry pairing lifts the scalar endpoint inequality to matrix energies. -/
+
 open scoped BigOperators
 open Matrix
 
@@ -11,9 +13,11 @@ variable {n : Type*} [Fintype n] [DecidableEq n]
 
 noncomputable def rotate (U M : Matrix n n ℝ) : Matrix n n ℝ := U.transpose * M * U
 
+omit [DecidableEq n] in
 lemma rotate_sub (U M N : Matrix n n ℝ) : rotate U (M - N) = rotate U M - rotate U N := by
   simp [rotate, Matrix.mul_sub, Matrix.sub_mul]
 
+omit [DecidableEq n] in
 lemma rotate_add (U M N : Matrix n n ℝ) : rotate U (M + N) = rotate U M + rotate U N := by
   simp [rotate, Matrix.mul_add, Matrix.add_mul]
 
@@ -23,6 +27,7 @@ lemma rotate_smul (U M : Matrix n n ℝ) (c : ℝ) : rotate U (c • M) = c • 
 lemma rotate_nsmul (U M : Matrix n n ℝ) (c : ℕ) : rotate U (c • M) = c • rotate U M := by
   simp only [rotate, Matrix.mul_smul, Matrix.smul_mul]
 
+omit [DecidableEq n] in
 lemma rotate_symmetric (U M : Matrix n n ℝ) (hM : M.IsHermitian) (i j : n) :
     rotate U M j i = rotate U M i j := by
   have hh : (rotate U M).IsHermitian := by
