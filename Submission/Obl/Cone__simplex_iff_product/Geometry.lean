@@ -74,7 +74,7 @@ theorem isClosed_cone {n : ℕ} {K : Set (E n)} (hK : IsCompact K) : IsClosed (c
   let S : Set (E (n + 1) × K) :=
     {p | 0 ≤ p.1 0 ∧ ∀ i : Fin n, p.1 i.succ = p.1 0 * (p.2 : E n) i}
   have hS : IsClosed S := by
-    simp only [S, setOf_and, setOf_forall]
+    simp only [S, ofPred_and, ofPred_forall]
     apply IsClosed.inter (isClosed_le continuous_const (by fun_prop))
     exact isClosed_iInter fun i => isClosed_eq (by fun_prop) (by fun_prop)
   have he : Prod.fst '' S = cone K := by
