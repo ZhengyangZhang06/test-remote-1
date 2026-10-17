@@ -120,4 +120,12 @@ theorem ae_eq_zero_of_integral_hermitePoly {f : ℝ → ℝ} (hf : MemLp f 2 γ)
   intro n
   simpa using hpoly (X ^ n)
 
+theorem ae_eq_zero_of_integral_hermiteFunction {f : ℝ → ℝ} (hf : MemLp f 2 γ)
+    (horth : ∀ n, (∫ x, f x * hermiteFunction n x ∂γ) = 0) : f =ᵐ[γ] 0 := by
+  apply ae_eq_zero_of_integral_hermitePoly hf
+  intro n
+  have h := horth n
+  simp only [hermiteFunction, ← mul_div_assoc, integral_div] at h
+  exact (div_eq_zero_iff).mp h |>.resolve_right (by positivity)
+
 end Submission.Obl.Entropy__gaussian_chaos_resolvent
