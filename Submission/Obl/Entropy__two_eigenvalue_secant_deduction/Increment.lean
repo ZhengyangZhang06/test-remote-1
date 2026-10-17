@@ -85,11 +85,11 @@ lemma continuous_J (j : ℝ) : Continuous (J j) := by
   fun_prop
 
 /-- A pointwise derivative-cost bound controls each partial interval. -/
-lemma J_sub_le {j a c P : ℝ} (hac : a ≤ c) (hP : 0 ≤ P) (hp : 0 < p j)
-    (hl : ∀ x ∈ Icc a c, 0 < l x)
-    (hF : ∀ x ∈ Icc a c, Fcost j x ≤ P) :
+lemma J_sub_le_open {j a c P : ℝ} (hac : a ≤ c) (hP : 0 ≤ P) (hp : 0 < p j)
+    (hl : ∀ x ∈ Ioo a c, 0 < l x)
+    (hF : ∀ x ∈ Ioo a c, Fcost j x ≤ P) :
     ‖J j c-J j a‖ ≤ Real.sqrt P * (logq c-logq a) := by
-  have hder (x : ℝ) (hx : x ∈ Icc a c) :
+  have hder (x : ℝ) (hx : x ∈ Ioo a c) :
       ‖deriv (J j) x‖ ≤ Real.sqrt P * gaussianGap x := by
     rw [(hasDerivAt_J j x (hl x hx).ne').deriv, norm_smul,
       Real.norm_of_nonneg (gaussianGap_pos x).le]
@@ -101,8 +101,8 @@ lemma J_sub_le {j a c P : ℝ} (hac : a ≤ c) (hP : 0 ≤ P) (hp : 0 < p j)
   have h := norm_sub_le_integral_of_norm_deriv_le_of_le
     (B := fun x => Real.sqrt P*gaussianGap x) hac
     (continuous_J j).continuousOn
-    (fun x hx => (hasDerivAt_J j x (hl x ⟨hx.1.le,hx.2.le⟩).ne').differentiableAt.differentiableWithinAt)
-    (Filter.Eventually.of_forall fun x hx => hder x ⟨hx.1.le,hx.2.le⟩)
+    (fun x hx => (hasDerivAt_J j x (hl x hx).ne').differentiableAt.differentiableWithinAt)
+    (Filter.Eventually.of_forall fun x hx => hder x hx)
     ((continuous_const.mul (contDiff_gaussianHazard.continuous.sub continuous_id)).intervalIntegrable a c)
   have he : (∫ x in a..c, Real.sqrt P*gaussianGap x) =
       Real.sqrt P*(logq c-logq a) := by
@@ -110,5 +110,12 @@ lemma J_sub_le {j a c P : ℝ} (hac : a ≤ c) (hP : 0 ≤ P) (hp : 0 < p j)
       intervalIntegral.integral_eq_sub_of_hasDerivAt (fun x _ => hasDerivAt_logq x)
         ((contDiff_gaussianHazard.continuous.sub continuous_id).intervalIntegrable a c)]
   exact h.trans_eq he
+
+lemma J_sub_le {j a c P : ℝ} (hac : a ≤ c) (hP : 0 ≤ P) (hp : 0 < p j)
+    (hl : ∀ x ∈ Icc a c, 0 < l x)
+    (hF : ∀ x ∈ Icc a c, Fcost j x ≤ P) :
+    ‖J j c-J j a‖ ≤ Real.sqrt P * (logq c-logq a) :=
+  J_sub_le_open hac hP hp (fun x hx => hl x ⟨hx.1.le,hx.2.le⟩)
+    (fun x hx => hF x ⟨hx.1.le,hx.2.le⟩)
 
 end Submission.Obl.Entropy__two_eigenvalue_secant_deduction
