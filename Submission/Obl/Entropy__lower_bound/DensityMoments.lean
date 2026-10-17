@@ -185,4 +185,42 @@ theorem densityCovariance_det_pos
     (b : EuclideanSpace ℝ (Fin m)) : 0 < (densityCovariance f b).det :=
   (densityCovariance_posDef hf0 hf hprob hf2 b).det_pos
 
+/-- Scalar first moments inherit integrability from the vector first moment. -/
+theorem integrable_density_coord
+    (hf0 : ∀ x, 0 ≤ f x) (hf : Integrable f volume)
+    (hf2 : Integrable (fun x => f x * ‖x‖ ^ 2) volume) (i : Fin m) :
+    Integrable (fun x => f x * x i) volume := by
+  simpa using (EuclideanSpace.proj (𝕜 := ℝ) i).integrable_comp
+    (integrable_density_smul hf0 hf hf2)
+
+/-- Centering the raw second moment subtracts the product of the means. -/
+theorem densityCovariance_eq_raw_moments
+    (hf0 : ∀ x, 0 ≤ f x) (hf : Integrable f volume)
+    (hprob : ∫ x, f x = 1)
+    (hf2 : Integrable (fun x => f x * ‖x‖ ^ 2) volume)
+    (b : EuclideanSpace ℝ (Fin m)) (hb : b = ∫ x, f x • x) (i j : Fin m) :
+    densityCovariance f b i j = (∫ x, f x * x i * x j) - b i * b j := by
+  have hi := integrable_density_coord hf0 hf hf2 i
+  have hj := integrable_density_coord hf0 hf hf2 j
+  have hij : Integrable (fun x => f x * x i * x j) volume := by
+    simpa using integrable_density_centered_mul hf0 hf hf2 0 i j
+  have hmi : ∫ x, f x * x i = b i := by rw [hb, density_mean_apply hf0 hf hf2]
+  have hmj : ∫ x, f x * x j = b j := by rw [hb, density_mean_apply hf0 hf hf2]
+  calc
+    densityCovariance f b i j = ∫ x,
+        ((f x * x i * x j - (f x * x i) * b j) - b i * (f x * x j)) +
+          (b i * b j) * f x := by
+      apply integral_congr_ae
+      filter_upwards [] with x
+      ring
+    _ = (∫ x, f x * x i * x j) - b i * b j := by
+      have hs₁ := integral_sub hij (hi.mul_const (b j))
+      have hs₂ := integral_sub (hij.sub (hi.mul_const (b j))) (hj.const_mul (b i))
+      have ha := integral_add ((hij.sub (hi.mul_const (b j))).sub (hj.const_mul (b i)))
+        (hf.const_mul (b i * b j))
+      simp only [Pi.sub_apply] at hs₁ hs₂ ha
+      rw [ha, hs₂, hs₁]
+      simp only [integral_const_mul, integral_mul_const, hmi, hmj, hprob]
+      ring
+
 end Submission.Obl.Entropy__lower_bound
