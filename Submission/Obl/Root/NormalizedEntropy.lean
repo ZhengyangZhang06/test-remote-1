@@ -1,6 +1,6 @@
 import Submission.Obl.Root.Normalization
 import Submission.Obl.Root.Reduction
-import Submission.Obl.Root.DensityAffine
+import Submission.Obl.Entropy__affine_exponential_moments.Affine
 
 open MeasureTheory
 open Submission.Lib.EntropyTools
@@ -25,25 +25,25 @@ theorem exists_isotropic_density {n : ℕ} (f : EuclideanSpace ℝ (Fin n) → �
   have hp : (densityCov f).PosDef := densityCovariance_posDef hf0 hf hmass hf2 _
   obtain ⟨e, he⟩ := exists_covariance_normalizer (densityCov f) hp
   let b := -e (densityMean f)
-  let g := DensityAffine.affineDensity e b f
+  let g := Submission.Obl.Entropy__affine_exponential_moments.affineDensity e b f
   have hmean : densityMean g = 0 := by
-    change (∫ y, DensityAffine.affineDensity e b f y • y) = 0
-    rw [DensityAffine.mean_affineDensity e b hf (integrable_density_smul hf0 hf hf2) hmass]
+    change (∫ y, Submission.Obl.Entropy__affine_exponential_moments.affineDensity e b f y • y) = 0
+    rw [Submission.Obl.Entropy__affine_exponential_moments.mean_affineDensity e b hf (integrable_density_smul hf0 hf hf2) hmass]
     exact add_neg_cancel _
   have hcov : densityCov g = 1 := by
-    have h := DensityAffine.covariance_affineDensity e b (densityMean f) hf0 hf hf2
+    have h := Submission.Obl.Entropy__affine_exponential_moments.covariance_affineDensity e b (densityMean f) hf0 hf hf2
     change densityCovariance g (e (densityMean f) + b) = _ at h
     have hb : e (densityMean f) + b = densityMean g := by rw [hmean]; exact add_neg_cancel _
     rw [hb] at h
     exact h.trans he
-  refine ⟨g, DensityAffine.affineDensity_nonneg e b hf0,
-    DensityAffine.upperSemicontinuous_affineDensity e b hu,
-    DensityAffine.log_concave_affineDensity e b hc,
-    DensityAffine.integrable_affineDensity e b hf, ?_,
-    DensityAffine.integrable_second_affineDensity e b hf0 hf hf2,
-    DensityAffine.integrable_entropy_affineDensity e b hf hent, hmean, hcov, ?_⟩
-  · exact (DensityAffine.integral_affineDensity e b f).trans hmass
-  · have h := DensityAffine.entropy_deficit_affineDensity e b hf0 hf hmass hf2 hent
+  refine ⟨g, Submission.Obl.Entropy__affine_exponential_moments.affineDensity_nonneg e b hf0,
+    Submission.Obl.Entropy__affine_exponential_moments.upperSemicontinuous_affineDensity e b hu,
+    Submission.Obl.Entropy__affine_exponential_moments.log_concave_affineDensity e b hc,
+    Submission.Obl.Entropy__affine_exponential_moments.integrable_affineDensity e b hf, ?_,
+    Submission.Obl.Entropy__affine_exponential_moments.integrable_second_affineDensity e b hf0 hf hf2,
+    Submission.Obl.Entropy__affine_exponential_moments.integrable_entropy_affineDensity e b hf hent, hmean, hcov, ?_⟩
+  · exact (Submission.Obl.Entropy__affine_exponential_moments.integral_affineDensity e b f).trans hmass
+  · have h := Submission.Obl.Entropy__affine_exponential_moments.entropy_deficit_affineDensity e b hf0 hf hmass hf2 hent
     change densityEntropy g - Real.log (densityCov g).det / 2 =
       densityEntropy f - Real.log (densityCov f).det / 2 at h
     simpa only [hcov, Matrix.det_one, Real.log_one, zero_div, sub_zero] using h

@@ -1,11 +1,13 @@
-import Submission.Obl.Root.DensityAffine
+import Submission.Obl.Entropy__affine_exponential_moments.Affine
 
 open MeasureTheory
 open scoped ENNReal
 
 set_option backward.isDefEq.respectTransparency false
 
-namespace Submission.Obl.Root.DensityAffine
+open Submission.Obl.Entropy__affine_exponential_moments
+
+namespace Submission.Obl.Root.AffineMeasure
 
 /-- A measurable equivalence transports a density by composing it with the inverse. -/
 theorem map_withDensity_equiv {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
@@ -42,4 +44,4 @@ theorem map_withDensity_affine {n : ℕ}
     ENNReal.ofReal_mul (inv_nonneg.mpr (abs_nonneg _))]
   rfl
 
-end Submission.Obl.Root.DensityAffine
+end Submission.Obl.Root.AffineMeasure

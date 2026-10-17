@@ -1,10 +1,9 @@
 /-
 Adapted from: here:root
-
-Original proofs by session x0014 of exponential-product moments and entropy.
+Original affine-density and exponential-moment proofs by session x0014.
 -/
 
-import Submission.Lib.DensityAffine.Core
+import Submission.Obl.Entropy__affine_exponential_moments.Affine
 import Submission.Lib.Cone.Integration
 
 set_option backward.isDefEq.respectTransparency false
@@ -12,7 +11,7 @@ set_option backward.isDefEq.respectTransparency false
 open MeasureTheory Set
 open Submission.Lib.EntropyTools
 
-namespace Submission.Lib.DensityAffine
+namespace Submission.Obl.Entropy__affine_exponential_moments
 
 /-- The real density of a mean-one exponential variable. -/
 noncomputable def expDensity (x : ℝ) : ℝ :=
@@ -334,4 +333,4 @@ theorem affine_product_regular {n : ℕ}
       (integrable_entropy_productExpDensity n)⟩
   rw [integral_affineDensity, integral_productExpDensity]
 
-end Submission.Lib.DensityAffine
+end Submission.Obl.Entropy__affine_exponential_moments

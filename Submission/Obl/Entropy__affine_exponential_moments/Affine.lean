@@ -1,8 +1,6 @@
 /-
 Adapted from: here:root
-
-Original proofs by session x0014 of the affine normalization identities
-used in Sections 2 and 3 of the supplied paper.
+Original affine-density and exponential-moment proofs by session x0014.
 -/
 
 import Mathlib
@@ -13,7 +11,7 @@ open MeasureTheory
 open Submission.Lib.EntropyTools
 open scoped Matrix
 
-namespace Submission.Lib.DensityAffine
+namespace Submission.Obl.Entropy__affine_exponential_moments
 
 noncomputable def affineDensity {n : ℕ}
     (e : EuclideanSpace ℝ (Fin n) ≃L[ℝ] EuclideanSpace ℝ (Fin n))
@@ -346,4 +344,4 @@ theorem log_concave_affineDensity {n : ℕ}
   rw [affineDensity, Real.log_mul (ne_of_gt hd) hy', Real.log_inv, hA]
   ring
 
-end Submission.Lib.DensityAffine
+end Submission.Obl.Entropy__affine_exponential_moments
