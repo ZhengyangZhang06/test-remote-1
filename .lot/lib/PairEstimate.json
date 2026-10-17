@@ -1,0 +1,20 @@
+{
+  "name": "PairEstimate",
+  "module": "Submission.Lib.PairEstimate",
+  "files": [
+    "Submission/Lib/PairEstimate.lean",
+    "Submission/Lib/PairEstimate/Integration.lean",
+    "Submission/Lib/PairEstimate/MatrixAlgebra.lean",
+    "Submission/Lib/PairEstimate/PairAlgebra.lean",
+    "Submission/Lib/PairEstimate/PairAssembly.lean",
+    "Submission/Lib/PairEstimate/PolynomialCertificate.lean",
+    "Submission/Lib/PairEstimate/SpectralAlgebra.lean",
+    "Submission/Lib/PairEstimate/Threshold.lean"
+  ],
+  "by": "x0043",
+  "gid": "g00063",
+  "from": "here:o017",
+  "purpose": "",
+  "at": 1792219951.7408712,
+  "sha": "003908f7352f1e883f1d23b298b4d1e597c86a8c"
+}
