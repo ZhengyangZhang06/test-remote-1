@@ -16,8 +16,8 @@ def linearField (X : ι → Matrix ι ι ℝ) (x : ι → ℝ) : Matrix ι ι �
 def CoefficientSymmetry (X : ι → Matrix ι ι ℝ) : Prop :=
   ∀ r s i, X r i s = X s i r
 
-/-- Coefficient symmetry exchanges the two arguments of the associated bilinear map. -/
 omit [DecidableEq ι] in
+/-- Coefficient symmetry exchanges the two arguments of the associated bilinear map. -/
 theorem linearField_mulVec_comm (X : ι → Matrix ι ι ℝ)
     (hX : CoefficientSymmetry X) (x y : ι → ℝ) :
     linearField X x *ᵥ y = linearField X y *ᵥ x := by
@@ -32,8 +32,8 @@ theorem linearField_mulVec_comm (X : ι → Matrix ι ι ℝ)
   rw [hX r s i]
   ring
 
-/-- The constant and linear terms of Jacobian compatibility force the coefficients to commute. -/
 omit [DecidableEq ι] in
+/-- The constant and linear terms of Jacobian compatibility force the coefficients to commute. -/
 theorem coefficients_commute (X : ι → Matrix ι ι ℝ)
     (hX : CoefficientSymmetry X)
     (h₂ : ∀ r s t i,
@@ -47,8 +47,8 @@ theorem coefficients_commute (X : ι → Matrix ι ι ℝ)
   simp_rw [hX t s, hX t r, hX r s] at h
   exact add_right_cancel h
 
-/-- Once the coefficients are diagonal, coefficient symmetry leaves a single possible entry. -/
 omit [Fintype ι] in
+/-- Once the coefficients are diagonal, coefficient symmetry leaves a single possible entry. -/
 theorem diagonal_coefficients (X : ι → Matrix ι ι ℝ)
     (hX : CoefficientSymmetry X)
     (hdiag : ∀ r i j, i ≠ j → X r i j = 0) (r : ι) :
