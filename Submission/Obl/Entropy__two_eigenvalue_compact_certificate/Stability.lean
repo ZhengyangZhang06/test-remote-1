@@ -37,4 +37,27 @@ theorem stable_forward_error {f f' c g : ℝ → ℝ} {a b E F : ℝ}
     linarith
   · exact helper f f' g hderiv hode (fun y hy => le_of_abs_le (hg y hy)) (le_of_abs_le ha)
 
+/-- The same estimate for an expanding equation, run from right to left. -/
+theorem stable_backward_error {f f' c g : ℝ → ℝ} {E F : ℝ}
+    (hderiv : ∀ x ∈ Icc (-1 : ℝ) 1, HasDerivAt f (f' x) x)
+    (hode : ∀ x ∈ Icc (-1 : ℝ) 1, f' x = c x * f x + g x)
+    (hc : ∀ x ∈ Icc (-1 : ℝ) 1, 0 < c x)
+    (hg : ∀ x ∈ Icc (-1 : ℝ) 1, |g x| ≤ F)
+    (hE : 0 < E) (hF : 0 ≤ F) (ha : |f 1| ≤ E)
+    {x : ℝ} (hx : x ∈ Icc (-1 : ℝ) 1) : |f x| ≤ E + 2*F := by
+  have hn (y : ℝ) (hy : y ∈ Icc (-1 : ℝ) 1) : -y ∈ Icc (-1 : ℝ) 1 := by
+    constructor <;> linarith [hy.1, hy.2]
+  have hh := stable_forward_error (f := fun y => f (-y)) (f' := fun y => -f' (-y))
+    (c := fun y => c (-y)) (g := fun y => -g (-y)) (a := -1) (b := 1)
+    (fun y hy => by
+      convert! (hderiv (-y) (hn y hy)).comp y (hasDerivAt_id y).neg using 1
+      simp)
+    (fun y hy => by rw [hode (-y) (hn y hy)]; ring)
+    (fun y hy => hc (-y) (hn y hy))
+    (fun y hy => by simpa using hg (-y) (hn y hy)) hE hF
+    (by simpa using ha) (hn x hx)
+  simp only [neg_neg] at hh
+  have : F*(-x- -1) ≤ 2*F := by nlinarith [hx.1]
+  linarith
+
 end Submission.Obl.Entropy__two_eigenvalue_compact_certificate

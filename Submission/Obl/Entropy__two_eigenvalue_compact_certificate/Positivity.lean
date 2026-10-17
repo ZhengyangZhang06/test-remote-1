@@ -1,4 +1,5 @@
 import Submission.Obl.Entropy__two_eigenvalue_compact_certificate.Polynomial
+import Submission.Lib.PairEstimate.PolynomialCertificate
 
 namespace Submission.Obl.Entropy__two_eigenvalue_compact_certificate
 
@@ -23,16 +24,8 @@ private theorem quartic_bound (a b c d e m t : ℝ)
     (h0 : m ≤ a) (h1 : m ≤ a+b/4) (h2 : m ≤ a+b/2+c/6)
     (h3 : m ≤ a+3*b/4+c/2+d/4) (h4 : m ≤ a+b+c+d+e) :
     m ≤ a + t*(b+t*(c+t*(d+t*e))) := by
-  have h : 0 ≤ (a-m)*(1-t)^4 + 4*(a+b/4-m)*t*(1-t)^3 +
-      6*(a+b/2+c/6-m)*t^2*(1-t)^2 +
-      4*(a+3*b/4+c/2+d/4-m)*t^3*(1-t) + (a+b+c+d+e-m)*t^4 := by
-    have : 0 ≤ 1-t := sub_nonneg.mpr ht'
-    have h0' := sub_nonneg.mpr h0
-    have h1' := sub_nonneg.mpr h1
-    have h2' := sub_nonneg.mpr h2
-    have h3' := sub_nonneg.mpr h3
-    have h4' := sub_nonneg.mpr h4
-    positivity
+  have h := Submission.Lib.PairEstimate.quartic_lower_on_unit a b c d e m t ht ht'
+    h0 h1 h2 h3 h4
   nlinarith only [h]
 
 private theorem quartic_bound_abs (a b c d e m x : ℝ) (hx : |x| ≤ 1)
