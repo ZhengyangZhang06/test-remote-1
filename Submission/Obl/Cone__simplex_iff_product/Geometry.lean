@@ -1,6 +1,6 @@
 import Mathlib
 import ChallengeDeps
-import Submission.Lib.ConvexBody
+import Submission.Lib.Cone.Geometry
 
 open Set MeasureTheory
 open scoped BigOperators Topology
@@ -65,27 +65,11 @@ theorem cone_add {n : ℕ} {K : Set (E n)} (hK : Convex ℝ K)
     rw [he i, hf i]
     field_simp
 
-theorem convex_cone {n : ℕ} {K : Set (E n)} (hK : Convex ℝ K) : Convex ℝ (cone K) := by
-  intro x hx y hy a b ha hb hab
-  exact cone_add hK (cone_smul hx ha) (cone_smul hy hb)
+theorem convex_cone {n : ℕ} {K : Set (E n)} (hK : Convex ℝ K) : Convex ℝ (cone K) :=
+  Submission.Lib.Cone.cone_convex hK
 
-theorem isClosed_cone {n : ℕ} {K : Set (E n)} (hK : IsCompact K) : IsClosed (cone K) := by
-  let : CompactSpace K := isCompact_iff_compactSpace.mp hK
-  let S : Set (E (n + 1) × K) :=
-    {p | 0 ≤ p.1 0 ∧ ∀ i : Fin n, p.1 i.succ = p.1 0 * (p.2 : E n) i}
-  have hS : IsClosed S := by
-    simp only [S, ofPred_and, ofPred_forall]
-    apply IsClosed.inter (isClosed_le continuous_const (by fun_prop))
-    exact isClosed_iInter fun i => isClosed_eq (by fun_prop) (by fun_prop)
-  have he : Prod.fst '' S = cone K := by
-    ext z
-    constructor
-    · rintro ⟨⟨w, x⟩, h, rfl⟩
-      exact ⟨h.1, x, x.property, h.2⟩
-    · rintro ⟨ht, x, hx, he⟩
-      exact ⟨(z, ⟨x, hx⟩), ⟨ht, he⟩, rfl⟩
-  rw [← he]
-  exact isClosedMap_fst_of_compactSpace S hS
+theorem isClosed_cone {n : ℕ} {K : Set (E n)} (hK : IsCompact K) : IsClosed (cone K) :=
+  Submission.Lib.Cone.cone_closed hK
 
 theorem cone_interior_nonempty {n : ℕ} {K : Set (E n)}
     (hK : (interior K).Nonempty) : (interior (cone K)).Nonempty := by

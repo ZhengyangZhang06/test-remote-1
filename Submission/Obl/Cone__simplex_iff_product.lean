@@ -1,6 +1,6 @@
 import Mathlib
 import ChallengeDeps
-import Submission.Obl.Cone__moments
+import Submission.Lib.Cone.Moments
 import Submission.Obl.Cone__simplex_iff_product.Simplex
 import Submission.Obl.Cone__simplex_iff_product.Normalization
 set_option linter.unusedVariables false
@@ -8,10 +8,13 @@ set_option linter.unusedVariables false
 /-!
 # `Submission.Cone.simplex_iff_product`
 
-Prove the theorem at the end of this file and keep its statement exactly as
-it is. Put helper declarations in `namespace Submission.Obl.Cone__simplex_iff_product`, where others can
-reuse them, or make them `private`. Only this file and `Submission/Obl/Cone__simplex_iff_product/`
-belong to this obligation.
+An affine product representation identifies the regular closed cone support and
+therefore its simplex section. Conversely, lifted simplex vertices give the linear
+equivalence; comparison of the cone and product integrals fixes its determinant.
+
+Geometry was developed by session x0006; the normalization helpers and final
+assembly were developed by session x0012. The cone mass theorem is imported from
+the accepted library contribution of session x0005.
 -/
 
 open MeasureTheory
@@ -27,12 +30,9 @@ theorem Submission.Cone.simplex_iff_product : ∀ n : ℕ, 1 ≤ n → ∀ K : S
     simpa only [hf, cone] using he
   · intro hsimplex
     obtain ⟨L, hsupport, hheight⟩ := simplex_linearEquiv hsimplex
-    let b := ∫ x, f x • x
-    let C : Matrix (Fin (n + 1)) (Fin (n + 1)) ℝ :=
-      fun i j => ∫ x, f x * (x i - b i) * (x j - b j)
-    let H := -(∫ x, f x * Real.log (f x))
-    have hmom := Submission.Cone.moments n hn K hK f hf b rfl C rfl H rfl
-    obtain ⟨_, _, _, _, _, _, hmass, _⟩ := hmom
+    have hmass : ∫ x, f x = 1 := by
+      rw [hf]
+      exact Submission.Lib.Cone.density_integral hK
     have hpref := cone_prefactor f hf hmass L hsupport hheight
     refine ⟨L, 0, Filter.Eventually.of_forall ?_⟩
     intro z
