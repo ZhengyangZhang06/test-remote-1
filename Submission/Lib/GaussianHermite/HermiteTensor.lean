@@ -13,7 +13,7 @@ namespace Submission.Lib.GaussianHermite
 noncomputable def gaussianPi (m : ℕ) : Measure (Fin m → ℝ) :=
   Measure.pi fun _ => gaussianReal 0 1
 
-instance (m : ℕ) : IsProbabilityMeasure (gaussianPi m) := by
+scoped instance (m : ℕ) : IsProbabilityMeasure (gaussianPi m) := by
   unfold gaussianPi
   infer_instance
 
