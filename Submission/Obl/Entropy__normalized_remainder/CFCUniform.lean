@@ -33,8 +33,42 @@ lemma exists_spectrum_subset_Icc_of_bounded_entries {α : Type*}
   have : |t| ≤ R := ht'.trans (hnorm.trans (by dsimp [R]; linarith))
   exact abs_le.1 this
 
+/-- Continuous scalar functions are uniformly bounded on a bounded Hermitian field. -/
+lemma exists_cfc_norm_bound_of_bounded_entries {α : Type*}
+    (A : α → Matrix n n ℝ) (hAH : ∀ x, (A x).IsHermitian)
+    (hbound : ∃ R : ℝ, 0 < R ∧ ∀ x i j, |A x i j| ≤ R)
+    {f : ℝ → ℝ} (hf : Continuous f) :
+    ∃ C : ℝ, 0 < C ∧ ∀ x, ‖cfc f (A x)‖ ≤ C := by
+  obtain ⟨R, _, hspec⟩ := exists_spectrum_subset_Icc_of_bounded_entries A hAH hbound
+  obtain ⟨K, hK⟩ := isCompact_Icc.bddAbove_image (K := Set.Icc (-R) R) hf.norm.continuousOn
+  refine ⟨max K 0 + 1, by positivity, fun x => ?_⟩
+  apply norm_cfc_le (by positivity)
+  intro t ht
+  exact (hK ⟨t, hspec x ht, rfl⟩).trans (by linarith [le_max_left K 0])
+
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   [MeasurableSpace E] [OpensMeasurableSpace E] {μ : Measure E}
+
+omit [NormedSpace ℝ E] in
+lemma memLp_cfc_entries_of_bounded [IsFiniteMeasure μ] (A : E → Matrix n n ℝ)
+    (hAc : Continuous A) (hAH : ∀ x, (A x).IsHermitian)
+    (hbound : ∃ R : ℝ, 0 < R ∧ ∀ x i j, |A x i j| ≤ R)
+    {f : ℝ → ℝ} (hf : Continuous f) :
+    ∀ i j, MemLp (fun x => cfc f (A x) i j) 2 μ := by
+  obtain ⟨C, _, hC⟩ := exists_cfc_norm_bound_of_bounded_entries A hAH hbound hf
+  have hfc : Continuous (fun x => cfc f (A x)) :=
+    hAc.cfc_of_mem_nhdsSet (s := Set.univ) f (by simp)
+      (fun x => (hAH x).isSelfAdjoint) hf.continuousOn
+  intro i j
+  let ev : Matrix n n ℝ →L[ℝ] ℝ :=
+    { toLinearMap :=
+        { toFun := fun M => M i j
+          map_add' := fun _ _ => rfl
+          map_smul' := fun _ _ => rfl }
+      cont := (continuous_apply j).comp (continuous_apply i) }
+  apply MemLp.of_bound (ev.continuous.comp hfc).aestronglyMeasurable (‖ev‖ * C)
+  exact Filter.Eventually.of_forall (fun x => (ev.le_opNorm (cfc f (A x))).trans
+    (mul_le_mul_of_nonneg_left (hC x) (norm_nonneg ev)))
 
 /-- A scalar C1 function preserves L2 derivatives of a bounded Hermitian field. -/
 lemma memLp_entryDirectionalDerivative_cfc_of_bounded (A : E → Matrix n n ℝ)

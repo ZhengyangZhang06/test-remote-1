@@ -1,5 +1,6 @@
 import Submission.Obl.Entropy__normalized_remainder.CFCUniform
 import Submission.Obl.Entropy__normalized_remainder.Interfaces
+import Submission.Obl.Entropy__normalized_remainder.WeakDivergenceC1
 import Submission.Lib.GaussianTransport.GaussianTails
 
 open MeasureTheory ProbabilityTheory
@@ -82,5 +83,31 @@ lemma squareIntegrable_multiplierGradient
     SquareIntegrable (multiplierGradient A r) :=
   squareIntegrable_coordinateDerivative_cfc hAs hA hbound
     (contDiff_multiplier_scalar.of_le (by simp)) r hZ
+
+lemma squareIntegrable_cfc_field
+    (hAs : ∀ i j, ContDiff ℝ ∞ (fun x => A x i j))
+    (hA : ∀ x, (A x).IsHermitian)
+    (hbound : ∃ R : ℝ, 0 < R ∧ ∀ x i j, |A x i j| ≤ R)
+    {f : ℝ → ℝ} (hf : Continuous f) :
+    SquareIntegrable (fun x => cfc f (A x)) :=
+  memLp_cfc_entries_of_bounded A (contDiff_matrix_of_entries hAs).continuous hA hbound hf
+
+/-- The CFC regularity and energy bounds supply every hypothesis needed to test
+the frozen weak-divergence identity against a scalar entry of a CFC field. -/
+theorem WeakDivergence.cfc_test {F : E m → Mat m} {v : Fin m → E m → Mat m}
+    (h : WeakDivergence F v) (hF : SquareIntegrable F) (hv : ∀ r, SquareIntegrable (v r))
+    (hAs : ∀ i j, ContDiff ℝ ∞ (fun x => A x i j))
+    (hA : ∀ x, (A x).IsHermitian)
+    (hbound : ∃ R : ℝ, 0 < R ∧ ∀ x i j, |A x i j| ≤ R)
+    (hZ : ∀ r, SquareIntegrable (coordinateDerivative A r))
+    {f : ℝ → ℝ} (hf : ContDiff ℝ 1 f) (i j k l : Fin m) :
+    expectation (fun x => F x i j * cfc f (A x) k l) =
+      ∑ r, expectation (fun x => v r x i j *
+        coordinateDerivative (fun y => cfc f (A y)) r x k l) := by
+  exact h.c1_test hF hv
+    (contDiff_one_cfc_entries (fun i j => (hAs i j).of_le (by simp)) hA hf k l)
+    (squareIntegrable_cfc_field hAs hA hbound hf.continuous k l)
+    (fun r => squareIntegrable_coordinateDerivative_cfc hAs hA hbound hf r (hZ r) k l)
+    i j
 
 end Submission.Obl.Entropy__normalized_remainder
