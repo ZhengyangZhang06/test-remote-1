@@ -71,9 +71,7 @@ theorem cone_convexHull_lift {n : ℕ} {ι : Type*} [Fintype ι] [Nonempty ι]
     · ext j
       refine Fin.cases ?_ (fun k => ?_) j
       · simp only [esum_apply, PiLp.smul_apply, lift_zero, smul_eq_mul, mul_one]
-        simpa [← Finset.mul_sum, hsum] using
-          (Finset.sum_subset (Finset.subset_univ s)
-            (f := fun i => if i ∈ s then z 0 * w i else 0) (by simp)).symm
+        simp [← Finset.mul_sum, hsum]
       · simp only [esum_apply, PiLp.smul_apply, smul_eq_mul, lift_succ]
         rw [he k, ← hx, esum_apply]
         simp only [PiLp.smul_apply, smul_eq_mul, Finset.mul_sum]
