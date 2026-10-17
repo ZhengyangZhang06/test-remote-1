@@ -1,1 +1,1 @@
-import Submission.Lib.JacobianCompatibility.Compatibility
+import Submission.Lib.JacobianCompatibility.Coefficients
