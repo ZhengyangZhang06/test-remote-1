@@ -1,0 +1,19 @@
+{
+  "name": "JacobianCompatibility",
+  "module": "Submission.Lib.JacobianCompatibility",
+  "files": [
+    "Submission/Lib/JacobianCompatibility.lean",
+    "Submission/Lib/JacobianCompatibility/Coefficients.lean",
+    "Submission/Lib/JacobianCompatibility/Compatibility.lean",
+    "Submission/Lib/JacobianCompatibility/MatrixLimits.lean",
+    "Submission/Lib/JacobianCompatibility/PrimitiveCoefficients.lean",
+    "Submission/Lib/JacobianCompatibility/ScalarLimits.lean",
+    "Submission/Lib/JacobianCompatibility/UniformJacobian.lean"
+  ],
+  "by": "x0067",
+  "gid": "g00062",
+  "from": "here:o011",
+  "purpose": "",
+  "at": 1792219967.904619,
+  "sha": "7c6e5e180a2ba8af1ec999314a9f0fd9890d6e22"
+}
