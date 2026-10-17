@@ -1,0 +1,83 @@
+{
+  "children": [
+    {
+      "key": "centered_slack",
+      "lean_name": "Entropy.centered_slack_transports",
+      "lean_statement": "∀ m : ℕ, 1 ≤ m → (fun (q : ℝ → ℝ) (γ : MeasureTheory.Measure (EuclideanSpace ℝ (Fin m))) (ω : ℝ → ℝ) => ∀ f : ℕ → (EuclideanSpace ℝ (Fin m)) → ℝ, (∀ n, (∀ x, 0 ≤ f n x) ∧ MeasureTheory.Integrable (f n) MeasureTheory.volume ∧ MeasureTheory.integral MeasureTheory.volume (f n) = 1 ∧ MeasureTheory.Integrable (fun x => f n x * ‖x‖ ^ 2) MeasureTheory.volume) → ∀ P : ℕ → (EuclideanSpace ℝ (Fin m)) ≃ₗ[ℝ] (EuclideanSpace ℝ (Fin m)), ∀ G : ℕ → (EuclideanSpace ℝ (Fin m)) → (EuclideanSpace ℝ (Fin m)), ∀ A : ℕ → (EuclideanSpace ℝ (Fin m)) → (Matrix (Fin m) (Fin m) ℝ), (∀ n, ContDiff ℝ 1 (G n)) → (∀ n i j, Continuous (fun x => A n x i j)) → (∀ n x, (A n x).IsHermitian) → (∀ n, ∃ R : ℝ, 0 < R ∧ ∀ x i j, |A n x i j| ≤ R) → (∀ n x i j, cfc q (A n x) i j = (fderiv ℝ (G n) x (PiLp.single 2 j (1 : ℝ))) i) → (∀ n, MeasureTheory.Measure.map (G n) γ = MeasureTheory.Measure.withDensity MeasureTheory.volume (fun x => ENNReal.ofReal (|LinearMap.det (P n).toLinearMap|⁻¹ * f n ((P n).symm x)))) → (fun (X : ℕ → Fin m → (Matrix (Fin m) (Fin m) ℝ)) => (fun (B : ℕ → (Matrix (Fin m) (Fin m) ℝ)) => (fun (energy : ℕ → ℝ) => ∀ hB : ∀ n, (B n).PosSemidef, ∀ δ : ℕ → ℝ, Filter.Tendsto (δ) Filter.atTop (nhds (0)) → (∀ n, energy n / 500 + Finset.sum Finset.univ (fun i : Fin m => ω ((hB n).isHermitian.eigenvalues i)) / 1000 ≤ δ n) → ∃ F : ℕ → (EuclideanSpace ℝ (Fin m)) → (EuclideanSpace ℝ (Fin m)), (∀ n, ContDiff ℝ 1 (F n) ∧ MeasureTheory.MemLp (F n) 2 γ ∧ MeasureTheory.integral γ (F n) = 0) ∧ (∀ n, MeasureTheory.Measure.map (F n) γ = MeasureTheory.Measure.map (fun x => P n (x - MeasureTheory.integral MeasureTheory.volume (fun y => f n y • y))) (MeasureTheory.Measure.withDensity MeasureTheory.volume (fun x => ENNReal.ofReal (f n x)))) ∧ (∀ n i j, MeasureTheory.MemLp (fun x => A n x i j) 2 γ) ∧ (∀ n r, (X n r).IsHermitian) ∧ (∀ n x v i, (fderiv ℝ (F n) x v) i = Finset.sum Finset.univ (fun j : Fin m => cfc q (A n x) i j * v j)) ∧ Filter.Tendsto (energy) Filter.atTop (nhds (0)) ∧ Filter.Tendsto (B) Filter.atTop (nhds (1 : (Matrix (Fin m) (Fin m) ℝ)))) (fun n => MeasureTheory.integral γ (fun x => Finset.sum Finset.univ (fun i : Fin m => Finset.sum Finset.univ (fun j : Fin m => ((A n x - Finset.sum Finset.univ (fun r : Fin m => x r • X n r)) i j) ^ 2))))) (fun n => Finset.sum Finset.univ (fun r : Fin m => X n r * X n r))) (fun n r => Matrix.of (fun i j => MeasureTheory.integral γ (fun x => x r * A n x i j)))) (fun t : ℝ => ProbabilityTheory.gaussianPDFReal 0 1 t / ProbabilityTheory.cdf (ProbabilityTheory.gaussianReal 0 1) (-t)) (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) (fun z : ℝ => (3 * (z - 1) ^ 2 / (37 + 3 * z)) * ((3 : ℝ) / 20 + ((49 : ℝ) / 100) * (37 / (37 + 3 * z))) * (if z = 0 then (13 : ℝ) / 100 else min ((13 : ℝ) / 100) (32 / (25 * Real.sqrt z))))",
+      "nl_statement": "Section 6, vanishing-slack and centering: for smooth Gaussian transports of affine images of probability densities, a strict remainder tending to zero yields centered square-integrable transports with the same Jacobians, vanishing nonlinear residual, and coefficient square sum converging to identity.",
+      "role_in_glue": "Converts the data supplied by reused normalization and remainder into the centered sequence required by Gaussian compactness.",
+      "weight": 4,
+      "depends_on": [],
+      "reuse": null
+    },
+    {
+      "key": "hazard_lipschitz",
+      "lean_name": "Entropy.gaussian_hazard_lipschitz",
+      "lean_statement": "∀ x y : ℝ, |ProbabilityTheory.gaussianPDFReal 0 1 x / ProbabilityTheory.cdf (ProbabilityTheory.gaussianReal 0 1) (-x) - ProbabilityTheory.gaussianPDFReal 0 1 y / ProbabilityTheory.cdf (ProbabilityTheory.gaussianReal 0 1) (-y)| ≤ |x - y|",
+      "nl_statement": "Lemma 2.1, scalar input to Lemma 6.2: the Gaussian hazard q(t)=phi(t)/Phi(-t) is 1-Lipschitz.",
+      "role_in_glue": "Combined with the proved general cfc_entry_square_sum_le matrix lemma, supplies the Frobenius contraction hypothesis of transport compactness.",
+      "weight": 3,
+      "depends_on": [],
+      "reuse": null
+    },
+    {
+      "key": "transport_compactness",
+      "lean_name": "Entropy.linear_transport_limit",
+      "lean_statement": "∀ m : ℕ, 1 ≤ m → ∀ q : ℝ → ℝ, (∀ U V : (Matrix (Fin m) (Fin m) ℝ), U.IsHermitian → V.IsHermitian → Finset.sum Finset.univ (fun i : Fin m => Finset.sum Finset.univ (fun j : Fin m => ((cfc q U) i j - (cfc q V) i j) ^ 2)) ≤ Finset.sum Finset.univ (fun i : Fin m => Finset.sum Finset.univ (fun j : Fin m => (U i j - V i j) ^ 2))) → ∀ Fseq : ℕ → (EuclideanSpace ℝ (Fin m)) → (EuclideanSpace ℝ (Fin m)), ∀ Aseq : ℕ → (EuclideanSpace ℝ (Fin m)) → (Matrix (Fin m) (Fin m) ℝ), ∀ Xseq : ℕ → Fin m → (Matrix (Fin m) (Fin m) ℝ), (∀ n, ContDiff ℝ 1 (Fseq n) ∧ MeasureTheory.MemLp (Fseq n) 2 (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) ∧ MeasureTheory.integral (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) (Fseq n) = 0) → (∀ n, (∀ x, (Aseq n x).IsHermitian) ∧ (∀ i j, MeasureTheory.MemLp (fun x => Aseq n x i j) 2 (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))))) → (∀ n r, (Xseq n r).IsHermitian) → (∀ n x v i, (fderiv ℝ (Fseq n) x v) i = Finset.sum Finset.univ (fun j : Fin m => (cfc q (Aseq n x)) i j * v j)) → (Filter.Tendsto (fun n => MeasureTheory.integral (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) (fun x => Finset.sum Finset.univ (fun i : Fin m => Finset.sum Finset.univ (fun j : Fin m => (Aseq n x i j - Finset.sum Finset.univ (fun r : Fin m => x r * Xseq n r i j)) ^ 2)))) Filter.atTop (nhds (0 : ℝ))) → (Filter.Tendsto (fun n => Finset.sum Finset.univ (fun r : Fin m => Xseq n r * Xseq n r)) Filter.atTop (nhds (1 : (Matrix (Fin m) (Fin m) ℝ)))) → ∃ σ : ℕ → ℕ, StrictMono σ ∧ ∃ F : (EuclideanSpace ℝ (Fin m)) → (EuclideanSpace ℝ (Fin m)), ∃ X : Fin m → (Matrix (Fin m) (Fin m) ℝ), (ContDiff ℝ 1 F) ∧ (MeasureTheory.MemLp F 2 (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m)))) ∧ (MeasureTheory.integral (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) (F) = 0) ∧ (∀ r, (X r).IsHermitian) ∧ (Finset.sum Finset.univ (fun r : Fin m => X r * X r) = (1 : (Matrix (Fin m) (Fin m) ℝ))) ∧ (∀ x v i, (fderiv ℝ (F) x v) i = Finset.sum Finset.univ (fun j : Fin m => (cfc q (Finset.sum Finset.univ (fun r : Fin m => x r • X r))) i j * v j)) ∧ (Filter.Tendsto (fun n => MeasureTheory.integral (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) (fun x => ‖Fseq (σ n) x - F x‖ ^ 2)) Filter.atTop (nhds (0 : ℝ)))",
+      "nl_statement": "Section 6, linear-field-limit through map-cauchy: normalized Gaussian transports with vanishing field remainder have a subsequence converging strongly in L2 to a centered C1 map whose Jacobian is the functional calculus of a normalized linear symmetric matrix field.",
+      "role_in_glue": "Produces the limiting map and coefficient matrices to which local rigidity applies.",
+      "weight": 4,
+      "depends_on": [],
+      "reuse": null
+    },
+    {
+      "key": "jacobian_rigidity",
+      "lean_name": "Entropy.linear_jacobian_rigidity",
+      "lean_statement": "∀ m : ℕ, 1 ≤ m → ∀ F : (EuclideanSpace ℝ (Fin m)) → (EuclideanSpace ℝ (Fin m)), ContDiff ℝ 1 F → MeasureTheory.MemLp F 2 (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) → MeasureTheory.integral (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) (F) = 0 → ∀ X : Fin m → (Matrix (Fin m) (Fin m) ℝ), (∀ r, (X r).IsHermitian) → Finset.sum Finset.univ (fun r : Fin m => X r * X r) = (1 : (Matrix (Fin m) (Fin m) ℝ)) → (∀ x v i, (fderiv ℝ (F) x v) i = Finset.sum Finset.univ (fun j : Fin m => (cfc (fun t : ℝ => ProbabilityTheory.gaussianPDFReal 0 1 t / ProbabilityTheory.cdf (ProbabilityTheory.gaussianReal 0 1) (-t)) (Finset.sum Finset.univ (fun r : Fin m => x r • X r))) i j * v j)) → (∃ L : (EuclideanSpace ℝ (Fin m)) ≃ₗ[ℝ] (EuclideanSpace ℝ (Fin m)), ∃ a : (EuclideanSpace ℝ (Fin m)), MeasureTheory.Measure.map F (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) = (MeasureTheory.volume : MeasureTheory.Measure (EuclideanSpace ℝ (Fin m))).withDensity (fun x => ENNReal.ofReal (|LinearMap.det L.toLinearMap|⁻¹ * (if ∀ i : Fin m, 0 ≤ L.symm (x - a) i then Real.exp (-Finset.sum Finset.univ (fun i : Fin m => L.symm (x - a) i)) else 0)))) ∧ ((fun i j => MeasureTheory.integral (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) (fun x => F x i * F x j)) = (1 : (Matrix (Fin m) (Fin m) ℝ)))",
+      "nl_statement": "Lemma 6.1: a centered C1 Gaussian transport with Jacobian q(sum x_r X_r), symmetric coefficients and sum X_r²=I has an affine exponential-product law and covariance I.",
+      "role_in_glue": "Classifies the limiting normalized law and supplies covariance I for normalizer compactness.",
+      "weight": 5,
+      "depends_on": [],
+      "reuse": null
+    },
+    {
+      "key": "affine_recovery",
+      "lean_name": "Entropy.affine_limit_density",
+      "lean_statement": "∀ m : ℕ, 1 ≤ m → ∀ f : (EuclideanSpace ℝ (Fin m)) → ℝ, (∀ x, 0 ≤ f x) → MeasureTheory.Integrable f (MeasureTheory.volume : MeasureTheory.Measure (EuclideanSpace ℝ (Fin m))) → MeasureTheory.integral (MeasureTheory.volume : MeasureTheory.Measure (EuclideanSpace ℝ (Fin m))) (f) = 1 → MeasureTheory.Integrable (fun x => f x * ‖x‖ ^ 2) (MeasureTheory.volume : MeasureTheory.Measure (EuclideanSpace ℝ (Fin m))) → ∀ b : (EuclideanSpace ℝ (Fin m)), b = MeasureTheory.integral (MeasureTheory.volume : MeasureTheory.Measure (EuclideanSpace ℝ (Fin m))) (fun x => f x • x) → ∀ C : (Matrix (Fin m) (Fin m) ℝ), C = (fun i j => MeasureTheory.integral (MeasureTheory.volume : MeasureTheory.Measure (EuclideanSpace ℝ (Fin m))) (fun x => f x * (x i - b i) * (x j - b j))) → C.PosDef → ∀ fseq : ℕ → (EuclideanSpace ℝ (Fin m)) → ℝ, ∀ bseq : ℕ → (EuclideanSpace ℝ (Fin m)), ∀ Cseq : ℕ → (Matrix (Fin m) (Fin m) ℝ), ∀ Pseq : ℕ → (EuclideanSpace ℝ (Fin m)) ≃ₗ[ℝ] (EuclideanSpace ℝ (Fin m)), ∀ Fseq : ℕ → (EuclideanSpace ℝ (Fin m)) → (EuclideanSpace ℝ (Fin m)), (∀ n, (∀ x, 0 ≤ fseq n x) ∧ MeasureTheory.Integrable (fseq n) (MeasureTheory.volume : MeasureTheory.Measure (EuclideanSpace ℝ (Fin m))) ∧ MeasureTheory.integral (MeasureTheory.volume : MeasureTheory.Measure (EuclideanSpace ℝ (Fin m))) (fseq n) = 1 ∧ MeasureTheory.Integrable (fun x => fseq n x * ‖x‖ ^ 2) (MeasureTheory.volume : MeasureTheory.Measure (EuclideanSpace ℝ (Fin m))) ∧ bseq n = MeasureTheory.integral (MeasureTheory.volume : MeasureTheory.Measure (EuclideanSpace ℝ (Fin m))) (fun x => (fseq n) x • x) ∧ Cseq n = (fun i j => MeasureTheory.integral (MeasureTheory.volume : MeasureTheory.Measure (EuclideanSpace ℝ (Fin m))) (fun x => (fseq n) x * (x i - (bseq n) i) * (x j - (bseq n) j)))) → (Filter.Tendsto (fun n => MeasureTheory.integral (MeasureTheory.volume : MeasureTheory.Measure (EuclideanSpace ℝ (Fin m))) (fun x => |fseq n x - f x|)) Filter.atTop (nhds (0 : ℝ))) → (Filter.Tendsto (bseq) Filter.atTop (nhds (b))) → (Filter.Tendsto (Cseq) Filter.atTop (nhds (C))) → (∀ n, MeasureTheory.Measure.map (Fseq n) (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) = MeasureTheory.Measure.map (fun x => Pseq n (x - bseq n)) ((MeasureTheory.volume : MeasureTheory.Measure (EuclideanSpace ℝ (Fin m))).withDensity (fun x => ENNReal.ofReal (fseq n x)))) → (∀ n, ContDiff ℝ 1 (Fseq n) ∧ MeasureTheory.MemLp (Fseq n) 2 (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) ∧ MeasureTheory.integral (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) (Fseq n) = 0) → ∀ σ : ℕ → ℕ, StrictMono σ → ∀ F : (EuclideanSpace ℝ (Fin m)) → (EuclideanSpace ℝ (Fin m)), MeasureTheory.MemLp F 2 (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) → MeasureTheory.integral (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) (F) = 0 → (Filter.Tendsto (fun n => MeasureTheory.integral (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) (fun x => ‖Fseq (σ n) x - F x‖ ^ 2)) Filter.atTop (nhds (0 : ℝ))) → (∃ L : (EuclideanSpace ℝ (Fin m)) ≃ₗ[ℝ] (EuclideanSpace ℝ (Fin m)), ∃ a : (EuclideanSpace ℝ (Fin m)), MeasureTheory.Measure.map F (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) = (MeasureTheory.volume : MeasureTheory.Measure (EuclideanSpace ℝ (Fin m))).withDensity (fun x => ENNReal.ofReal (|LinearMap.det L.toLinearMap|⁻¹ * (if ∀ i : Fin m, 0 ≤ L.symm (x - a) i then Real.exp (-Finset.sum Finset.univ (fun i : Fin m => L.symm (x - a) i)) else 0)))) → ((fun i j => MeasureTheory.integral (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))) (fun x => F x i * F x j)) = (1 : (Matrix (Fin m) (Fin m) ℝ))) → ∃ L : (EuclideanSpace ℝ (Fin m)) ≃ₗ[ℝ] (EuclideanSpace ℝ (Fin m)), ∃ a : (EuclideanSpace ℝ (Fin m)), ∀ᵐ x ∂MeasureTheory.volume, f x = |LinearMap.det L.toLinearMap|⁻¹ * (if ∀ i : Fin m, 0 ≤ L.symm (x - a) i then Real.exp (-Finset.sum Finset.univ (fun i : Fin m => L.symm (x - a) i)) else 0)",
+      "nl_statement": "Section 6, normalized-covariance-limit through the penultimate paragraph: recover an affine exponential-product density from subsequential L2 convergence of centered affine normalizations, positive limiting covariance, and an exponential-product limit with covariance I.",
+      "role_in_glue": "Transfers the classified normalized law back to the original density, with the exact Jacobian factor.",
+      "weight": 4,
+      "depends_on": [],
+      "reuse": null
+    },
+    {
+      "key": "product_moments",
+      "lean_name": "Entropy.affine_exponential_moments",
+      "lean_statement": "∀ m : ℕ, ∀ f : (EuclideanSpace ℝ (Fin m)) → ℝ, ∀ L : (EuclideanSpace ℝ (Fin m)) ≃ₗ[ℝ] (EuclideanSpace ℝ (Fin m)), ∀ a : (EuclideanSpace ℝ (Fin m)), (∀ᵐ x ∂MeasureTheory.volume, f x = |LinearMap.det L.toLinearMap|⁻¹ * (if ∀ i : Fin m, 0 ≤ L.symm (x - a) i then Real.exp (-Finset.sum Finset.univ (fun i : Fin m => L.symm (x - a) i)) else 0)) → ∀ b : (EuclideanSpace ℝ (Fin m)), b = MeasureTheory.integral (MeasureTheory.volume : MeasureTheory.Measure (EuclideanSpace ℝ (Fin m))) (fun x => f x • x) → ∀ C : (Matrix (Fin m) (Fin m) ℝ), C = (fun i j => MeasureTheory.integral (MeasureTheory.volume : MeasureTheory.Measure (EuclideanSpace ℝ (Fin m))) (fun x => f x * (x i - b i) * (x j - b j))) → ∀ H : ℝ, H = -MeasureTheory.integral (MeasureTheory.volume : MeasureTheory.Measure (EuclideanSpace ℝ (Fin m))) (fun x => f x * Real.log (f x)) → H = (m : ℝ) + Real.log |LinearMap.det L.toLinearMap| ∧ C.det = (LinearMap.det L.toLinearMap) ^ 2",
+      "nl_statement": "Final paragraph of Section 6: explicit entropy and covariance determinant of any density almost everywhere equal to an invertible affine image of the product mean-one exponential density.",
+      "role_in_glue": "Proves the converse equality implication by substituting the exact entropy and covariance determinant formulas.",
+      "weight": 3,
+      "depends_on": [],
+      "reuse": null
+    },
+    {
+      "key": "shared_normalization",
+      "reuse": "o005",
+      "nl_statement": "Proposition 2.3: normalized Gaussian transport and affine gap invariance.",
+      "role_in_glue": "The assembly glue applies it to every smooth approximating potential, obtaining its normalizer, Gaussian map, matrix field and affine entropy-gap identity."
+    },
+    {
+      "key": "shared_remainder",
+      "reuse": "o006",
+      "nl_statement": "Theorem 3.1: exact nonnegative nonlinear-field and spectral remainder.",
+      "role_in_glue": "The assembly glue applies its exact strict remainder to each normalized law, then transfers that bound to the original approximating density."
+    },
+    {
+      "key": "shared_approximation",
+      "reuse": "o007",
+      "nl_statement": "Lemma 5.2: approximation with L1, mean, covariance, and entropy convergence.",
+      "role_in_glue": "The assembly glue obtains smooth approximating potentials with L1, entropy, mean and covariance convergence."
+    }
+  ],
+  "notes": "Six new children and three reused shared inputs o005/o006/o007. The proved Assembly.lean glue applies approximation, chooses normalized transports, transfers the exact density and deficit identities, and applies centered_slack_transports to their raw data. No Section 2--5 result is repeated or inferred from lower_bound alone. The general matrix step of Lemma 6.2 is included from x0007 as the locally checked owned Frobenius.lean; only scalar Gaussian hazard Lipschitz remains a child. Accepted EntropyTools supplies covariance positivity. Every new and reused theorem is used by the final proof."
+}
