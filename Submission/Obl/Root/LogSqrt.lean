@@ -148,4 +148,29 @@ theorem scalar_log_sqrt_ratio_bound {S : ℝ} (hS : 0 < S) :
       div_le_iff₀ (sq_pos_of_ne_zero (sub_ne_zero.mpr (Ne.symm hS1)))]
     exact scalar_log_sqrt_bound hS
 
+/-- The square-root part of the absorption estimate, written without division by
+`sqrt lam` so it also covers `lam = 0`. -/
+theorem scalar_log_sqrt_absorption {S lam : ℝ} (hS : 0 < S) (hlam : 0 ≤ lam)
+    (hprod : S * lam ≤ 40 / 3) :
+    (3 / 40 : ℝ) *
+        (if S = 1 then (1 / 2 : ℝ) else S * (S - 1 - Real.log S) / (1 - S) ^ 2) *
+        Real.sqrt lam ≤
+      (22 / 25 : ℝ) * ((3 / 20 : ℝ) + (1813 / 4000 : ℝ) * S) := by
+  have hF := (div_le_iff₀ (Real.sqrt_pos.mpr hS)).mp (scalar_log_sqrt_ratio_bound hS)
+  have hr : Real.sqrt S * Real.sqrt lam ≤ 11 / 3 := by
+    have heq : (Real.sqrt S * Real.sqrt lam) ^ 2 = S * lam := by
+      rw [mul_pow, Real.sq_sqrt hS.le, Real.sq_sqrt hlam]
+    nlinarith [mul_nonneg (Real.sqrt_nonneg S) (Real.sqrt_nonneg lam)]
+  have ha : 0 ≤ (239 / 500 : ℝ) + (7 / 5 : ℝ) * S := by positivity
+  calc
+    _ ≤ (3 / 40 : ℝ) *
+        (((239 / 500 : ℝ) + (7 / 5 : ℝ) * S) * Real.sqrt S) * Real.sqrt lam :=
+      mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hF (by norm_num))
+        (Real.sqrt_nonneg lam)
+    _ = ((3 / 40 : ℝ) * ((239 / 500 : ℝ) + (7 / 5 : ℝ) * S)) *
+        (Real.sqrt S * Real.sqrt lam) := by ring
+    _ ≤ ((3 / 40 : ℝ) * ((239 / 500 : ℝ) + (7 / 5 : ℝ) * S)) * (11 / 3 : ℝ) :=
+      mul_le_mul_of_nonneg_left hr (by positivity)
+    _ ≤ _ := by linarith
+
 end Submission.Obl.Root.LogSqrt
