@@ -162,4 +162,31 @@ theorem jacobian_entries_limit
       (hAlp n) (memLp_linearField X) (hJlp n) hJlim
   exact ⟨hJlp, (lipschitz_cfc_linearField hq hXherm).continuous, hJlim, hJfield⟩
 
+theorem jacobian_limit
+    {Fseq : ℕ → E m → E m} {Aseq : ℕ → E m → Mat m}
+    {Xseq : ℕ → Fin m → Mat m} {X : Fin m → Mat m}
+    (hF : ∀ n, ContDiff ℝ 1 (Fseq n))
+    (hA : ∀ n, (∀ x, (Aseq n x).IsHermitian) ∧
+      (∀ i j, MemLp (fun x => Aseq n x i j) 2 (stdGaussian (E m))))
+    (hderiv : ∀ n x v i, (fderiv ℝ (Fseq n) x v) i =
+      ∑ j, cfc q (Aseq n x) i j * v j)
+    (hrem : Tendsto (fun n => ∫ x : E m,
+      ∑ i, ∑ j, (Aseq n x i j - ∑ r, x r * Xseq n r i j) ^ 2
+        ∂stdGaussian (E m)) atTop (𝓝 0))
+    (hX : Tendsto Xseq atTop (𝓝 X)) (hXherm : ∀ r, (X r).IsHermitian) :
+    let J := fun x : E m => entriesCLM m (entries (cfc q (linearField X x)))
+    Continuous J ∧ MemLp J 2 (stdGaussian (E m)) ∧
+      Tendsto (fun n => ∫ x : E m, ‖fderiv ℝ (Fseq n) x - J x‖ ^ 2
+        ∂stdGaussian (E m)) atTop (𝓝 0) := by
+  obtain ⟨hJlp, hJcont, hJlim, hJfield⟩ :=
+    jacobian_entries_limit hq hF hA hderiv hrem hX hXherm
+  dsimp only
+  refine ⟨(entriesCLM m).continuous.comp hJcont,
+    hJlim.continuousLinearMap_comp (entriesCLM m), ?_⟩
+  have heq (n : ℕ) (x : E m) :
+      entriesCLM m (entries (cfc q (Aseq n x))) = fderiv ℝ (Fseq n) x := by
+    ext v i
+    exact (hderiv n x v i).symm
+  simpa only [heq] using tendsto_energy_clm (entriesCLM m) hJlp hJlim hJfield
+
 end Submission.Obl.Entropy__linear_transport_limit
