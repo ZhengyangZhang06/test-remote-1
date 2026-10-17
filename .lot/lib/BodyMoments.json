@@ -1,0 +1,13 @@
+{
+  "name": "BodyMoments",
+  "module": "Submission.Lib.BodyMoments",
+  "files": [
+    "Submission/Lib/BodyMoments.lean"
+  ],
+  "by": "x0003",
+  "gid": "g00004",
+  "from": "here:root",
+  "purpose": "",
+  "at": 1792215756.611891,
+  "sha": "991cfd1d23e3f46d49fafab235260f3cca14fec0"
+}
