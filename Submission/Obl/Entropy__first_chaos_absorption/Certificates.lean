@@ -1,4 +1,5 @@
 import Submission.Obl.Entropy__first_chaos_absorption.TailCertificate
+import Submission.Obl.Entropy__first_chaos_absorption.PositiveCertificate
 import Submission.Obl.Entropy__absorption_p_lower_bounds
 import Submission.Obl.Entropy__absorption_h_square_bound
 
@@ -13,7 +14,10 @@ lemma pValue_lower_bounds (a : ℝ) :
   by_cases ha : a ≤ -6
   · exact ⟨fun _ => (negative_tail_certificates ha).1, fun ha0 => by linarith,
       fun ha4 => by linarith⟩
-  have hp := Submission.Entropy.absorption_p_lower_bounds a (by linarith)
+  by_cases ha10 : 10 ≤ a
+  · have hp := (positive_tail_certificates ha10).1
+    exact ⟨fun ha0 => by linarith, fun _ => by linarith, fun _ => hp⟩
+  have hp := Submission.Entropy.absorption_p_lower_bounds a (by linarith) (by linarith)
   change (a ≤ 0 → 1 / (7 + a^2) ≤
       deriv (fun z => transportRatio z * (1 + deriv transportRatio z)) a -
         (deriv transportRatio a)^2 - (40/3)*(deriv (deriv transportRatio) a)^2) ∧
@@ -34,7 +38,9 @@ lemma pValue_pos (a : ℝ) : 0 < pValue a := by
 lemma hValue_sq_le (a : ℝ) : (hValue a)^2 ≤ (67/100 : ℝ)^2 * pValue a := by
   by_cases ha : a ≤ -6
   · exact (negative_tail_certificates ha).2
-  have hh := Submission.Entropy.absorption_h_square_bound a (by linarith)
+  by_cases ha10 : 10 ≤ a
+  · exact (positive_tail_certificates ha10).2
+  have hh := Submission.Entropy.absorption_h_square_bound a (by linarith) (by linarith)
   change (transportRatio a * (1 + deriv transportRatio a) - (3/2)*transportRatio a -
       (80/3)*(deriv transportRatio a - 7/25)*deriv (deriv transportRatio) a)^2 ≤
     (67/100 : ℝ)^2 *
