@@ -161,6 +161,66 @@ theorem gaussianHazard_neg_one_gt : (287 : ℝ) / 1000 < gaussianHazard (-1) := 
   norm_num only [neg_neg]
   exact (lt_div_iff₀ (normalCDF_pos 1)).2 hcomp
 
+private theorem exp_neg_half_lt : Real.exp (-1 / 2) < (61 : ℝ) / 100 := by
+  have he : (100 : ℝ) / 61 < Real.exp (1 / 2) := by
+    have hs : Real.exp (1 / 2) ^ 2 = Real.exp 1 := by
+      rw [pow_two, ← Real.exp_add]
+      norm_num
+    nlinarith [Real.exp_one_gt_d9, Real.exp_pos (1 / 2)]
+  rw [show (-1 / 2 : ℝ) = -(1 / 2) by ring, Real.exp_neg]
+  rw [inv_lt_comm₀ (Real.exp_pos _) (by norm_num)]
+  norm_num
+  exact he
+
+private theorem integral_exp_neg_sq_lower :
+    (5 : ℝ) / 6 ≤ ∫ x in (0 : ℝ)..1, Real.exp (-x ^ 2 / 2) := by
+  have hp : Continuous (fun x : ℝ => 1 - x ^ 2 / 2) := by fun_prop
+  have he : Continuous (fun x : ℝ => Real.exp (-x ^ 2 / 2)) := by fun_prop
+  have hle := intervalIntegral.integral_mono_on (μ := volume) (by norm_num : (0 : ℝ) ≤ 1)
+    (hp.intervalIntegrable 0 1) (he.intervalIntegrable 0 1)
+    (fun x _ => by linarith [Real.add_one_le_exp (-x ^ 2 / 2)])
+  have hval : (∫ x in (0 : ℝ)..1, (1 - x ^ 2 / 2)) = 5 / 6 := by
+    simp (disch := apply Continuous.intervalIntegrable; fun_prop) only
+      [intervalIntegral.integral_sub, intervalIntegral.integral_div,
+        intervalIntegral.integral_const, integral_pow, smul_eq_mul]
+    norm_num
+  rwa [hval] at hle
+
+/-- The upper endpoint needed by the analytic growth-rate proof. -/
+theorem gaussianHazard_neg_one_lt : gaussianHazard (-1) < (59 : ℝ) / 200 := by
+  let c : ℝ := Real.sqrt (2 * Real.pi)
+  let A : ℝ := ∫ x in (0 : ℝ)..1, Real.exp (-x ^ 2 / 2)
+  have hc : 0 < c := Real.sqrt_pos.2 (by positivity)
+  have hpdf : c * normalPDF 1 = Real.exp (-1 / 2) := by
+    dsimp [c, normalPDF, gaussianPDFReal]
+    norm_num only [NNReal.coe_one, sub_zero, mul_one, one_pow]
+    rw [← mul_assoc, mul_inv_cancel₀ (ne_of_gt hc), one_mul]
+  have hid : (∫ x in (0 : ℝ)..1, normalPDF x) = c⁻¹ * A := by
+    simp only [normalPDF, gaussianPDFReal, NNReal.coe_one, sub_zero, mul_one]
+    exact intervalIntegral.integral_const_mul _ _
+  have hi := intervalIntegral.integral_eq_sub_of_hasDerivAt
+    (fun x _ => hasDerivAt_normalCDF x) (contDiff_normalPDF.continuous.intervalIntegrable 0 1)
+      (a := (0 : ℝ)) (b := 1)
+  rw [hid, normalCDF_zero] at hi
+  have hcdf : c * normalCDF 1 = c / 2 + A := by
+    have h' := congrArg (fun z : ℝ => c * z) hi
+    rw [← mul_assoc, mul_inv_cancel₀ (ne_of_gt hc), one_mul] at h'
+    linarith
+  have hl : (25 : ℝ) / 12 < c / 2 + A := by
+    have hs := sqrt_two_pi_lower
+    have ha := integral_exp_neg_sq_lower
+    dsimp [c, A] at *
+    linarith
+  have hcomp : normalPDF 1 < (59 / 200 : ℝ) * normalCDF 1 := by
+    have hn := exp_neg_half_lt
+    rw [← hpdf] at hn
+    rw [← hcdf] at hl
+    nlinarith
+  unfold gaussianHazard
+  rw [normalPDF_neg]
+  norm_num only [neg_neg]
+  exact (div_lt_iff₀ (normalCDF_pos 1)).2 hcomp
+
 /-- The logarithmic separation between `-2` and `-1`. -/
 theorem log_hazard_neg_one_sub_neg_two_gt :
     (81 : ℝ) / 50 < Real.log (gaussianHazard (-1)) - Real.log (gaussianHazard (-2)) := by
