@@ -1,0 +1,25 @@
+{
+  "children": [
+    {
+      "key": "cfc",
+      "lean_name": "Entropy.c1_bounded_matrix_calculus",
+      "lean_statement": "∀ m : ℕ, 1 ≤ m → ∀ A : (EuclideanSpace ℝ (Fin m)) → (Matrix (Fin m) (Fin m) ℝ), (∀ x, (A x).IsHermitian) → (∀ i j, ContDiff ℝ 1 (fun x => A x i j)) → (∃ R : ℝ, 0 < R ∧ ∀ x i j, |A x i j| ≤ R) → ∀ g : ℝ → ℝ, ContDiff ℝ 1 g → (∀ i j, ContDiff ℝ 1 (fun x => cfc g (A x) i j)) ∧ (∃ S : ℝ, 0 < S ∧ ∀ x i j, |cfc g (A x) i j| ≤ S)",
+      "nl_statement": "C1 scalar functional calculus on a bounded C1 Hermitian matrix field has C1 bounded entries. This is the regularity part of the matrix derivative calculus used in Sections 2--3, with no derivative-energy claim.",
+      "role_in_glue": "Applied to q and k=t/q; supplies Gaussian L2 entries and C1 H1 tests k(A). The proved C1 weak-testing helper removes any need for full smooth CFC.",
+      "weight": 4,
+      "depends_on": [],
+      "reuse": null
+    },
+    {
+      "key": "covariance",
+      "lean_name": "Entropy.gaussian_covariance_variational",
+      "lean_statement": "∀ m : ℕ, 1 ≤ m → (fun γ => ((fun I => ((fun L2 => ((fun W => (∀ f : (EuclideanSpace ℝ (Fin m)) → ℝ, (∀ x, 0 ≤ f x) → MeasureTheory.Integrable f MeasureTheory.volume → MeasureTheory.integral MeasureTheory.volume f = 1 → MeasureTheory.Integrable (fun x => f x * ‖x‖^2) MeasureTheory.volume → ∀ F : (EuclideanSpace ℝ (Fin m)) → (EuclideanSpace ℝ (Fin m)), ContDiff ℝ 1 F → MeasureTheory.Measure.map F γ = MeasureTheory.Measure.withDensity MeasureTheory.volume (fun x => ENNReal.ofReal (f x)) → ∀ J : (EuclideanSpace ℝ (Fin m)) → (Matrix (Fin m) (Fin m) ℝ), L2 J → (∀ x i j, J x i j = (fderiv ℝ F x (PiLp.single 2 j (1 : ℝ))) i) → ∀ a : (EuclideanSpace ℝ (Fin m)) → (Matrix (Fin m) (Fin m) ℝ), ∀ b : Fin m → (EuclideanSpace ℝ (Fin m)) → (Matrix (Fin m) (Fin m) ℝ), L2 a → (∀ r, L2 (b r)) → (∀ i j, ∀ z : (EuclideanSpace ℝ (Fin m)) → ℝ, ContDiff ℝ ((⊤ : ENat) : WithTop ENat) z → HasCompactSupport z → I (fun x => (a x i j - J x i j) * z x) = Finset.sum Finset.univ (fun r : Fin m => I (fun x => b r x i j * fderiv ℝ z x (PiLp.single 2 r (1 : ℝ))))) → ∀ P : (Matrix (Fin m) (Fin m) ℝ), P.PosDef → Matrix.trace (P * (Matrix.of (fun i j => MeasureTheory.integral MeasureTheory.volume (fun x => f x * (x i - (MeasureTheory.integral MeasureTheory.volume (fun y => f y • y)) i) * (x j - (MeasureTheory.integral MeasureTheory.volume (fun y => f y • y)) j))))) ≤ W P a + Finset.sum Finset.univ (fun r : Fin m => W P (b r)))) (fun (P : (Matrix (Fin m) (Fin m) ℝ)) (H : (EuclideanSpace ℝ (Fin m)) → (Matrix (Fin m) (Fin m) ℝ)) => I (fun x => Matrix.trace ((H x).transpose * P * H x))))) (fun (H : (EuclideanSpace ℝ (Fin m)) → (Matrix (Fin m) (Fin m) ℝ)) => ∀ i j, MeasureTheory.MemLp (fun x => H x i j) 2 γ))) (MeasureTheory.integral γ))) ((ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin m))))",
+      "nl_statement": "Lemma 3.2 covariance representation and dual estimate, before completion: if DF=a-partial* b in compact-test Gaussian distributions, tr(P Cov(F)) is at most the row-weighted L2 energy of a,b. F has the stated probability density as its pushforward.",
+      "role_in_glue": "Apply with F=gradient phi, a=k(A)+u and b=v-K. No entropy or k-specific identity is built into this child.",
+      "weight": 5,
+      "depends_on": [],
+      "reuse": null
+    }
+  ],
+  "notes": "Two paper-aligned interfaces remain: C1 bounded matrix calculus and the Gaussian covariance variational estimate. Completed entropy, smooth cutoff and C1 mollification proofs from x0045 are merged into the checked glue. The CFC child is deliberately only C1, matching x0063's locally completed MatrixCFCDifferentiation candidate, which is not yet an accepted import. All weak-testing, square completion, logdet and trace algebra are proved helpers."
+}
