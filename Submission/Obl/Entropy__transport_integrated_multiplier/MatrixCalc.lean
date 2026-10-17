@@ -7,6 +7,7 @@ namespace Submission.Obl.Entropy__transport_integrated_multiplier
 variable {E ι : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   [Fintype ι] [DecidableEq ι]
 
+omit [Fintype ι] [DecidableEq ι] in
 lemma isHermitian_entry_derivative {F : E → Matrix ι ι ℝ}
     (hF : ∀ x, (F x).IsHermitian) (x v : E) :
     (Matrix.of fun i j => fderiv ℝ (fun y => F y i j) x v).IsHermitian := by
@@ -14,8 +15,9 @@ lemma isHermitian_entry_derivative {F : E → Matrix ι ι ℝ}
     funext y
     exact (hF y).apply i j
   ext i j
-  simpa only [Matrix.conjTranspose_apply, Matrix.of_apply, star_trivial, he]
+  simp only [Matrix.conjTranspose_apply, Matrix.of_apply, star_trivial, he]
 
+omit [DecidableEq ι] in
 lemma fderiv_matrix_square {Q : E → Matrix ι ι ℝ}
     (hQ : ∀ i j, Differentiable ℝ (fun x => Q x i j)) (x v : E) (i j : ι) :
     fderiv ℝ (fun y => (Q y * Q y) i j) x v =
@@ -32,12 +34,14 @@ lemma fderiv_matrix_square {Q : E → Matrix ι ι ℝ}
   change fderiv ℝ (fun y => Q y i k * Q y k j) x v = _ at hv
   simpa only [add_apply, smul_apply, smul_eq_mul, mul_comm, add_comm] using hv
 
+omit [DecidableEq ι] in
 lemma contDiff_matrix_square {n : ℕ∞ω} {Q : E → Matrix ι ι ℝ}
     (hQ : ∀ i j, ContDiff ℝ n (fun x => Q x i j)) (i j : ι) :
     ContDiff ℝ n (fun x => (Q x * Q x) i j) := by
   simp only [Matrix.mul_apply]
   exact ContDiff.sum fun k _ => (hQ i k).mul (hQ k j)
 
+omit [DecidableEq ι] in
 lemma square_isHermitian {Q : Matrix ι ι ℝ} (hQ : Q.IsHermitian) :
     (Q * Q).IsHermitian := by
   simpa only [hQ.eq] using (Matrix.posSemidef_conjTranspose_mul_self Q).isHermitian
@@ -51,6 +55,7 @@ lemma square_curvature_nonneg {Q B : Matrix ι ι ℝ}
   rw [← Submission.Lib.MatrixEntropy.trace_transpose_mul, hsym]
   exact Submission.Lib.MatrixEntropy.trace_mul_nonneg_of_posSemidef hP hB
 
+omit [DecidableEq ι] in
 lemma square_trace_entries {Q : Matrix ι ι ℝ} (hQ : Q.IsHermitian) :
     (Q * Q).trace = ∑ i, ∑ j, (Q i j)^2 := by
   have hsym : Q.transpose = Q := by simpa using hQ.eq
@@ -58,6 +63,7 @@ lemma square_trace_entries {Q : Matrix ι ι ℝ} (hQ : Q.IsHermitian) :
     _ = (Q.transpose * Q).trace := by rw [hsym]
     _ = _ := by rw [Submission.Lib.MatrixEntropy.trace_transpose_mul]; simp only [pow_two]
 
+omit [DecidableEq ι] in
 lemma trace_mul_entries_right {P H : Matrix ι ι ℝ} (hH : H.IsHermitian) :
     Matrix.trace (P * H) = ∑ i, ∑ j, P i j * H i j := by
   have hsym : H.transpose = H := by simpa using hH.eq

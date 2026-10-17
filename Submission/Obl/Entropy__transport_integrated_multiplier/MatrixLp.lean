@@ -19,6 +19,7 @@ lemma EntryLp.mul {p q r : ℝ≥0∞} [p.HolderTriple q r]
   simp only [Matrix.mul_apply]
   exact memLp_finsetSum Finset.univ fun k _ => (hG k j).mul' (hF i k)
 
+omit [Fintype ι] in
 lemma EntryLp.add {p : ℝ≥0∞} {F G : X → Matrix ι ι ℝ}
     (hF : EntryLp p F μ) (hG : EntryLp p G μ) : EntryLp p (fun x => F x + G x) μ :=
   fun i j => (hF i j).add (hG i j)
@@ -27,6 +28,7 @@ lemma EntryLp.trace {p : ℝ≥0∞} {F : X → Matrix ι ι ℝ} (hF : EntryLp 
     MemLp (fun x => Matrix.trace (F x)) p μ := by
   exact memLp_finsetSum Finset.univ fun i _ => hF i i
 
+omit [Fintype ι] in
 lemma EntryLp.integrable {F : X → Matrix ι ι ℝ} (hF : EntryLp 1 F μ) (i j : ι) :
     Integrable (fun x => F x i j) μ := memLp_one_iff_integrable.mp (hF i j)
 

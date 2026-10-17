@@ -14,6 +14,11 @@ variable {m : ℕ}
 local notation "E" => EuclideanSpace ℝ (Fin m)
 local notation "Mat" => Matrix (Fin m) (Fin m) ℝ
 
+/-- Smoothness of the scalar multiplier follows from positivity of the hazard. -/
+lemma contDiff_transportRatio : ContDiff ℝ ∞ transportRatio :=
+  contDiff_exponentialTransport.div contDiff_gaussianHazard
+    (fun a => ne_of_gt (gaussianHazard_pos a))
+
 /-- Coordinate derivatives of a matrix field. -/
 noncomputable def matrixDeriv (F : E → Mat) (r : Fin m) (x : E) : Mat :=
   Matrix.of fun i j => fderiv ℝ (fun y => F y i j) x (PiLp.single 2 r 1)
@@ -52,8 +57,7 @@ theorem transport_multiplier_of_c1
   intro J Q H K γ hweak hH hK
   have hAc' : Continuous A := continuous_matrix hAc
   have hq := contDiff_gaussianHazard.continuous
-  have hk : Continuous transportRatio :=
-    contDiff_exponentialTransport.continuous.div hq (fun a => ne_of_gt (gaussianHazard_pos a))
+  have hk : Continuous transportRatio := contDiff_transportRatio.continuous
   have hJ : ∀ x, (J x).IsHermitian := fun x => cfc_predicate _ _
   have hQ : ∀ x, (Q x).IsHermitian := fun x => cfc_predicate _ _
   have hJtop : EntryLp ∞ J γ := entryLp_top_cfc hA hAc' hAb hq

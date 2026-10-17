@@ -8,6 +8,7 @@ namespace Submission.Obl.Entropy__transport_integrated_multiplier
 
 variable {X ι : Type*} [TopologicalSpace X] [Fintype ι] [DecidableEq ι]
 
+omit [TopologicalSpace X] [Fintype ι] [DecidableEq ι] in
 /-- A continuous scalar observation of a bounded Hermitian field is bounded. -/
 lemma bounded_observation_of_hermitian
     {A : X → Matrix ι ι ℝ} (hA : ∀ x, (A x).IsHermitian)
@@ -29,6 +30,7 @@ lemma continuousOn_cfc_hermitian {f : ℝ → ℝ} (hf : Continuous f) :
   exact continuousOn_id.cfc_of_mem_nhdsSet f (s := univ) (by simp)
     (fun B hB => hB.isSelfAdjoint) hf.continuousOn
 
+omit [TopologicalSpace X] in
 /-- Continuous functional calculus preserves boundedness of a Hermitian field, entrywise. -/
 lemma bounded_cfc_entries {A : X → Matrix ι ι ℝ} (hA : ∀ x, (A x).IsHermitian)
     (hAb : ∃ R : ℝ, 0 < R ∧ ∀ x i j, |A x i j| ≤ R)

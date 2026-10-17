@@ -13,7 +13,7 @@ lemma bilinear_matrix_quad
       B (WithLp.toLp 2 v) (WithLp.toLp 2 v) := by
   have hv : (∑ i, v i • (PiLp.single 2 i 1 : EuclideanSpace ℝ ι)) = WithLp.toLp 2 v := by
     ext i
-    simp [PiLp.single_apply, Pi.single_apply, Finset.sum_apply, eq_comm]
+    simp [Pi.single_apply, Finset.sum_apply]
   rw [← hv]
   simp only [dotProduct, Matrix.mulVec, Matrix.of_apply, Pi.star_apply, star_trivial,
     map_sum, sum_apply, map_smul, smul_apply,
