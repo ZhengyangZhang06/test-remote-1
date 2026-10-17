@@ -1,3 +1,9 @@
+/-
+Adapted from: here:root
+
+Volume and covariance positivity lemmas written in session x0003 for root.
+-/
+
 import Mathlib
 import ChallengeDeps
 
