@@ -6,3 +6,4 @@ import Submission.Obl.Cone__simplex_iff_product
 import Submission.Obl.Entropy__affine_exponential_moments
 import Submission.Obl.Entropy__gaussian_hazard_lipschitz
 import Submission.Obl.Entropy__log_concave_exponential_tail
+import Submission.Obl.Entropy__moreau_envelope_sequence
