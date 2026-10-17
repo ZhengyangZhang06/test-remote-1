@@ -1,4 +1,4 @@
-import Submission.Obl.Entropy__noncommuting_remainder_assembly.Completion
+import Submission.Obl.Entropy__noncommuting_remainder_assembly.MatrixAlgebra
 
 open scoped BigOperators
 
@@ -49,7 +49,6 @@ lemma commutator_resolvent_coefficient {s α u v : ℝ}
     _ = (v * (1 - u) / (v + 1 / 8) + u * (1 - v) / (u + 1 / 8)) /
         (α * s ^ 2 * u * v) := by
       field_simp
-      <;> ring
     _ ≤ _ := div_le_div_of_nonneg_right (commutator_coefficient hu.le hv.le) (by positivity)
 
 lemma commutator_compensation_coefficient {s α u v : ℝ}
@@ -58,7 +57,7 @@ lemma commutator_compensation_coefficient {s α u v : ℝ}
       ((1 - v) / (α * s * v) - (1 - u) / (α * s * u)) =
         (s * (u - v)) ^ 2 / (α * s ^ 2 * u * v) := by
   field_simp
-  <;> ring
+  ring
 
 /-- A symmetric double sum is its average with the transpose. -/
 lemma sum_pair_average (f : ι → ι → ℝ) :
@@ -145,11 +144,13 @@ lemma diagonal_commutator_bound [DecidableEq ι]
     apply Finset.sum_le_sum
     intro j _
     have h := mul_le_mul_of_nonneg_right (hcoeff i j) (sq_nonneg (b i j))
-    convert h using 1 <;> rw [hCij i j, hCij j i, hb' i j] <;> ring
+    convert h using 1
+    rw [hCij i j, hCij j i, hb' i j]
+    ring
   have hweight : (∑ r, ∑ i, ∑ j, (t j + c) * (W r i j) ^ 2) =
       Matrix.trace (Matrix.diagonal t * (∑ r, (W r).transpose * W r)) +
         c * (∑ r, squareSum (W r)) := by
-    simp only [Matrix.mul_sum, Matrix.trace_sum, diagonal_right_energy,
+    simp only [Matrix.trace_sum, diagonal_right_energy,
       squareSum, add_mul, Finset.sum_add_distrib, Finset.mul_sum]
   change -_ - 2 * Matrix.trace (C * _) - _ ≤ _
   linarith

@@ -55,7 +55,7 @@ lemma weighted_completion [DecidableEq ι]
           d • (T.transpose * (∑ r, X r * (X r).transpose) * T)) *
             (P * P.transpose)) := by
     rw [sum_squareSum_adjoint, pairing_weight_right, squareSum_mul_right]
-    simp [Matrix.add_mul, Matrix.smul_mul]
+    simp [Matrix.add_mul]
   rw [pairing_add_right, pairing_sum_right]
   linarith
 
@@ -71,6 +71,6 @@ lemma weighted_completion_constants [DecidableEq ι]
       (5 / 17 : ℝ) * (∑ r, squareSum (M r * R)) := by
   have h := weighted_completion X T a P R M (c := 111 / 25) (d := 17 / 20)
     (by norm_num) (by norm_num) hRP
-  convert h using 1 <;> ring
+  convert h using 1; ring
 
 end Submission.Obl.Entropy__noncommuting_remainder_assembly

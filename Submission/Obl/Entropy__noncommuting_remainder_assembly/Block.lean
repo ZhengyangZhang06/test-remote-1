@@ -58,6 +58,6 @@ lemma block_bound_constants [DecidableEq ι] (X : ν → Matrix ι κ ℝ)
       (40 / 37 : ℝ) * squareSum a + (40 / 3 : ℝ) * (∑ r, squareSum (L r)) := by
   have h := block_bound X S a L (s := 40 / 37) (α := 3 / 40)
     (by norm_num) (by norm_num) (by norm_num; exact hInv)
-  convert h using 1 <;> ring
+  convert h using 1; ring
 
 end Submission.Obl.Entropy__noncommuting_remainder_assembly

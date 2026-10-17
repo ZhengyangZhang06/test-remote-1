@@ -6,6 +6,7 @@ namespace Submission.Obl.Entropy__noncommuting_remainder_assembly
 
 variable {ι ν : Type*} [Fintype ι] [Fintype ν] [DecidableEq ι]
 
+omit [DecidableEq ι] in
 lemma starAlgEquiv_transpose (φ : Matrix ι ι ℝ ≃⋆ₐ[ℝ] Matrix ι ι ℝ)
     (A : Matrix ι ι ℝ) : φ A.transpose = (φ A).transpose := by
   simpa only [Matrix.star_eq_conjTranspose, Matrix.conjTranspose_eq_transpose_of_trivial]
@@ -90,5 +91,33 @@ lemma commutator_bound (X W : ν → Matrix ι ι ℝ) (b S : Matrix ι ι ℝ)
   have hsq (A : Matrix ι ι ℝ) : squareSum (φ A) = squareSum A := squareSum_unitary_conj U A
   simp only [hsq, ← starAlgEquiv_transpose, ← map_mul, ← map_sum, ← map_sub, htr] at h
   exact h
+
+/-- The paper's fixed constants, with positivity discharged from the Gram structure. -/
+lemma commutator_bound_constants (X W : ν → Matrix ι ι ℝ) (b : Matrix ι ι ℝ)
+    (hX : ∀ r, (X r).IsHermitian) (hb : b.IsHermitian) :
+    let B := ∑ r, X r * X r;
+    let S := ((37 / 40 : ℝ) • (1 : Matrix ι ι ℝ) + (3 / 40 : ℝ) • B)⁻¹;
+    let T := S - 1;
+    -Matrix.trace (T * b * B * b - T * B * b * b) -
+      2 * Matrix.trace ((T * b - b * T) * (∑ r, X r * W r)) -
+      Matrix.trace (T * (∑ r, (W r).transpose * W r)) ≤
+        (42 / 37 : ℝ) * (∑ r, ∑ i, ∑ j, (W r i j) ^ 2) := by
+  have hXs (r : ν) : (X r).transpose = X r := by simpa using (hX r).eq
+  have hbs : b.transpose = b := by simpa using hb.eq
+  let B := ∑ r, X r * (X r).transpose
+  let M := (37 / 40 : ℝ) • (1 : Matrix ι ι ℝ) + (3 / 40 : ℝ) • B
+  have hB : B.PosSemidef := Matrix.posSemidef_sum _ fun r _ => by
+    simpa only [Matrix.conjTranspose_eq_transpose_of_trivial] using
+      Matrix.posSemidef_self_mul_conjTranspose (X r)
+  have hM : M.PosDef := (Matrix.PosDef.one.smul (by norm_num : (0 : ℝ) < 37 / 40)).add_posSemidef
+    (hB.smul (by norm_num : (0 : ℝ) ≤ 3 / 40))
+  have hInv : ((40 / 37 : ℝ)⁻¹ • (1 : Matrix ι ι ℝ) + (3 / 40 : ℝ) • B) * M⁻¹ = 1 := by
+    norm_num
+    exact Matrix.mul_nonsing_inv _ (Matrix.isUnit_iff_isUnit_det _ |>.mp hM.isUnit)
+  have h := commutator_bound X W b M⁻¹ (s := 40 / 37) (α := 3 / 40)
+    (by norm_num) (by norm_num) hM.inv hbs hInv
+  norm_num only [show (1 : ℝ) + (40 / 37) / 8 = 42 / 37 by norm_num] at h
+  simpa only [M, B, hXs, squareSum] using h
+
 
 end Submission.Obl.Entropy__noncommuting_remainder_assembly
