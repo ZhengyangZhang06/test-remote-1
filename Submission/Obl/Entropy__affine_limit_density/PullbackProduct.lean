@@ -18,6 +18,7 @@ theorem affineDensity_comp {m : ℕ} (P L0 : E m ≃L[ℝ] E m)
       L0.symm (P (x - b) - a0) := by
     simp [sub_add_eq_sub_sub, map_sub]
   rw [ha]
+  simp only [ContinuousLinearEquiv.symm_symm]
   ring
 
 /-- Pull an affine exponential law back through an arbitrary invertible normalization. -/
@@ -41,12 +42,13 @@ theorem exists_affine_exponential_of_map_eq {m : ℕ} {f : E m → ℝ}
   have hlaw' : Measure.map (fun x => e (x - b))
       (volume.withDensity (fun x => ENNReal.ofReal (f x))) =
       volume.withDensity (fun x => ENNReal.ofReal (affineDensity e0 a0 productExpDensity x)) := by
-    simpa only [affineDensity, productExpDensity_eq] using hlaw
+    simpa [affineDensity, productExpDensity_eq, e, e0] using hlaw
   have h := ae_eq_affineDensity_of_map_eq hf0 hf
     (affineDensity_nonneg e0 a0 productExpDensity_nonneg)
     (integrable_affineDensity e0 a0 (integrable_productExpDensity m)) e b hlaw'
   rw [affineDensity_comp] at h
   refine ⟨L0.trans P.symm, b + P.symm a0, ?_⟩
-  simpa only [affineDensity, productExpDensity_eq] using h
+  filter_upwards [h] with x hx
+  simpa [affineDensity, productExpDensity_eq, e, e0] using hx
 
 end Submission.Obl.Entropy__affine_limit_density

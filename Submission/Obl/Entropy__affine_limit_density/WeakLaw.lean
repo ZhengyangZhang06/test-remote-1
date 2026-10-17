@@ -62,7 +62,7 @@ theorem map_eq_of_density_limits {m : ℕ} {μ : Measure (E m)} [IsFiniteMeasure
     (hlaw : ∀ n, Measure.map (Fn n) μ = Measure.map (Tn n)
       (volume.withDensity (fun x => ENNReal.ofReal (fn n x)))) :
     Measure.map F μ = Measure.map T (volume.withDensity (fun x => ENNReal.ofReal (f x))) := by
-  haveI := isFinite_density hf0 hf
+  have := isFinite_density hf0 hf
   apply ext_of_forall_integral_eq_of_IsFiniteMeasure
   intro g
   have hleft : Tendsto (fun n => ∫ x, g (Fn n x) ∂μ) atTop
