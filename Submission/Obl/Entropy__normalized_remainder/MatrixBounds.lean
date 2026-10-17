@@ -24,7 +24,7 @@ theorem log_det_le_trace_sub_dim {m : ℕ} {C : Mat m} (hC : C.PosDef) :
       Finset.sum_le_sum fun i _ => Real.log_le_sub_one_of_pos (hC.eigenvalues_pos i)
     _ = _ := by simp [Finset.sum_sub_distrib]
 
-/-- The log-determinant supporting plane used in equation (3.10). -/
+/-- The log-determinant supporting plane used in the deficit reduction. -/
 theorem log_det_supporting_plane {m : ℕ} {C S : Mat m}
     (hC : C.PosDef) (hS : S.PosDef) :
     Real.log C.det + (m : ℝ) ≤ Matrix.trace (S * C) - Real.log S.det := by
@@ -100,7 +100,7 @@ theorem dualS_le {m : ℕ} {B : Mat m} (hB : B.PosSemidef) :
     Commute.mul_nonneg (dualS_posDef hB).posSemidef.nonneg hB.nonneg
       (dualS_commute hB)).smul (by norm_num)
 
-/-- Equation (3.9): the deviation is a weighted first-chaos defect. -/
+/-- The deviation is a weighted first-chaos defect (the paper's dual relations). -/
 theorem dualT_eq {m : ℕ} {B : Mat m} (hB : B.PosSemidef) :
     dualT B = -(3 / 40 : ℝ) • (dualS B * (B - 1)) := by
   ext i j

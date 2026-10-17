@@ -4,7 +4,7 @@ import Submission.Lib.EntropyTools.Remainder
 /-!
 # The first Gaussian chaos of a symmetric matrix field
 
-The definitions in equation (3.5) of the supplied paper.  All expectations
+The first-chaos definitions in Section 3 of the supplied paper.  All expectations
 are entrywise, as in the frozen interface of `normalized_remainder`.
 -/
 
