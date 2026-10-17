@@ -10,3 +10,9 @@ import Submission.Lib.EntropyRemainder.ChaosSummation
 import Submission.Lib.EntropyRemainder.ScalarMinorant
 import Submission.Lib.EntropyRemainder.CommutatorScalar
 import Submission.Lib.EntropyRemainder.BlockContraction
+import Submission.Lib.EntropyRemainder.GaussianDensity
+import Submission.Lib.EntropyRemainder.GaussianIBP
+import Submission.Lib.EntropyRemainder.Interfaces
+import Submission.Lib.EntropyRemainder.FirstChaosDerivative
+import Submission.Lib.EntropyRemainder.SmoothCutoff
+import Submission.Lib.EntropyRemainder.WeakDivergence
