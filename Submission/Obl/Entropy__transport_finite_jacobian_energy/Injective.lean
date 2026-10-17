@@ -1,6 +1,8 @@
 import Mathlib
 import Submission.Obl.Entropy__centered_slack_transports.Fields
 
+set_option autoImplicit false
+
 open MeasureTheory Set Filter
 open scoped Topology
 
@@ -26,7 +28,7 @@ theorem injective_of_positive_derivative
     rw [(hd t).deriv]
     exact hpos _ _ hv
   have hlt := hm (show (0 : ℝ) < 1 by norm_num)
-  simpa [f, hxy] using hlt
+  simp [f, hxy] at hlt
 
 /-- The determinant of a derivative equals that of its coordinate matrix. -/
 theorem det_derivative_from_basis {m : ℕ}

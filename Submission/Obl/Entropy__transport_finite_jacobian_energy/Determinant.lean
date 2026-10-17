@@ -1,5 +1,7 @@
 import Mathlib
 
+set_option autoImplicit false
+
 open Matrix
 open scoped BigOperators Matrix.Norms.Elementwise
 

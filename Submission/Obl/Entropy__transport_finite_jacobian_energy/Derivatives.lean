@@ -1,5 +1,7 @@
 import Submission.Obl.Entropy__transport_finite_jacobian_energy.Determinant
 
+set_option autoImplicit false
+
 open Matrix
 open scoped BigOperators Matrix.Norms.Elementwise ContDiff
 
@@ -33,28 +35,30 @@ lemma directional_comm {f : E → F} (hf : ContDiff ℝ ∞ f) (v w x : E) :
 lemma directional_sum {ι : Type*} (s : Finset ι) {f : ι → E → F}
     {x : E} (hf : ∀ i ∈ s, DifferentiableAt ℝ (f i) x) (v : E) :
     directional v (fun y => ∑ i ∈ s, f i y) x = ∑ i ∈ s, directional v (f i) x := by
-  simp only [directional, fderiv_fun_sum hf, ContinuousLinearMap.sum_apply]
+  simp only [directional, fderiv_fun_sum hf, _root_.sum_apply]
 
 lemma directional_mul {f g : E → ℝ} {x : E}
     (hf : DifferentiableAt ℝ f x) (hg : DifferentiableAt ℝ g x) (v : E) :
     directional v (fun y => f y * g y) x =
       directional v f x * g x + f x * directional v g x := by
-  simp only [directional, fderiv_fun_mul hf hg, ContinuousLinearMap.add_apply,
-    ContinuousLinearMap.smul_apply, smul_eq_mul]
+  simp only [directional, fderiv_fun_mul hf hg, _root_.add_apply,
+    _root_.smul_apply, smul_eq_mul]
   ring
 
 lemma directional_sub {f g : E → F} {x : E}
     (hf : DifferentiableAt ℝ f x) (hg : DifferentiableAt ℝ g x) (v : E) :
     directional v (fun y => f y - g y) x = directional v f x - directional v g x := by
-  simp only [directional, fderiv_fun_sub hf hg, ContinuousLinearMap.sub_apply]
+  simp only [directional, fderiv_fun_sub hf hg, _root_.sub_apply]
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
+omit [DecidableEq ι] in
 lemma differentiableAt_matrix_entry {A : E → Matrix ι ι ℝ} {x : E}
     (hA : DifferentiableAt ℝ A x) (i j : ι) :
     DifferentiableAt ℝ (fun y => A y i j) x :=
   differentiableAt_pi.mp (differentiableAt_pi.mp hA i) j
 
+omit [DecidableEq ι] in
 lemma directional_matrix_entry {A : E → Matrix ι ι ℝ} {x : E}
     (hA : DifferentiableAt ℝ A x) (i j : ι) (v : E) :
     directional v (fun y => A y i j) x = directional v A x i j := by

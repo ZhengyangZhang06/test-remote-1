@@ -1,5 +1,7 @@
 import Submission.Obl.Entropy__transport_finite_jacobian_energy.Derivatives
 
+set_option autoImplicit false
+
 open scoped BigOperators Matrix.Norms.Elementwise ContDiff
 
 namespace Submission.Obl.Entropy__transport_finite_jacobian_energy
