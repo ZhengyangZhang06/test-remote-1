@@ -68,4 +68,15 @@ lemma frozen_h_eq :
   rw [deriv_transportRatio_eq, deriv_transportSlope_eq]
   exact funext fun a => (hValue_eq a).symm
 
+/-- The scalar cost in the frozen goal agrees with the algebraic certificate form. -/
+lemma frozen_cost_eq :
+    (fun a => (40/37) * ((deriv transportRatio a - 7/25)^2 + (5/96) *
+      (transportRatio a * (1 + deriv transportRatio a) - (3/2)*transportRatio a -
+        (80/3)*(deriv transportRatio a - 7/25)*deriv (deriv transportRatio) a)^2 /
+      (deriv (fun z => transportRatio z * (1 + deriv transportRatio z)) a -
+        (deriv transportRatio a)^2 - (40/3)*(deriv (deriv transportRatio) a)^2))) =
+    yCostValue := by
+  simp only [deriv_transportRatio_eq, deriv_transportSlope_eq, ← pValue_eq_deriv, ← hValue_eq]
+  rfl
+
 end Submission.Obl.Entropy__first_chaos_absorption
