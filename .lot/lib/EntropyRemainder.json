@@ -1,0 +1,30 @@
+{
+  "name": "EntropyRemainder",
+  "module": "Submission.Lib.EntropyRemainder",
+  "files": [
+    "Submission/Lib/EntropyRemainder.lean",
+    "Submission/Lib/EntropyRemainder/BlockContraction.lean",
+    "Submission/Lib/EntropyRemainder/ChaosSummation.lean",
+    "Submission/Lib/EntropyRemainder/CommutatorScalar.lean",
+    "Submission/Lib/EntropyRemainder/CompactApprox.lean",
+    "Submission/Lib/EntropyRemainder/FirstChaos.lean",
+    "Submission/Lib/EntropyRemainder/FirstChaosDerivative.lean",
+    "Submission/Lib/EntropyRemainder/FirstChaosTrace.lean",
+    "Submission/Lib/EntropyRemainder/GaussianDensity.lean",
+    "Submission/Lib/EntropyRemainder/GaussianIBP.lean",
+    "Submission/Lib/EntropyRemainder/Interfaces.lean",
+    "Submission/Lib/EntropyRemainder/MatrixBounds.lean",
+    "Submission/Lib/EntropyRemainder/ScalarMinorant.lean",
+    "Submission/Lib/EntropyRemainder/SmoothCutoff.lean",
+    "Submission/Lib/EntropyRemainder/WeakDivergence.lean",
+    "Submission/Lib/EntropyRemainder/WeakDivergenceC1.lean",
+    "Submission/Lib/EntropyRemainder/WeakMatrix.lean",
+    "Submission/Lib/EntropyRemainder/WeakWitness.lean"
+  ],
+  "by": "x0062",
+  "gid": "g00130",
+  "from": "here:o006",
+  "purpose": "",
+  "at": 1792223002.626399,
+  "sha": "5cce93bb580e12bcb9e4a1d61243afcfcfdb9e73"
+}
