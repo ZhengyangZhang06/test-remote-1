@@ -4,6 +4,7 @@ import Submission.Helpers
 import Submission.Obl.Cone__moments
 import Submission.Obl.Cone__simplex_iff_product
 import Submission.Obl.Entropy__absorption_h_square_bound
+import Submission.Obl.Entropy__absorption_logarithmic_cutoff
 import Submission.Obl.Entropy__absorption_p_lower_bounds
 import Submission.Obl.Entropy__affine_exponential_moments
 import Submission.Obl.Entropy__affine_limit_density
