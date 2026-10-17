@@ -1,0 +1,35 @@
+{
+  "children": [
+    {
+      "key": "p_lower_bounds",
+      "lean_name": "Entropy.absorption_p_lower_bounds",
+      "lean_statement": "∀ a : ℝ, -6 ≤ a → a ≤ 10 → (fun t : ℝ → ℝ => (fun q : ℝ → ℝ => (fun k : ℝ → ℝ => (fun b : ℝ → ℝ => (fun l : ℝ → ℝ => (fun p : ℝ → ℝ => (a ≤ 0 → 1 / (7 + a^2) ≤ p a) ∧ (0 ≤ a → (1/4 : ℝ) ≤ p a) ∧ (4 ≤ a → (23/50 : ℝ) ≤ p a)) (fun a => deriv (fun z => k z * (1 + b z)) a - (b a)^2 - (40/3) * (l a)^2)) (deriv b)) (deriv k)) (fun a => t a / q a)) (fun a => ProbabilityTheory.gaussianPDFReal 0 1 a / ProbabilityTheory.cdf (ProbabilityTheory.gaussianReal 0 1) (-a))) (fun a => -Real.log (ProbabilityTheory.cdf (ProbabilityTheory.gaussianReal 0 1) (-a)))",
+      "nl_statement": "On -6<=a<=10, the Gaussian reserve p satisfies p(a)>=1/(7+a^2) when a<=0, p(a)>=1/4 when a>=0, and p(a)>=23/50 when a>=4.",
+      "role_in_glue": "Supplies p positivity and the quadratic minorant used in the first-chaos spectral absorption estimate.",
+      "weight": 5,
+      "depends_on": [],
+      "reuse": null
+    },
+    {
+      "key": "h_square_bound",
+      "lean_name": "Entropy.absorption_h_square_bound",
+      "lean_statement": "∀ a : ℝ, -6 ≤ a → a ≤ 10 → (fun t : ℝ → ℝ => (fun q : ℝ → ℝ => (fun k : ℝ → ℝ => (fun b : ℝ → ℝ => (fun l : ℝ → ℝ => (fun p : ℝ → ℝ => (fun h : ℝ → ℝ => (h a)^2 ≤ ((67/100 : ℝ)^2) * p a) (fun a => k a * (1 + b a) - (3/2) * k a - (80/3) * (b a - 7/25) * l a)) (fun a => deriv (fun z => k z * (1 + b z)) a - (b a)^2 - (40/3) * (l a)^2)) (deriv b)) (deriv k)) (fun a => t a / q a)) (fun a => ProbabilityTheory.gaussianPDFReal 0 1 a / ProbabilityTheory.cdf (ProbabilityTheory.gaussianReal 0 1) (-a))) (fun a => -Real.log (ProbabilityTheory.cdf (ProbabilityTheory.gaussianReal 0 1) (-a)))",
+      "nl_statement": "On -6<=a<=10, the Gaussian coefficient h0 satisfies h0(a)^2 <= (67/100)^2 p(a).",
+      "role_in_glue": "Combines with p>0 and the accepted slope bounds to bound the Y-square cost by 111/1000.",
+      "weight": 5,
+      "depends_on": [],
+      "reuse": null
+    },
+    {
+      "key": "logarithmic_cutoff",
+      "lean_name": "Entropy.absorption_logarithmic_cutoff",
+      "lean_statement": "∀ z : ℝ, 0 ≤ z → 40 / (37 + 3*z) - 1 - Real.log (40 / (37 + 3*z)) ≤ (86/125) * ((3 * (z - 1)^2 / (37 + 3*z)) * ((3 : ℝ)/20 + ((49 : ℝ)/100)*(37/(37+3*z))) * (if z = 0 then (13 : ℝ)/100 else min ((13 : ℝ)/100) (32/(25*Real.sqrt z))))",
+      "nl_statement": "The elementary logarithmic cost for the affine inverse s=40/(37+3z) is at most (86/125) times the exact rigidity weight, including the cutoff at z=0.",
+      "role_in_glue": "Supplies the .688 logarithmic bound that is subtracted from the .689 averaged p-minorant, retaining the exact omega/1000 remainder.",
+      "weight": 4,
+      "depends_on": [],
+      "reuse": null
+    }
+  ],
+  "notes": "The two Gaussian certificates are needed only for -6<=a<=10: both tails are already proved in merged owned TailCertificate.lean and PositiveCertificate.lean. The third child is the pure scalar logarithmic cutoff bound. Owned matrix spectral integration, direct Gaussian first-chaos moments, and elementary quadratic-minorant/loss algebra are proved in glue. A logarithmic proof was reported elsewhere but is not in accepted lib or available on an o021 branch; the scalar logarithmic child gives its author a frozen obligation to offer the proof to."
+}
