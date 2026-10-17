@@ -13,8 +13,11 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 noncomputable def weakCutoff (n : ℕ) (x : E) : ℝ :=
   (default : ContDiffBump (0 : E)) ((1 / ((n : ℝ) + 1)) • x)
 
-theorem weakCutoff_smooth (n : ℕ) : ContDiff ℝ ∞ (weakCutoff (E := E) n) :=
+theorem weakCutoff_contDiff (n : ℕ) {s : ENat} : ContDiff ℝ s (weakCutoff (E := E) n) :=
   (default : ContDiffBump (0 : E)).contDiff.comp (contDiff_id.const_smul _)
+
+theorem weakCutoff_smooth (n : ℕ) : ContDiff ℝ ∞ (weakCutoff (E := E) n) :=
+  weakCutoff_contDiff n
 
 theorem weakCutoff_compact (n : ℕ) : HasCompactSupport (weakCutoff (E := E) n) :=
   (default : ContDiffBump (0 : E)).hasCompactSupport.comp_smul (by positivity)
@@ -83,22 +86,23 @@ variable {E r : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 /-- A weak identity tested against compactly supported smooth functions extends to smooth
 `H¹` tests. This cutoff argument needs no special property of the measure. -/
-theorem weak_h1_testing (e : r → E) {H z : E → ℝ} {v : r → E → ℝ}
+theorem weak_h1_testing_of_contDiff (s : ENat) (hs : (s : WithTop ENat) ≠ 0)
+    (e : r → E) {H z : E → ℝ} {v : r → E → ℝ}
     (hH : MemLp H 2 μ) (hv : ∀ i, MemLp (v i) 2 μ)
-    (hweak : ∀ w : E → ℝ, ContDiff ℝ ∞ w → HasCompactSupport w →
+    (hweak : ∀ w : E → ℝ, ContDiff ℝ s w → HasCompactSupport w →
       (∫ x, H x * w x ∂μ) = ∑ i, ∫ x, v i x * fderiv ℝ w x (e i) ∂μ)
-    (hzs : ContDiff ℝ ∞ z) (hz : MemLp z 2 μ)
+    (hzs : ContDiff ℝ s z) (hz : MemLp z 2 μ)
     (hdz : ∀ i, MemLp (fun x => fderiv ℝ z x (e i)) 2 μ) :
     (∫ x, H x * z x ∂μ) = ∑ i, ∫ x, v i x * fderiv ℝ z x (e i) ∂μ := by
   obtain ⟨C, hC0, hC⟩ := weakCutoff_fderiv_bound (E := E)
   let w (n : ℕ) (x : E) := weakCutoff n x * z x
-  have hws n : ContDiff ℝ ∞ (w n) := (weakCutoff_smooth n).mul hzs
+  have hws n : ContDiff ℝ s (w n) := (weakCutoff_contDiff n).mul hzs
   have hwc n : HasCompactSupport (w n) := (weakCutoff_compact n).mul_right
   have hwder n x (i : r) : fderiv ℝ (w n) x (e i) =
       weakCutoff n x * fderiv ℝ z x (e i) + z x * fderiv ℝ (weakCutoff n) x (e i) := by
     rw [show w n = fun x => weakCutoff n x * z x from rfl,
       fderiv_fun_mul ((weakCutoff_smooth n).differentiable (by simp) x)
-        (hzs.differentiable (by simp) x)]
+        (hzs.differentiable hs x)]
     simp
   have hleft : Tendsto (fun n => ∫ x, H x * w n x ∂μ) atTop
       (𝓝 (∫ x, H x * z x ∂μ)) := by
@@ -122,7 +126,7 @@ theorem weak_h1_testing (e : r → E) {H z : E → ℝ} {v : r → E → ℝ}
       (fun x => ‖v i x * fderiv ℝ z x (e i)‖ + C * ‖e i‖ * ‖v i x * z x‖)
     · intro n
       exact (hv i).aestronglyMeasurable.mul
-        (((hws n).continuous_fderiv (by simp)).clm_apply continuous_const).aestronglyMeasurable
+        (((hws n).continuous_fderiv hs).clm_apply continuous_const).aestronglyMeasurable
     · exact ((hv i).integrable_mul (hdz i)).norm.add
         (((hv i).integrable_mul hz).norm.const_mul (C * ‖e i‖))
     · intro n
@@ -151,6 +155,16 @@ theorem weak_h1_testing (e : r → E) {H z : E → ℝ} {v : r → E → ℝ}
     funext (fun n => hweak (w n) (hws n) (hwc n))
   rw [heq] at hleft
   exact tendsto_nhds_unique hleft (tendsto_finsetSum _ (fun i _ => hright i))
+
+/-- The smooth specialization of the cutoff extension. -/
+theorem weak_h1_testing (e : r → E) {H z : E → ℝ} {v : r → E → ℝ}
+    (hH : MemLp H 2 μ) (hv : ∀ i, MemLp (v i) 2 μ)
+    (hweak : ∀ w : E → ℝ, ContDiff ℝ ∞ w → HasCompactSupport w →
+      (∫ x, H x * w x ∂μ) = ∑ i, ∫ x, v i x * fderiv ℝ w x (e i) ∂μ)
+    (hzs : ContDiff ℝ ∞ z) (hz : MemLp z 2 μ)
+    (hdz : ∀ i, MemLp (fun x => fderiv ℝ z x (e i)) 2 μ) :
+    (∫ x, H x * z x ∂μ) = ∑ i, ∫ x, v i x * fderiv ℝ z x (e i) ∂μ :=
+  weak_h1_testing_of_contDiff ⊤ (by simp) e hH hv hweak hzs hz hdz
 
 end Testing
 
