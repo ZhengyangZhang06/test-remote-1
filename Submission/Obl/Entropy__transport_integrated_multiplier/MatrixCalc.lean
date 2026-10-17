@@ -29,7 +29,8 @@ lemma fderiv_matrix_square {Q : E → Matrix ι ι ℝ}
   intro k _
   have hd := fderiv_mul (hQ i k x) (hQ k j x)
   have hv := congrArg (fun L => L v) hd
-  simpa only [Pi.mul_apply, add_apply, smul_apply, smul_eq_mul, mul_comm, add_comm] using hv
+  change fderiv ℝ (fun y => Q y i k * Q y k j) x v = _ at hv
+  simpa only [add_apply, smul_apply, smul_eq_mul, mul_comm, add_comm] using hv
 
 lemma contDiff_matrix_square {Q : E → Matrix ι ι ℝ}
     (hQ : ∀ i j, ContDiff ℝ ∞ (fun x => Q x i j)) (i j : ι) :
