@@ -1,0 +1,35 @@
+{
+ "format": "lot-gitwork/1",
+ "tree": "zy42-oai-101-gw2",
+ "namespace": "zy42-oai-101-gw2",
+ "order": "o048-1",
+ "obl": "o048",
+ "lean_name": "Entropy.smooth_gaussian_transport",
+ "lean_statement": "\u2200 m : \u2115, 1 \u2264 m \u2192 (fun (H : ((EuclideanSpace \u211d (Fin m)) \u2192 \u211d) \u2192 \u211d \u2192 \u211d \u2192 Prop) => (fun (regular : ((EuclideanSpace \u211d (Fin m)) \u2192 \u211d) \u2192 Prop) => (fun (T : ((EuclideanSpace \u211d (Fin m)) \u2192 \u211d) \u2192 ((EuclideanSpace \u211d (Fin m)) \u2192 \u211d) \u2192 Prop) => \u2200 V : ((EuclideanSpace \u211d (Fin m)) \u2192 \u211d), regular V \u2192 \u2203 \u03c6 : ((EuclideanSpace \u211d (Fin m)) \u2192 \u211d), T V \u03c6) (fun U \u03c6 : ((EuclideanSpace \u211d (Fin m)) \u2192 \u211d) => ContDiff \u211d ((\u22a4 : ENat) : WithTop ENat) \u03c6 \u2227 ConvexOn \u211d Set.univ \u03c6 \u2227 MeasureTheory.Measure.map (gradient \u03c6) (ProbabilityTheory.stdGaussian (EuclideanSpace \u211d (Fin m))) = MeasureTheory.Measure.withDensity MeasureTheory.volume (fun x => ENNReal.ofReal (Real.exp (-U x))))) (fun V : ((EuclideanSpace \u211d (Fin m)) \u2192 \u211d) => ContDiff \u211d ((\u22a4 : ENat) : WithTop ENat) V \u2227 (\u2203 a b : \u211d, 0 < a \u2227 a \u2264 b \u2227 H V a b) \u2227 MeasureTheory.Integrable (fun x => Real.exp (-V x)) MeasureTheory.volume \u2227 MeasureTheory.integral MeasureTheory.volume (fun x => Real.exp (-V x)) = 1 \u2227 MeasureTheory.Integrable (fun x => Real.exp (-V x) * \u2016x\u2016 ^ 2) MeasureTheory.volume \u2227 MeasureTheory.Integrable (fun x => Real.exp (-V x) * Real.log (Real.exp (-V x))) MeasureTheory.volume)) (fun (F : ((EuclideanSpace \u211d (Fin m)) \u2192 \u211d)) (a b : \u211d) => \u2200 x v : (EuclideanSpace \u211d (Fin m)), a * \u2016v\u2016 ^ 2 \u2264 (fderiv \u211d (fderiv \u211d F) x v) v \u2227 (fderiv \u211d (fderiv \u211d F) x v) v \u2264 b * \u2016v\u2016 ^ 2)",
+ "type_sha": "ba66930050f7f5e15c59aa34a367aa810a574a99e61027beedb51639239645af",
+ "module": "Submission.Obl.Entropy__smooth_gaussian_transport",
+ "module_path": "Submission/Obl/Entropy__smooth_gaussian_transport.lean",
+ "owned": [
+  "Submission/Obl/Entropy__smooth_gaussian_transport.lean",
+  "Submission/Obl/Entropy__smooth_gaussian_transport/"
+ ],
+ "nl_statement": "Section 2.2, the full-space regularity paragraph: every smooth uniformly convex probability potential has a smooth convex gradient transport from the standard Gaussian.",
+ "role_in_glue": "Supplies a smooth convex Gaussian transport for each regular target in the universal premise of the normalization child.",
+ "lib": "e7188a74b82dc65120d1cac7138bc3b372cea76f",
+ "problem": "oai_101_simplex_isotropic_constant",
+ "trusted": "/home/ubuntu/lean-runs/lean-test/trusted-v7/oai_101_simplex_isotropic_constant",
+ "checker": {
+  "check.sh": "d4efc8602560fbfd4f5bc82a3b6a1d205a5fa801cfd23aecb62fb7c3331a8983",
+  "pristine.tar": "62138aed8d58c276b23aac2d4229ebec072e5c19229c38f075847667a0109c37",
+  "protected.sha256": "6192c40e119bb30d7669848913900778413c9fdc89d402ce27ce211d5a7429f5"
+ },
+ "dag_node": {
+  "id": "o048",
+  "lean_name": "Submission.Entropy.smooth_gaussian_transport",
+  "lean_statement": "\u2200 m : \u2115, 1 \u2264 m \u2192 (fun (H : ((EuclideanSpace \u211d (Fin m)) \u2192 \u211d) \u2192 \u211d \u2192 \u211d \u2192 Prop) => (fun (regular : ((EuclideanSpace \u211d (Fin m)) \u2192 \u211d) \u2192 Prop) => (fun (T : ((EuclideanSpace \u211d (Fin m)) \u2192 \u211d) \u2192 ((EuclideanSpace \u211d (Fin m)) \u2192 \u211d) \u2192 Prop) => \u2200 V : ((EuclideanSpace \u211d (Fin m)) \u2192 \u211d), regular V \u2192 \u2203 \u03c6 : ((EuclideanSpace \u211d (Fin m)) \u2192 \u211d), T V \u03c6) (fun U \u03c6 : ((EuclideanSpace \u211d (Fin m)) \u2192 \u211d) => ContDiff \u211d ((\u22a4 : ENat) : WithTop ENat) \u03c6 \u2227 ConvexOn \u211d Set.univ \u03c6 \u2227 MeasureTheory.Measure.map (gradient \u03c6) (ProbabilityTheory.stdGaussian (EuclideanSpace \u211d (Fin m))) = MeasureTheory.Measure.withDensity MeasureTheory.volume (fun x => ENNReal.ofReal (Real.exp (-U x))))) (fun V : ((EuclideanSpace \u211d (Fin m)) \u2192 \u211d) => ContDiff \u211d ((\u22a4 : ENat) : WithTop ENat) V \u2227 (\u2203 a b : \u211d, 0 < a \u2227 a \u2264 b \u2227 H V a b) \u2227 MeasureTheory.Integrable (fun x => Real.exp (-V x)) MeasureTheory.volume \u2227 MeasureTheory.integral MeasureTheory.volume (fun x => Real.exp (-V x)) = 1 \u2227 MeasureTheory.Integrable (fun x => Real.exp (-V x) * \u2016x\u2016 ^ 2) MeasureTheory.volume \u2227 MeasureTheory.Integrable (fun x => Real.exp (-V x) * Real.log (Real.exp (-V x))) MeasureTheory.volume)) (fun (F : ((EuclideanSpace \u211d (Fin m)) \u2192 \u211d)) (a b : \u211d) => \u2200 x v : (EuclideanSpace \u211d (Fin m)), a * \u2016v\u2016 ^ 2 \u2264 (fderiv \u211d (fderiv \u211d F) x v) v \u2227 (fderiv \u211d (fderiv \u211d F) x v) v \u2264 b * \u2016v\u2016 ^ 2)",
+  "module": "Submission.Obl.Entropy__smooth_gaussian_transport"
+ },
+ "model": "codex/gpt-6-astra:max",
+ "issued": 1792239296.1132994,
+ "lease_until": 1792282496.1132994
+}
