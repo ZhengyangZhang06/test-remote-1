@@ -12,6 +12,7 @@ import Submission.Obl.Entropy__gaussian_chaos_resolvent
 import Submission.Obl.Entropy__gaussian_first_chaos_h1_projection
 import Submission.Obl.Entropy__gaussian_hazard_lipschitz
 import Submission.Obl.Entropy__gaussian_l2_poincare
+import Submission.Obl.Entropy__gaussian_weak_remainder_witnesses
 import Submission.Obl.Entropy__hazard_secant_surplus
 import Submission.Obl.Entropy__linear_jacobian_normal_form
 import Submission.Obl.Entropy__linear_jacobian_rigidity
