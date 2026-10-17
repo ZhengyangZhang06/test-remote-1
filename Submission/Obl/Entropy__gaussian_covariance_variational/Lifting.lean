@@ -14,7 +14,7 @@ def ScalarCovarianceBound (m : ℕ) : Prop :=
     (∀ j, MemLp (fun x => fderiv ℝ F x (PiLp.single 2 j (1 : ℝ))) 2 γ) →
     ∀ a : Fin m → E → ℝ, ∀ b : Fin m → Fin m → E → ℝ,
     (∀ j, MemLp (a j) 2 γ) → (∀ r j, MemLp (b r j) 2 γ) →
-    (∀ j z, ContDiff ℝ (⊤ : WithTop ENat) z → HasCompactSupport z →
+    (∀ j z, ContDiff ℝ ((⊤ : ENat) : WithTop ENat) z → HasCompactSupport z →
       (∫ x, (a j x - fderiv ℝ F x (PiLp.single 2 j (1 : ℝ))) * z x ∂γ) =
         ∑ r, ∫ x, b r j x * fderiv ℝ z x (PiLp.single 2 r (1 : ℝ)) ∂γ) →
     (∫ x, (F x - ∫ y, F y ∂γ)^2 ∂γ) ≤
@@ -29,12 +29,12 @@ lemma weak_row
     (hJ : ∀ i j, MemLp (fun x => J x i j) 2 (stdGaussian (EuclideanSpace ℝ (Fin m))))
     (ha : ∀ i j, MemLp (fun x => a x i j) 2 (stdGaussian (EuclideanSpace ℝ (Fin m))))
     (hb : ∀ r i j, MemLp (fun x => b r x i j) 2 (stdGaussian (EuclideanSpace ℝ (Fin m))))
-    (hw : ∀ i j z, ContDiff ℝ (⊤ : WithTop ENat) z → HasCompactSupport z →
+    (hw : ∀ i j z, ContDiff ℝ ((⊤ : ENat) : WithTop ENat) z → HasCompactSupport z →
       (∫ x, (a x i j - J x i j) * z x ∂stdGaussian (EuclideanSpace ℝ (Fin m))) =
         ∑ r, ∫ x, b r x i j * fderiv ℝ z x (PiLp.single 2 r (1 : ℝ))
           ∂stdGaussian (EuclideanSpace ℝ (Fin m)))
     (u : Fin m → ℝ) (j : Fin m) (z : EuclideanSpace ℝ (Fin m) → ℝ)
-    (hz : ContDiff ℝ (⊤ : WithTop ENat) z) (hzs : HasCompactSupport z) :
+    (hz : ContDiff ℝ ((⊤ : ENat) : WithTop ENat) z) (hzs : HasCompactSupport z) :
     (∫ x, ((∑ i, u i * a x i j) - ∑ i, u i * J x i j) * z x
       ∂stdGaussian (EuclideanSpace ℝ (Fin m))) =
       ∑ r, ∫ x, (∑ i, u i * b r x i j) * fderiv ℝ z x (PiLp.single 2 r (1 : ℝ))
@@ -74,7 +74,7 @@ theorem covariance_of_scalar (hs : ScalarCovarianceBound m)
     (hJF : ∀ x i j, J x i j = (fderiv ℝ F x (PiLp.single 2 j (1 : ℝ))) i)
     (ha : ∀ i j, MemLp (fun x => a x i j) 2 (stdGaussian (EuclideanSpace ℝ (Fin m))))
     (hb : ∀ r i j, MemLp (fun x => b r x i j) 2 (stdGaussian (EuclideanSpace ℝ (Fin m))))
-    (hw : ∀ i j z, ContDiff ℝ (⊤ : WithTop ENat) z → HasCompactSupport z →
+    (hw : ∀ i j z, ContDiff ℝ ((⊤ : ENat) : WithTop ENat) z → HasCompactSupport z →
       (∫ x, (a x i j - J x i j) * z x ∂stdGaussian (EuclideanSpace ℝ (Fin m))) =
         ∑ r, ∫ x, b r x i j * fderiv ℝ z x (PiLp.single 2 r (1 : ℝ))
           ∂stdGaussian (EuclideanSpace ℝ (Fin m)))
