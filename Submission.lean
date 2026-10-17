@@ -10,3 +10,4 @@ import Submission.Obl.Entropy__gaussian_hazard_lipschitz
 import Submission.Obl.Entropy__log_concave_exponential_tail
 import Submission.Obl.Entropy__mollified_convex_sequence
 import Submission.Obl.Entropy__moreau_envelope_sequence
+import Submission.Obl.Entropy__smooth_approximation
