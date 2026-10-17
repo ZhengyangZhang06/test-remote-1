@@ -7,6 +7,7 @@ import Submission.Obl.Entropy__affine_exponential_moments
 import Submission.Obl.Entropy__affine_limit_density
 import Submission.Obl.Entropy__centered_slack_transports
 import Submission.Obl.Entropy__continuous_jacobian_of_l2_limit
+import Submission.Obl.Entropy__gaussian_first_chaos_h1_projection
 import Submission.Obl.Entropy__gaussian_hazard_lipschitz
 import Submission.Obl.Entropy__gaussian_l2_poincare
 import Submission.Obl.Entropy__linear_jacobian_normal_form
