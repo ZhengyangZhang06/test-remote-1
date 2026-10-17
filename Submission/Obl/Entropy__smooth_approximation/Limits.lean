@@ -135,7 +135,7 @@ theorem approximation_of_dominated {m : ℕ} {f : E m → ℝ}
   · exact Submission.Lib.EntropyTools.densityCovariance_tendsto_of_moments
       hf0 hf hmass hf2 hV0 (fun n => (hreg n).2.1) (fun n => (hreg n).2.2.1)
       (fun n => (hreg n).2.2.2.1) hfirst hsecond
-  · have hi := tendsto_integral_filter_of_dominated_convergence
+  · have hi := tendsto_integral_filter_of_dominated_convergence (l := atTop)
       (F := fun n x => |density (V n) x - f x|) (f := fun _ => (0 : ℝ))
       (fun x => 2 * B x + |f x|)
       (Eventually.of_forall fun n => ((hreg n).2.1.sub hf).abs.aestronglyMeasurable)
@@ -144,8 +144,10 @@ theorem approximation_of_dominated {m : ℕ} {f : E m → ℝ}
     · filter_upwards [hVB0] with n hn
       exact Eventually.of_forall fun x => by
         simp only [Real.norm_eq_abs, abs_abs]
-        exact (abs_sub _ _).trans (add_le_add_right (by
-          simpa only [abs_of_nonneg (hV0 n x)] using hn x) _)
+        calc
+          |density (V n) x - f x| ≤ |density (V n) x| + |f x| := abs_sub _ _
+          _ = density (V n) x + |f x| := by rw [abs_of_nonneg (hV0 n x)]
+          _ ≤ 2 * B x + |f x| := by linarith [hn x]
     · filter_upwards [hVlim] with x hx
       simpa using (hx.sub_const (f x)).abs
 
