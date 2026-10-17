@@ -44,6 +44,7 @@ theorem linearField_mulVec (X : ι → Matrix ι ι ℝ) (U : Matrix ι ι ℝ) 
   intro s _
   rw [mul_comm]
 
+omit [DecidableEq ι] in
 /-- Rotation of the whole field agrees with rotation of its coefficients. -/
 theorem rotated_linearField (X : ι → Matrix ι ι ℝ) (U : Matrix ι ι ℝ) (x : ι → ℝ) :
     U.transpose * linearField X (U *ᵥ x) * U =
