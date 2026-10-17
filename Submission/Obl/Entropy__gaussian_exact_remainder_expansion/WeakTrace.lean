@@ -1,4 +1,5 @@
 import Submission.Obl.Entropy__gaussian_exact_remainder_expansion.GaussianFirst
+import Submission.Obl.Entropy__gaussian_exact_remainder_expansion.CutoffTests
 
 set_option backward.isDefEq.respectTransparency false
 set_option backward.isDefEq.respectTransparency.types false
@@ -60,5 +61,17 @@ lemma defect₂_zero_of_test {m : ℕ} {A : E m → Mat m}
     simpa only [hk,hg] using Submission.Lib.MatrixEntropy.trace_cross_transpose hT (K A r x) (g r x)
   rw [funext he]
   exact integral_trace_left_zero hR hz (T A)
+
+lemma defect₂_zero {m : ℕ} {A : E m → Mat m}
+    (hA : ∀ x, (A x).IsHermitian) (hr : FCRegular A)
+    {g : Fin m → E m → Mat m} (hgs : ∀ r x, (g r x).IsHermitian)
+    (hgl : ∀ r, MatrixLp (γ m) 2 (g r)) (hdiv : Div (Y A) g) :
+    (∫ x, defect₂ A g x ∂γ m) = 0 := by
+  apply defect₂_zero_of_test hA hr hgs hgl
+  intro i j a b
+  obtain ⟨hs,⟨C,_,hC⟩,hd⟩ := hr k smooth_k
+  exact weak_test_bounded_c1 ((hr.Y_lp hA i j).integrable (by norm_num))
+    (fun r => hgl r i j) (hdiv i j) (hs a b)
+    (fun x => by simpa only [Real.norm_eq_abs] using hC x a b) (fun r => hd r a b)
 
 end Submission.Obl.Entropy__gaussian_exact_remainder_expansion
