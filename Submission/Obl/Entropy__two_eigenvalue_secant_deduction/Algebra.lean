@@ -30,7 +30,8 @@ lemma dd_symm (v : ℝ → ℝ) (a c : ℝ) : dd v a c = dd v c a := by
   by_cases h : a = c
   · subst c; rfl
   · simp only [dd, if_neg h, if_neg (Ne.symm h)]
-    rw [← neg_sub (v a) (v c), ← neg_sub a c, neg_div_neg]
+    rw [← neg_sub (v a) (v c), ← neg_sub a c]
+    simp only [neg_div, div_neg, neg_neg]
 
 lemma sigma_symm (a c : ℝ) : sigma a c = sigma c a := by
   unfold sigma delta
