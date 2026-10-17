@@ -1,4 +1,4 @@
-import Submission.Obl.Entropy__hazard_secant_surplus.Growth
+import Submission.Lib.GaussianTransport.GaussianSlope
 
 open Set Filter
 open scoped Topology
