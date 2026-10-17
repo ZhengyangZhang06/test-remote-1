@@ -93,4 +93,39 @@ theorem weighted_theta_bound (n : ℕ) (c : ℝ)
     _ ≤ (tailTheta 10 - c) / (10 : ℝ) ^ (n + 1) := hm (by norm_num) ha ha
     _ ≤ _ := by gcongr; exact theta_ten.2
 
+
+
+/-- The product majorant used to control the correction to p. -/
+theorem weighted_theta_product {a : ℝ} (ha : 10 ≤ a) :
+    (tailTheta a - 19/40) * (2*tailTheta a - 193/50) / a^2 ≤ 3/40 := by
+  have hd (x : ℝ) (hx : 10 ≤ x) : HasDerivAt
+      (fun x => (tailTheta x - 19/40) * (2*tailTheta x - 193/50) / x^2)
+      ((4*tailTheta x - 481/100 -
+        2*(tailTheta x - 19/40)*(2*tailTheta x - 193/50)) / x^3) x := by
+    have hxp : 0 < x := by linarith
+    convert! (((hasDerivAt_tailTheta hxp).sub_const (19/40)).mul
+      (((hasDerivAt_tailTheta hxp).const_mul 2).sub_const (193/50))).div
+      ((hasDerivAt_id x).pow 2) (pow_ne_zero _ hxp.ne') using 1
+    simp only [Pi.pow_apply, Pi.mul_apply, id_eq]
+    field_simp
+    <;> ring
+  have hm : AntitoneOn
+      (fun x => (tailTheta x - 19/40) * (2*tailTheta x - 193/50) / x^2) (Ici 10) := by
+    apply antitoneOn_of_deriv_nonpos (convex_Ici 10)
+      (fun x hx => (hd x hx).continuousAt.continuousWithinAt)
+      (fun x hx => (hd x (interior_subset hx)).differentiableAt.differentiableWithinAt)
+    intro x hx
+    have hx' : 10 ≤ x := interior_subset hx
+    rw [(hd x hx').deriv]
+    apply div_nonpos_of_nonpos_of_nonneg
+    · have ht := theta_lower hx'
+      nlinarith only [ht, sq_nonneg (tailTheta x - 3221/1000)]
+    · positivity
+  calc
+    _ ≤ (tailTheta 10 - 19/40) * (2*tailTheta 10 - 193/50) / 10^2 :=
+      hm (by norm_num) ha ha
+    _ ≤ (1611/500 - 19/40) * (2*(1611/500) - 193/50) / (10:ℝ)^2 := by
+      gcongr <;> linarith [theta_ten.1, theta_ten.2]
+    _ ≤ _ := by norm_num
+
 end Submission.Obl.Entropy__two_eigenvalue_positive_certificate
