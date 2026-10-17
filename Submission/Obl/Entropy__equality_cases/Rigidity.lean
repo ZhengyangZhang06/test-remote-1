@@ -1,4 +1,5 @@
 import Mathlib
+import Submission.Obl.Entropy__equality_cases.JointBasis
 
 /-! Algebraic coefficient identities in the rigidity lemma of Section 6. -/
 
