@@ -57,11 +57,13 @@ theorem integral_trace_completion
         ∑ s, (∫ x, ∑ i, ∑ j, (K s x i j)^2 ∂μ) := by
   have hik := integrable_trace (integrable_matrix_mul hk hk)
   have hiK s := integrable_trace (integrable_matrix_mul (hK s) (hK s))
-  simp only [trace_sub, trace_smul, trace_sum, nsmul_eq_mul]
-  rw [integral_sub ((integrable_trace hT).const_mul 2 |>.sub hik)
-      (integrable_finsetSum _ fun s _ => hiK s),
-    integral_sub ((integrable_trace hT).const_mul 2) hik,
-    integral_const_mul, integral_finsetSum _ (fun s _ => hiK s)]
+  simp only [two_smul, trace_sub, trace_add, trace_sum]
+  simp only [← two_mul]
+  have hs := integral_sub ((integrable_trace hT).const_mul 2 |>.sub hik)
+      (integrable_finsetSum Finset.univ fun s _ => hiK s)
+  simp only [Pi.sub_apply] at hs
+  rw [hs, integral_sub ((integrable_trace hT).const_mul 2) hik,
+    integral_const_mul, integral_finsetSum Finset.univ (fun s _ => hiK s)]
   simp_rw [trace_square_eq_sum_sq (hks _), trace_square_eq_sum_sq (hKs _ _)]
 
 /-- Once the transport entropy identity and covariance completion are supplied,
