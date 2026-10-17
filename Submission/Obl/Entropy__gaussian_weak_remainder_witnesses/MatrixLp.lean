@@ -30,6 +30,10 @@ lemma neg (hF : MatrixLp μ p F) : MatrixLp μ p (fun x => -F x) :=
 lemma smul (hF : MatrixLp μ p F) (c : ℝ) : MatrixLp μ p (fun x => c • F x) :=
   fun i j => (hF i j).const_smul c
 
+lemma nsmul (hF : MatrixLp μ p F) (c : ℕ) : MatrixLp μ p (fun x => c • F x) := by
+  intro i j
+  simpa only [Matrix.smul_apply, nsmul_eq_mul] using (hF i j).const_mul (c : ℝ)
+
 lemma transpose (hF : MatrixLp μ p F) : MatrixLp μ p (fun x => (F x).transpose) :=
   fun i j => hF j i
 
